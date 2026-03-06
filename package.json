@@ -14,6 +14,7 @@
     "@syncfusion/ej2-react-grids": "^32.2.8",
     "@tailwindcss/vite": "^4.2.1",
     "axios": "^1.13.5",
+    "html5-qrcode": "^2.3.8",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",

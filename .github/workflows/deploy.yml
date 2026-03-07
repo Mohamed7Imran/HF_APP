@@ -11,7 +11,7 @@ jobs:
 
     steps:
 
-    # 1️⃣ Checkout repo in a unique folder per run to avoid locked file issues
+    # 1️⃣ Checkout repo in a unique folder per run
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
@@ -42,17 +42,51 @@ jobs:
         Set-Location HF_APP_build_${{ github.run_id }}
         npm run build
 
-    # 5️⃣ Copy web.config into build folder
-   
-    - name: Copy web.config into build folder
+    # 5️⃣ Generate SPA-ready web.config in the build folder
+    - name: Generate SPA-ready web.config
       shell: powershell
       run: |
           $buildPath = "HF_APP_build_${{ github.run_id }}\build"
-          # Create build folder if it doesn't exist
-          if (-not (Test-Path $buildPath)) {
-              New-Item -ItemType Directory -Path $buildPath | Out-Null
-          }
-          Copy-Item "HF_APP_build_${{ github.run_id }}\web.config" "$buildPath\web.config" -Force
+          if (-not (Test-Path $buildPath)) { New-Item -ItemType Directory -Path $buildPath | Out-Null }
+
+          $webConfigContent = @"
+            <?xml version="1.0" encoding="utf-8"?>
+            <configuration>
+            <system.webServer>
+                <rewrite>
+                <rules>
+                    <rule name="React Routes" stopProcessing="true">
+                    <match url=".*" />
+                    <conditions logicalGrouping="MatchAll">
+                        <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+                    </conditions>
+                    <action type="Rewrite" url="/index.html" />
+                    </rule>
+                </rules>
+                </rewrite>
+                <staticContent>
+                <mimeMap fileExtension=".webmanifest" mimeType="application/manifest+json" />
+                <mimeMap fileExtension=".json" mimeType="application/json" />
+                <mimeMap fileExtension=".wasm" mimeType="application/wasm" />
+                </staticContent>
+                <httpProtocol>
+                <customHeaders>
+                    <add name="Service-Worker-Allowed" value="/" />
+                </customHeaders>
+                </httpProtocol>
+                <defaultDocument>
+                <files>
+                    <clear />
+                    <add value="index.html" />
+                </files>
+                </defaultDocument>
+            </system.webServer>
+            </configuration>
+            "@  # ← MUST BE ALONE, NO COMMENT OR SPACES
+
+          $webConfigPath = Join-Path $buildPath "web.config"
+          $webConfigContent | Out-File -FilePath $webConfigPath -Encoding UTF8 -Force
 
     # 6️⃣ Stop IIS App Pool before deploying
     - name: Stop IIS App Pool
@@ -71,14 +105,25 @@ jobs:
         }
         Copy-Item HF_APP_build_${{ github.run_id }}\build $dest -Recurse -Force
 
-    # 8️⃣ Start IIS App Pool after deployment
+    # 8️⃣ Fix folder permissions for IIS App Pool identity
+    - name: Set IIS folder permissions
+      shell: powershell
+      run: |
+        $dest = "D:\PRODUCTION_SOFTWEARE\frontend\dist"
+        $appPoolIdentity = "IIS AppPool\HF_FRONTEND"
+        $acl = Get-Acl $dest
+        $accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($appPoolIdentity,"ReadAndExecute, Read", "ContainerInherit,ObjectInherit", "None", "Allow")
+        $acl.SetAccessRule($accessRule)
+        Set-Acl -Path $dest -AclObject $acl
+
+    # 9️⃣ Start IIS App Pool after deployment
     - name: Start IIS App Pool
       shell: powershell
       run: |
         Import-Module WebAdministration
         Start-WebAppPool -Name "HF_FRONTEND"
 
-    # 9️⃣ Optional: Clean up old build folder
+    # 🔟 Optional: Clean up temporary build folder
     - name: Clean up build folder
       shell: powershell
       run: |

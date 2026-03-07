@@ -11,120 +11,44 @@ jobs:
 
     steps:
 
-    # 1️⃣ Checkout repo in a unique folder per run
+    # 1️⃣ Checkout repo in separate folder
     - name: Checkout Repository
       uses: actions/checkout@v4
       with:
-        path: HF_APP_build_${{ github.run_id }}
+        path: HF_APP_build
 
-    # 2️⃣ Kill any lingering Node processes to release native modules
-    - name: Kill Node processes
-      shell: powershell
-      run: |
-        try {
-            Stop-Process -Name "node" -Force -ErrorAction Stop
-            Write-Host "Killed Node processes"
-        } catch {
-            Write-Host "No node processes running"
-        }
-
-    # 3️⃣ Install dependencies cleanly
+    # 2️⃣ Install dependencies
     - name: Install Dependencies
-      shell: powershell
       run: |
-        Set-Location HF_APP_build_${{ github.run_id }}
+        cd HF_APP_build
         npm ci
 
-    # 4️⃣ Build React app
+    # 3️⃣ Build React App
     - name: Build React App
-      shell: powershell
       run: |
-        Set-Location HF_APP_build_${{ github.run_id }}
+        cd HF_APP_build
         npm run build
 
-    # 5️⃣ Generate SPA-ready web.config in the build folder
-    - name: Generate SPA-ready web.config
-      shell: powershell
-      run: |
-          $buildPath = "HF_APP_build_${{ github.run_id }}\build"
-          if (-not (Test-Path $buildPath)) { New-Item -ItemType Directory -Path $buildPath | Out-Null }
+    # 4️⃣ Copy web.config
+    - name: Copy web.config
+      run: copy HF_APP_build\web.config HF_APP_build\dist\web.config
 
-          $webConfigContent = @"
-            <?xml version="1.0" encoding="utf-8"?>
-            <configuration>
-            <system.webServer>
-                <rewrite>
-                <rules>
-                    <rule name="React Routes" stopProcessing="true">
-                    <match url=".*" />
-                    <conditions logicalGrouping="MatchAll">
-                        <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-                        <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-                    </conditions>
-                    <action type="Rewrite" url="/index.html" />
-                    </rule>
-                </rules>
-                </rewrite>
-                <staticContent>
-                <mimeMap fileExtension=".webmanifest" mimeType="application/manifest+json" />
-                <mimeMap fileExtension=".json" mimeType="application/json" />
-                <mimeMap fileExtension=".wasm" mimeType="application/wasm" />
-                </staticContent>
-                <httpProtocol>
-                <customHeaders>
-                    <add name="Service-Worker-Allowed" value="/" />
-                </customHeaders>
-                </httpProtocol>
-                <defaultDocument>
-                <files>
-                    <clear />
-                    <add value="index.html" />
-                </files>
-                </defaultDocument>
-            </system.webServer>
-            </configuration>
-            "@  # ← MUST BE ALONE, NO COMMENT OR SPACES
-
-          $webConfigPath = Join-Path $buildPath "web.config"
-          $webConfigContent | Out-File -FilePath $webConfigPath -Encoding UTF8 -Force
-
-    # 6️⃣ Stop IIS App Pool before deploying
+    # 5️⃣ Stop IIS App Pool
     - name: Stop IIS App Pool
-      shell: powershell
       run: |
         Import-Module WebAdministration
         Stop-WebAppPool -Name "HF_FRONTEND"
 
-    # 7️⃣ Deploy build to IIS folder
+    # 6️⃣ Deploy Build to IIS
     - name: Deploy Build
-      shell: powershell
       run: |
-        $dest = "D:\PRODUCTION_SOFTWEARE\frontend\dist"
-        if (Test-Path $dest) {
-            Remove-Item $dest -Recurse -Force -ErrorAction SilentlyContinue
+        if (Test-Path "D:\PRODUCTION_SOFTWEARE\frontend\dist") {
+          Remove-Item "D:\PRODUCTION_SOFTWEARE\frontend\dist" -Recurse -Force -ErrorAction SilentlyContinue
         }
-        Copy-Item HF_APP_build_${{ github.run_id }}\build $dest -Recurse -Force
+        Copy-Item HF_APP_build\dist "D:\PRODUCTION_SOFTWEARE\frontend\dist" -Recurse
 
-    # 8️⃣ Fix folder permissions for IIS App Pool identity
-    - name: Set IIS folder permissions
-      shell: powershell
-      run: |
-        $dest = "D:\PRODUCTION_SOFTWEARE\frontend\dist"
-        $appPoolIdentity = "IIS AppPool\HF_FRONTEND"
-        $acl = Get-Acl $dest
-        $accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($appPoolIdentity,"ReadAndExecute, Read", "ContainerInherit,ObjectInherit", "None", "Allow")
-        $acl.SetAccessRule($accessRule)
-        Set-Acl -Path $dest -AclObject $acl
-
-    # 9️⃣ Start IIS App Pool after deployment
+    # 7️⃣ Start IIS App Pool
     - name: Start IIS App Pool
-      shell: powershell
       run: |
         Import-Module WebAdministration
         Start-WebAppPool -Name "HF_FRONTEND"
-
-    # 🔟 Optional: Clean up temporary build folder
-    - name: Clean up build folder
-      shell: powershell
-      run: |
-        Remove-Item HF_APP_build_${{ github.run_id }} -Recurse -Force -ErrorAction SilentlyContinue

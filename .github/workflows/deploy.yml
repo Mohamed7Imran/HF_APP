@@ -10,22 +10,38 @@ jobs:
     runs-on: [self-hosted, windows, x64]
 
     steps:
-    - name: Checkout repo
+
+    - name: Stop Node Processes
+      run: taskkill /F /IM node.exe || exit 0
+
+    - name: Clean Runner Workspace
+      run: |
+        if exist node_modules rmdir /s /q node_modules
+        if exist dist rmdir /s /q dist
+
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Install Dependencies (Fast Install)
       run: npm ci
 
-    - name: Build React app
+    - name: Build React App
       run: npm run build
 
     - name: Copy web.config
       run: copy web.config dist\web.config
 
-    - name: Deploy to IIS folder
-      run: xcopy dist "D:\PRODUCTION_SOFTWEARE\frontend\dist" /E /H /C /I /Y
-
-    - name: Restart IIS App Pool
+    - name: Stop IIS App Pool
       run: |
         powershell Import-Module WebAdministration
-        powershell Restart-WebAppPool -Name "HF_FRONTEND"
+        powershell Stop-WebAppPool -Name "HF_FRONTEND"
+
+    - name: Deploy Build to IIS
+      run: |
+        if exist "D:\PRODUCTION_SOFTWEARE\frontend\dist" rmdir /s /q "D:\PRODUCTION_SOFTWEARE\frontend\dist"
+        xcopy dist "D:\PRODUCTION_SOFTWEARE\frontend\dist" /E /H /C /I /Y
+
+    - name: Start IIS App Pool
+      run: |
+        powershell Import-Module WebAdministration
+        powershell Start-WebAppPool -Name "HF_FRONTEND"

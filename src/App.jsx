@@ -101,6 +101,16 @@ function App() {
           }
         />
         <Route
+          path="/ord_page/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Syncfushion />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/qc-admin/*"
           element={
             <ProtectedRoute>

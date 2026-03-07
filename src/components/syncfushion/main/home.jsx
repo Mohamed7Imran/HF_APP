@@ -34,6 +34,7 @@ function Home() {
         <Route path="/order" element={<HeroFashionGrid13 />} />
         <Route path="god/" element={<h1>Good</h1> } />
          <Route path="/HrReportGrid" element={<HrReportGrid />} /> 
+         <Route path="/OrdPagination" element={<OrdPagination />} /> 
          {/* <Route path='/store' element= {<StoreGrid />} /> */}
          <Route path="/TallyBalanceReport" element={<TallyBalanceReport />} /> 
          <Route path="/OrdPagination" element={<OrdPagination />} /> 

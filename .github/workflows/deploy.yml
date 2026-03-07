@@ -10,45 +10,20 @@ jobs:
     runs-on: [self-hosted, windows, x64]
 
     steps:
-
-    # 1️⃣ Checkout repo in separate folder
-    - name: Checkout Repository
+    - name: Checkout repo
       uses: actions/checkout@v4
-      with:
-        path: HF_APP_build
 
-    # 2️⃣ Install dependencies
-    - name: Install Dependencies
-      run: |
-        cd HF_APP_build
-        npm ci
+    - name: Install dependencies
+      run: npm install
 
-    # 3️⃣ Build React App
-    - name: Build React App
-      run: |
-        cd HF_APP_build
-        npm run build
+    - name: Build React app
+      run: npm run build
 
-    # 4️⃣ Copy web.config
     - name: Copy web.config
-      run: copy HF_APP_build\web.config HF_APP_build\dist\web.config
+      run: copy web.config dist\web.config
 
-    # 5️⃣ Stop IIS App Pool
-    - name: Stop IIS App Pool
-      run: |
-        Import-Module WebAdministration
-        Stop-WebAppPool -Name "HF_FRONTEND"
+    - name: Deploy to IIS folder
+      run: xcopy dist "D:\PRODUCTION_SOFTWEARE\frontend\dist" /E /H /C /I /Y
 
-    # 6️⃣ Deploy Build to IIS
-    - name: Deploy Build
-      run: |
-        if (Test-Path "D:\PRODUCTION_SOFTWEARE\frontend\dist") {
-          Remove-Item "D:\PRODUCTION_SOFTWEARE\frontend\dist" -Recurse -Force -ErrorAction SilentlyContinue
-        }
-        Copy-Item HF_APP_build\dist "D:\PRODUCTION_SOFTWEARE\frontend\dist" -Recurse
-
-    # 7️⃣ Start IIS App Pool
-    - name: Start IIS App Pool
-      run: |
-        Import-Module WebAdministration
-        Start-WebAppPool -Name "HF_FRONTEND"
+    - name: Restart IIS
+      run: iisreset

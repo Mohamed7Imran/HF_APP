@@ -24,6 +24,7 @@ const CardGrid = () => {
       <Card title="Order" />
       <Card title="Grid-order" />
       <Card title="Syncfusion" />
+      <Card title="Bala" />
     </div>
   );
 };

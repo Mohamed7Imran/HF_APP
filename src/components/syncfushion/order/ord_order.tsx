@@ -352,7 +352,7 @@ const HeroFashionGrid13: React.FC = () => {
             <ColumnDirective field="img_fpath" headerText="img_fpath" width="90" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} />
             <ColumnDirective field="prnclr" type="string" headerText="PRN COLOR" width="100" template={genericHighlighter('prnclr')} />
 
-            <ColumnDirective field="u25" headerText="U25" width="90" template={genericHighlighter('u25')} />
+            <ColumnDirective field="u25 Week" headerText="U25" width="90" template={genericHighlighter('u25')} />
             <ColumnDirective field="abc" headerText="ABC" width="85" template={genericHighlighter('abc')} />
             <ColumnDirective field="u46" headerText="U46" width="85" template={genericHighlighter('u46')} />
             <ColumnDirective field="production_type_inside_outside" headerText="type" width="85" template={genericHighlighter('production_type_inside_outside')} />

@@ -3,6 +3,7 @@ import HeroFashionGrid13 from "../order/ord_order.tsx"
 import HrReportGrid from "../order/ord1 ok.tsx"
 import TallyBalanceReport from "../order/tally.tsx"
 import OrdPagination from "../order/ord_pagination.tsx"
+import PrnReportGrid from "../order/print.tsx"
 // import HrReportGrid from "../order/ord1 ok.tsx"
 // const HrReportGrid = React.lazy(() => import('../order/ord1 ok'));
 // // const StoreGrid = React.lazy(() => import('../page/order/StoreGrid'));
@@ -35,6 +36,7 @@ function Home() {
          {/* <Route path='/store' element= {<StoreGrid />} /> */}
          <Route path="/TallyBalanceReport" element={<TallyBalanceReport />} /> 
          <Route path="/OrdPagination" element={<OrdPagination />} /> 
+         <Route path="/PrnReportGrid" element={<PrnReportGrid />} /> 
         
     </Routes>
   );

@@ -34,21 +34,6 @@ import React from "react";
 import { FaChartPie, FaCheck, FaWallet, FaViadeo } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-<<<<<<< HEAD
-const Card = ({ title, path }) => {
-  const navigate = useNavigate();
-
-  return (
-    <div className="bg-white shadow-lg rounded-xl p-6">
-      <h2 className="text-lg font-bold mb-2">{title}</h2>
-      <p className="text-gray-600 mb-4">Grid Details</p>
-      <button 
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-        onClick={() => navigate(path)}
-      >
-        Open
-      </button>
-=======
 const Dashboard = () => {
 
   const navigate = useNavigate();
@@ -151,25 +136,8 @@ const Dashboard = () => {
 
       </div>
 
->>>>>>> bd5e0504c816a9b266bbdc172c8ce69004f56294
     </div>
   );
 };
 
-<<<<<<< HEAD
-const CardGrid = () => {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6">
-      {/* Assign specific paths to each card */}
-      <Card title="Order" path="order" />
-      <Card title="Grid-order" path="OrdPagination" />
-      <Card title="Syncfusion" path="syncfusion_route" />
-      <Card title="Bala" path="bala_route" />
-    </div>
-  );
-};
-
-export default CardGrid;
-=======
 export default Dashboard;
->>>>>>> bd5e0504c816a9b266bbdc172c8ce69004f56294

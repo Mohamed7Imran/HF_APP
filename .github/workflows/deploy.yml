@@ -11,39 +11,48 @@ jobs:
 
     steps:
 
-    - name: Stop Node Processes
-      run: taskkill /F /IM node.exe
-      continue-on-error: true
-
-    - name: Clean Runner Workspace
+    # 1️⃣ Kill any Node processes (release locked files)
+    - name: Kill Node Processes
       run: |
-        if (Test-Path node_modules) { Remove-Item node_modules -Recurse -Force }
-        if (Test-Path dist) { Remove-Item dist -Recurse -Force }
+        Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force
 
+    # 2️⃣ Clean workspace safely
+    - name: Clean workspace
+      run: |
+        if (Test-Path node_modules) { Remove-Item node_modules -Recurse -Force -ErrorAction SilentlyContinue }
+        if (Test-Path dist) { Remove-Item dist -Recurse -Force -ErrorAction SilentlyContinue }
+
+    # 3️⃣ Checkout repo
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    # 4️⃣ Install dependencies (fast, consistent)
     - name: Install Dependencies
       run: npm ci
 
+    # 5️⃣ Build React app
     - name: Build React App
       run: npm run build
 
+    # 6️⃣ Copy web.config to build folder
     - name: Copy web.config
       run: copy web.config dist\web.config
 
+    # 7️⃣ Stop IIS App Pool safely
     - name: Stop IIS App Pool
       run: |
         Import-Module WebAdministration
         Stop-WebAppPool -Name "HF_FRONTEND"
 
+    # 8️⃣ Deploy build to IIS folder
     - name: Deploy Build to IIS
       run: |
         if (Test-Path "D:\PRODUCTION_SOFTWEARE\frontend\dist") {
-          Remove-Item "D:\PRODUCTION_SOFTWEARE\frontend\dist" -Recurse -Force
+          Remove-Item "D:\PRODUCTION_SOFTWEARE\frontend\dist" -Recurse -Force -ErrorAction SilentlyContinue
         }
         Copy-Item dist "D:\PRODUCTION_SOFTWEARE\frontend\dist" -Recurse
 
+    # 9️⃣ Start IIS App Pool
     - name: Start IIS App Pool
       run: |
         Import-Module WebAdministration

@@ -25,7 +25,7 @@ const Dashboard = () => {
           </div>
 
           <h2 className="text-lg font-semibold text-gray-800 group-hover:text-orange-600 transition">
-            Order
+            Order syncfushion
           </h2>
 
           <p className="text-gray-500 text-sm mt-1">
@@ -59,7 +59,7 @@ const Dashboard = () => {
 
         {/* Card 3 */}
         <div
-          onClick={() => navigate("")}
+          onClick={() => navigate("card1")}
           className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden 
           transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
         >
@@ -71,18 +71,18 @@ const Dashboard = () => {
           </div>
 
           <h2 className="text-lg font-semibold text-gray-800 group-hover:text-green-600 transition">
-            Approvals
+            Order Card
           </h2>
 
           <p className="text-gray-500 text-sm mt-1">
-            Authorize pending requests.
+           Card view and details
           </p>
         </div>
 
 
         {/* Card 4 */}
         <div
-          onClick={() => navigate("")}
+          onClick={() => navigate("card2")}
           className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden 
           transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
         >
@@ -94,11 +94,11 @@ const Dashboard = () => {
           </div>
 
           <h2 className="text-lg font-semibold text-gray-800 group-hover:text-purple-600 transition">
-            Bill & Payments Dashboard
+            Order Card admin
           </h2>
 
           <p className="text-gray-500 text-sm mt-1">
-            Overall payment insights.
+           Overall card details
           </p>
         </div>
 

@@ -207,7 +207,7 @@ const HeroFashionGrid13: React.FC = () => {
     </div>
   );
 
-  const imageFieldTemplate = (field: 'mainimagepath' | 'prnfile1' | 'prnfile2') => (p: OrderData) => {
+  const imageFieldTemplate = (field: 'mainimagepath' | 'prnfile1' | 'prnfile2' | 'img_fpath') => (p: OrderData) => {
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" loading="lazy" style={{ width: '75px', height: '75px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
@@ -295,15 +295,7 @@ const HeroFashionGrid13: React.FC = () => {
         <div className="header-left">
           {showingCount} / {totalCount} Records
         </div>
-           <div className="header-right">
-          <input
-            type="text"
-            placeholder="Search all columns..."
-            value={searchKey}
-            onChange={onSearchChange}
-            className="search-input"
-          />
-        </div>
+
         {/* Center: Title */}
         <div className="header-center">
           HERO FASHION - ORDER DASHBOARD
@@ -352,7 +344,7 @@ const HeroFashionGrid13: React.FC = () => {
             <ColumnDirective field="img_fpath" headerText="img_fpath" width="90" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} />
             <ColumnDirective field="prnclr" type="string" headerText="PRN COLOR" width="100" template={genericHighlighter('prnclr')} />
 
-            <ColumnDirective field="u25" headerText="U25 week" width="90" template={genericHighlighter('u25')} />
+            <ColumnDirective field="u25" headerText="U25" width="90" template={genericHighlighter('u25')} />
             <ColumnDirective field="abc" headerText="ABC" width="85" template={genericHighlighter('abc')} />
             <ColumnDirective field="u46" headerText="U46" width="85" template={genericHighlighter('u46')} />
             <ColumnDirective field="production_type_inside_outside" headerText="type" width="85" template={genericHighlighter('production_type_inside_outside')} />

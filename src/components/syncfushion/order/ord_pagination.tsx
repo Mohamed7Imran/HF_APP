@@ -26,7 +26,7 @@ interface OrderData {
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string;img_fpath?:string
 }
 
-const HeroFashionGrid13: React.FC = () => {
+const OrdPagination: React.FC = () => {
   const [dataSource, setDataSource] = useState<OrderData[]>([]);
   const[totalCount, setTotalCount] = useState<number>(0);
   const [showingCount, setShowingCount] = useState<number>(0);
@@ -334,6 +334,7 @@ const HeroFashionGrid13: React.FC = () => {
           enableVirtualization={true}
           rowHeight={105}
           allowSorting={true}
+          allowPaging={true}
           allowGrouping={true}
           allowFiltering={true}
           allowResizing={true}
@@ -376,4 +377,4 @@ const HeroFashionGrid13: React.FC = () => {
   );
 };
 
-export default HeroFashionGrid13;
+export default OrdPagination;

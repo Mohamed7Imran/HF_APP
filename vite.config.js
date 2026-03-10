@@ -9,35 +9,35 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
-      workbox: {
-        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+  registerType: 'autoUpdate',
+  includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+  workbox: {
+        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, 
       },
-      manifest: {
-        name: 'HF APP',
-        short_name: 'HF APP',
-        start_url: '/',
-        display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#42b883',
-        lang: 'en',
-        scope: '/',
-        description: 'A progressive web app built with React and Vite',
-        icons: [
-          {
-            src: '/icons/application.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: '/icons/application.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
+  manifest: {
+    name: 'HF APP',
+    short_name: 'HF APP',
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#ffffff',
+    theme_color: '#42b883',
+    lang: 'en',
+    scope: '/',
+    description: 'A progressive web app built with React and Vite',
+    icons: [
+      {
+        src: '/icons/application.png',
+        sizes: '192x192',
+        type: 'image/png',
       },
-    })
+      {
+        src: '/icons/application.png',
+        sizes: '512x512',
+        type: 'image/png',
+      },
+    ],
+  },
+})
   ],
   server: {
     host: '0.0.0.0',
@@ -50,25 +50,4 @@ export default defineConfig({
       },
     },
   },
-  build: {
-    chunkSizeWarningLimit: 1500,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) {
-              return 'react-vendor'
-            }
-            if (id.includes('recharts')) {
-              return 'charts'
-            }
-            if (id.includes('@mui')) {
-              return 'mui'
-            }
-            return 'vendor'
-          }
-        }
-      }
-    }
-  }
 })

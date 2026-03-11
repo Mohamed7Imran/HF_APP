@@ -96,70 +96,53 @@ const HeroFashionGrid13: React.FC = () => {
   };
 
   // --- Data Fetching ---
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true); setError(null);
-        const [orderResponse, printResponse] = await Promise.all([
-          fetch('https://app.herofashion.com/order_panda'),
-          fetch('https://app.herofashion.com/PrintRgb/')
-         
-        ]);
-        if (!orderResponse.ok || !printResponse.ok) throw new Error("Failed to fetch data from APIs");
+  const fetchOrders = async () => {
+  try {
+    setLoading(true);
+    setError(null);
 
-        const orderData: OrderData[] = await orderResponse.json();
-        const printData: any[] = await printResponse.json();
-        const printMap: Record<string, any> = {};
-        printData.forEach(item => { if (item.jobno_joint) printMap[item.jobno_joint] = item; });
+    const [orderResponse, printResponse] = await Promise.all([
+      fetch('https://app.herofashion.com/order_panda'),
+      fetch('https://app.herofashion.com/PrintRgb/')
+    ]);
 
-        const mergedData = orderData.map((order) => {
-          const matchingPrintData = printMap[order.jobno_oms] || {};
-          return {
-            ...order,
-            prnclr: matchingPrintData.prnclr || null,
-            prnfile1: matchingPrintData.prnfile1 || '',
-            prnfile2: matchingPrintData.prnfile2 || '',
-            img_fpath: matchingPrintData.img_fpath || ''
-          };
-        });
+    if (!orderResponse.ok || !printResponse.ok)
+      throw new Error("Failed to fetch data");
 
-        const processedData = mergedData
-          .filter((item) => {
-            const dateStr = item.finaldelvdate || item.final_delivery_date;
-            if (!dateStr) return true;
-            const dateParts = dateStr.split(/[-/]/); let year = 0;
-            if (dateParts.length === 3) {
-              const p0 = parseInt(dateParts[0]); const p2 = parseInt(dateParts[2]);
-              year = p0 > 1000 ? p0 : (p2 < 100 ? 2000 + p2 : p2);
-            }
-            return year <= 2127;
-          })
-          .sort((a, b) => {
-            const typeA = (a.director_sample_order || '').toLowerCase();
-            const typeB = (b.director_sample_order || '').toLowerCase();
-            if (typeA !== typeB) {
-              if (typeA === 'sample') return -1; if (typeB === 'sample') return 1;
-              return typeA.localeCompare(typeB);
-            }
-            const dateA = new Date(a.finaldelvdate || a.final_delivery_date || 0).getTime();
-            const dateB = new Date(b.finaldelvdate || b.final_delivery_date || 0).getTime();
-            return dateA - dateB;
-          })
-          // --- FRONTEND SLNO GENERATION ---
-          .map((item, index) => ({
-            ...item,
-            slno1: index + 1
-          }));
+    const orderData: OrderData[] = await orderResponse.json();
+    const printData: any[] = await printResponse.json();
 
-        setDataSource(processedData);
-        setTotalCount(processedData.length);
-        setShowingCount(processedData.length);
-      } catch (err: any) {
-        console.error("Fetch error:", err); setError(err.message);
-      } finally { setLoading(false); }
-    };
-    fetchData();
-  }, []);
+    const printMap: Record<string, any> = {};
+    printData.forEach(item => {
+      if (item.jobno_joint) printMap[item.jobno_joint] = item;
+    });
+
+    const mergedData = orderData.map(order => {
+      const p = printMap[order.jobno_oms] || {};
+      return {
+        ...order,
+        prnclr: p.prnclr || null,
+        prnfile1: p.prnfile1 || '',
+        prnfile2: p.prnfile2 || '',
+        img_fpath: p.img_fpath || ''
+      };
+    });
+
+    setDataSource(mergedData);
+    setTotalCount(mergedData.length);
+    setShowingCount(mergedData.length);
+
+  } catch (err:any) {
+    console.error(err);
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchOrders();
+}, []);
 
   // --- Search & Highlight Logic ---
   const highlightText = (text: any) => {
@@ -207,32 +190,91 @@ const HeroFashionGrid13: React.FC = () => {
  
   let serverUpdated = false;
   let newPrimaryKey:number | null = null;
-  const actionBegin = (args: AddEventArgs|SaveEventArgs|EditEventArgs|DeleteEventArgs|ActionEventArgs) => {
-    const ajax = new Ajax({
-      onSuccess: function (response: string) {
-        serverUpdated = true;
-        newPrimaryKey = JSON.parse(response).id;
-        gridRef.current?.endEdit();
-      },
-      onFailure: function (xhr: XMLHttpRequest) {
-        gridRef.current?.closeEdit();
-      },
-    });
+
+
+  // const actionBegin = (args: AddEventArgs|SaveEventArgs|EditEventArgs|DeleteEventArgs|ActionEventArgs) => {
+  //   const ajax = new Ajax({
+  //     onSuccess: function (response: string) {
+  //       serverUpdated = true;
+  //       newPrimaryKey = JSON.parse(response).id;
+  //       gridRef.current?.endEdit();
+  //     },
+  //     onFailure: function (xhr: XMLHttpRequest) {
+  //       gridRef.current?.closeEdit();
+  //     },
+  //   });
     
-    if (args.requestType === 'save') {
-      if ((args as any).action === 'edit') {
-        console.log(args)
-        if (!serverUpdated) {
-          args.cancel = true;
-          ajax.url =
-            'https://app.herofashion.com/order_list_proc/';
-          ajax.type = 'POST';
-          ajax.data = JSON.stringify((args as any).data);
-          ajax.send();
-        }
-      }
+  //   if (args.requestType === 'save') {
+  //     if ((args as any).action === 'edit') {
+  //       console.log(args)
+  //       if (!serverUpdated) {
+  //         args.cancel = true;
+  //         ajax.url =
+  //           'https://app.herofashion.com/order_list_proc/';
+  //         ajax.type = 'POST';
+  //         ajax.data = JSON.stringify((args as any).data);
+  //         ajax.send();
+  //       }
+  //     }
+  //   }
+  // };
+
+
+const actionBegin = (args:any) => {
+
+  if (args.requestType === 'save') {
+
+    const data = args.data as OrderData;
+    const previous = args.previousData as OrderData;
+
+    args.cancel = true;
+
+    if (data.u7 !== previous?.u7) {
+
+      fetch('https://app.herofashion.com/udf7_update/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobno_oms: data.jobno_oms,
+          u7: data.u7
+        })
+      })
+      .then(res => res.json())
+      .then(() => {
+
+        fetchOrders();   // ✅ reload API
+        gridRef.current?.closeEdit();
+
+      });
+
+      return;
     }
-  };
+
+    if (data.reference !== previous?.reference) {
+
+      fetch('https://app.herofashion.com/order_list_proc/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jobno_oms: data.jobno_oms,
+          reference: data.reference
+        })
+      })
+      .then(res => res.json())
+      .then(() => {
+
+        fetchOrders();   // ✅ reload API
+        gridRef.current?.closeEdit();
+
+      });
+
+      return;
+    }
+
+  }
+};
+
+
   const actionComplete = (args: AddEventArgs|SaveEventArgs|EditEventArgs|DeleteEventArgs|ActionEventArgs) => {
     if (args.requestType === 'beginEdit') {
       // buyerIdVal = args.rowData['buyerid_id'];
@@ -243,11 +285,6 @@ const HeroFashionGrid13: React.FC = () => {
       newPrimaryKey = null;
     }
   };
-
-
-
-
-
 
   const orderSummaryTemplate = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -461,6 +498,8 @@ const HeroFashionGrid13: React.FC = () => {
              
               <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="130" template={deliveryInfoTemplate} />
               <ColumnDirective field="reference" headerText="reference" width="130" template={genericHighlighter('reference')} />
+
+              <ColumnDirective field="u7" headerText="7" width="70" allowEditing={true} template={genericHighlighter('u7')} />
    
               <ColumnDirective field="prnfile1" headerText="PRN IMG" width="85" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile1')} />
               <ColumnDirective field="prnfile2" headerText="MEAS IMG" width="85" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile2')} />
@@ -476,7 +515,7 @@ const HeroFashionGrid13: React.FC = () => {
               <ColumnDirective field="u8" headerText="8 FAB" width="90" template={genericHighlighter('u8')} />
               <ColumnDirective field="u14" headerText="14 DY" width="90" template={genericHighlighter('u14')} />
               <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} />
-              <ColumnDirective field="u7" headerText="7" width="70" template={genericHighlighter('u7')} />
+              
               <ColumnDirective field="u15" headerText="15" width="70" template={genericHighlighter('u15')} />
               <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
               <ColumnDirective field="u31" headerText="31 ITS" width="80" template={genericHighlighter('u31')} />

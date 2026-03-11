@@ -193,7 +193,7 @@ function Sidebar({ children }) {
 
       {/* --- CONTENT AREA --- */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden pt-16 lg:pt-0">
-        <main className="flex-1 overflow-y-auto pt-20 lg:pt-8 no-scrollbar">
+        <main className="flex-1 overflow-y-auto no-scrollbar">
           {children}
         </main>
       </div>

@@ -195,7 +195,7 @@ function Sample() {
         height={50}
         style={{ display: 'block' }}
         onError={(e: any) => {
-          e.target.onerror = null; // Prevent infinite loop
+          e.target.onerror = null; 
           setImgSrc('/placeholder.png');
         }}
         alt=""
@@ -225,13 +225,40 @@ function Sample() {
     </div>
   );
 
+  const merchTemplate=(props:OrderRow) =>{
+    return (
+        <span>
+           { props.company_name}-{props.pono}
+        </span>
+    )
+  }
+
   const toolbarOptions: any[] = [
     "Search",
     {
       id: "row-count",
       align: "Right",
       template: RowCountBadge
-    }
+    },
+    { text: '', prefixIcon: 'e-add', id: 'add_icon', tooltipText: 'Add Records' },
+      'Edit',
+      'Delete',
+      'Update',
+      'Cancel',
+      { type: 'Separator' },
+      { text: '', prefixIcon: 'sf-icon-expand-collapse', id: 'expand_icon', tooltipText: 'Expand/Collapse' },
+      { text: '', prefixIcon: 'sf-icon-clear-sorting', id: 'clearsorting_icon', tooltipText: 'Clear Sorting' },
+      { text: '', prefixIcon: 'e-filter-clear icon', id: 'clearfilter_icon', tooltipText: 'Clear Filtering' },
+      { type: 'Separator' },
+      { text: '', prefixIcon: 'sf-icon-clear-selection', id: 'clear_selection', tooltipText: 'Clear Selection' },
+      { text: '', prefixIcon: 'sf-icon-row-clear', id: 'clear_row_selection', tooltipText: 'Clear Row Selection' },
+      { text: '', prefixIcon: 'sf-icon-column-clear', id: 'clear_column_selection', tooltipText: 'Clear Column Selection' },
+      { text: '', prefixIcon: 'sf-icon-clear-cell', id: 'clear_cell_selection', tooltipText: 'Clear Cell Selection' },
+      { type: 'Separator' },
+      { type: 'Separator' },
+      { text: '', prefixIcon: 'e-csvexport', id: 'export_csv', tooltipText: 'Export CSV' },
+      { text: '', prefixIcon: 'e-excelexport', id: 'export_excel', tooltipText: 'Export Excel' },
+      { text: '', prefixIcon: 'e-pdfexport', id: 'export_pdf', tooltipText: 'Export PDF' },
   ];
 
   const filterSettings: FilterSettingsModel = { type: "Excel" };
@@ -269,10 +296,11 @@ function Sample() {
           <ColumnDirective field="styleid" headerText="Style ID" width="140" type="number" />
           <ColumnDirective field="company_name" headerText="Company" width="200" />
           <ColumnDirective field="pono" headerText="PO No" width="120" />
+          <ColumnDirective headerText="Company name and pono" template={merchTemplate} width="200" />
           <ColumnDirective field="reference" headerText="Reference" width="250" />
           <ColumnDirective field="validationStatus" headerText="Data Quality" width="130" />
-          <ColumnDirective field="validationNotes" headerText="Issues" width="250" />
-          <ColumnDirective field="podate" headerText="PO Date" width="140" type="date" format="yMd" />
+          {/* <ColumnDirective field="validationNotes" headerText="Issues" width="250" /> */}
+          <ColumnDirective field="podate" headerText="PO Date" freeze="Right" width="140" type="date" format="yMd" />
           <ColumnDirective
             field="final_delivery_date"
             headerText="Final Delivery"

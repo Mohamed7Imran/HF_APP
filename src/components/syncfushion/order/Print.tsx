@@ -419,8 +419,13 @@ const colorListTemplate = (p: PrnData) => {
             // enableVirtualization={true}
             rowHeight={130}
             allowSorting={true}
+            allowTextWrap={true}
             allowFiltering={true}
             allowResizing={true}
+            // allowTextWrap={true}
+            // allowSorting={true}
+            allowSelection={true}
+            allowGrouping={true}
             filterSettings={{ type: 'Excel' }}
             gridLines="Both"
           >

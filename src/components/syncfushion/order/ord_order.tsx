@@ -1,29 +1,74 @@
 import React, { useEffect, useState, useRef } from 'react';
 import {
-  GridComponent,
-  ColumnsDirective,
-  ColumnDirective,
-  Sort,
-  Inject,
-  Resize,
-  Filter,
-  Group,
-  Reorder,
-  Search,
-  VirtualScroll,
-  ContextMenu,
-  ColumnMenu,
-  Page,
-  Toolbar,
-  ColumnChooser,
-  Freeze,
-  Edit,
+  // GridComponent,
+  // ColumnsDirective,
+  // ColumnDirective,
+  // Sort,
+  // Inject,
+  // Resize,
+  // Filter,
+  // Group,
+  // Reorder,
+  // Search,
+  // VirtualScroll,
+  // ContextMenu,
+  // ColumnMenu,
+  // Page,
+  // Toolbar,
+  // ColumnChooser,
+  // Freeze,
+  // Edit,
+  // AddEventArgs,
+  // SaveEventArgs,
+  // EditEventArgs,
+  // DeleteEventArgs,
+  // ActionEventArgs,
+    GridComponent, Inject, ColumnMenu, ColumnChooser, RowDD, Freeze,
+  InfiniteScroll, CommandColumn, ContextMenu, VirtualScroll, Filter, Search, LazyLoadGroup, Reorder, Resize, Sort, PdfExport,
+  ExcelExport, Edit, Page, Toolbar, Group, ColumnsDirective, ColumnDirective,Aggregate,
+  ExcelQueryCellInfoEventArgs,
+  ContextMenuClickEventArgs,
+  QueryCellInfoEventArgs,
+  ColumnModel,
+  BeforePasteEventArgs,
+  CellSaveArgs,
+  FilterSettingsModel,
+  ToolbarItems,
+  EditMode,
+  ContextMenuItem,
+  ContextMenuItemModel,
+  SortSettingsModel,
+  SelectionSettingsModel,
+  parentsUntil,
+  CommandModel,
+  ValueType,
+  AggregateTemplateContext,
+  AggregateRowModel,
+  AggregateType,
+  CheckboxSelectionType,
+  SelectionType,
+  NewRowPosition,
+  FilterType,
+  FilterBarMode,
+  IndicatorType,
+  GridColumn,
+  PageEventArgs,
+  GroupEventArgs,
+  FilterEventArgs,
+  SearchEventArgs,
+  SortEventArgs,
   AddEventArgs,
   SaveEventArgs,
   EditEventArgs,
   DeleteEventArgs,
   ActionEventArgs,
-  
+  NotifyArgs,
+  ReorderEventArgs,
+  RowSelectEventArgs,
+  ColumnSelectEventArgs,
+  RowSelectingEventArgs,
+  Column,
+  RowDeselectEventArgs
 } 
 
 from '@syncfusion/ej2-react-grids';
@@ -467,9 +512,24 @@ const actionBegin = (args:any) => {
             enableVirtualization={true}
             rowHeight={95}
             allowSorting={true}
+            allowTextWrap={true}
             allowFiltering={true}
             allowGrouping={true}
             allowResizing={true}
+            showColumnChooser={true}
+          allowReordering={true}
+            // allowFiltering={true}
+            // allowPdfExport={true}
+            // enableRtl={false}
+            // allowExcelExport={true}
+            // allowRowDragAndDrop={false}
+            // allowTextWrap={true}
+            // allowSorting={true}
+           allowSelection={true}
+        // allowGrouping={true}
+        // enableStickyHeader={false}
+        // allowResizing={true}
+        // filterSettings={gridProperties.filterOptions}
             filterSettings={{ type: 'Excel' }}
             gridLines="Both"
             searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }}
@@ -531,7 +591,8 @@ const actionBegin = (args:any) => {
               <ColumnDirective field="quantity" headerText="QTY" width="80" textAlign="Right" template={genericHighlighter('quantity')} />
               <ColumnDirective field="company_name" headerText="COMPANY" width="120" template={genericHighlighter('company_name')} />
             </ColumnsDirective>
-            <Inject services={[Sort,Edit, Filter, Group, Reorder, Search, VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu]} />
+            {/* <Inject services={[Sort,Edit, Filter, Group, Reorder, Search, VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu]} /> */}
+            <Inject services={[Sort, CommandColumn, Aggregate, Edit, Group, RowDD, Freeze, VirtualScroll, ContextMenu, ColumnMenu, Filter, LazyLoadGroup, Page, PdfExport, InfiniteScroll, ExcelExport, Reorder, Resize, Toolbar, Search, ColumnChooser]} />
           </GridComponent>
         )}
       </div>

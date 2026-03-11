@@ -25,12 +25,8 @@ import {
   ActionEventArgs,
   
 } from '@syncfusion/ej2-react-grids';
-<<<<<<< HEAD
-import { Ajax, registerLicense } from '@syncfusion/ej2-base';
-=======
 import { registerLicense } from '@syncfusion/ej2-base';
 import "../../../App.css"
->>>>>>> 8576b71c2eb06f5c474f941aba547e37c359f0f1
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX1cdHRUQ2ddUkV3XUpWYEs=');
 

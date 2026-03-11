@@ -21,6 +21,7 @@
     "@syncfusion/ej2-react-dropdowns": "^32.2.8",
     "@syncfusion/ej2-react-grids": "^32.2.8",
     "@syncfusion/ej2-react-inputs": "^32.2.8",
+    "@syncfusion/ej2-react-interactive-chat": "^32.2.9",
     "@syncfusion/ej2-react-lists": "^32.2.7",
     "@syncfusion/ej2-react-navigations": "^32.2.8",
     "@syncfusion/ej2-react-popups": "^32.2.8",

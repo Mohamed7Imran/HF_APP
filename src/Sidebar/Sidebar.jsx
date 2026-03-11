@@ -4,7 +4,7 @@ import { api } from "../auth/auth";
 import { useNavigate } from "react-router-dom";
 import { logoutUser } from "../auth/auth";
 
-function Sidebar() {
+function Sidebar({ children }) {
   const [menus, setMenus] = useState([]);
   const [openMenus, setOpenMenus] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -194,7 +194,7 @@ function Sidebar() {
       {/* --- CONTENT AREA --- */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden pt-16 lg:pt-0">
         <main className="flex-1 overflow-y-auto pt-20 lg:pt-8 no-scrollbar">
-           {/* Your Content Here */}
+          {children}
         </main>
       </div>
     </div>

@@ -146,6 +146,28 @@ const Dashboard = () => {
           </p>
         </div>
 
+        {/* Card 7 */}
+        <div
+          onClick={() => navigate("sample")}
+          className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden 
+          transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+        >
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+
+          <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 
+          group-hover:rotate-12 transition duration-300">
+            <FaViadeo className="text-blue-500 text-2xl" />
+          </div>
+
+          <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+            Sample Grid
+          </h2>
+
+          <p className="text-gray-500 text-sm mt-1">
+            Update Grid
+          </p>
+        </div>
+
       </div>
 
     </div>

@@ -9,6 +9,7 @@ import { App } from '../order/SyncGrid.tsx';
 import Card1 from '../card/Card.jsx';
 import Card2 from '../card/Card2.jsx';
 import Sample from '../order/Sample.tsx';
+import StoreGrid from '../order/StoreGrid.tsx';
 
 
 function Home() {
@@ -19,7 +20,7 @@ function Home() {
         <Route path="god/" element={<h1>Good</h1> } />
          <Route path="/HrReportGrid" element={<HrReportGrid />} /> 
          <Route path="/OrdPagination" element={<OrdPagination />} /> 
-         {/* <Route path='/store' element= {<StoreGrid />} /> */}
+         <Route path='/store' element= {<StoreGrid />} />
          <Route path="/TallyBalanceReport" element={<TallyBalanceReport />} /> 
          <Route path="/OrdPagination" element={<OrdPagination />} /> 
          <Route path="/PrnReportGrid" element={<PrnReportGrid />} /> 

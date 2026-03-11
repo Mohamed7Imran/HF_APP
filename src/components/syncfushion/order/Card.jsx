@@ -1,5 +1,5 @@
 import React from "react";
-import { FaChartPie, FaCheck, FaWallet, FaViadeo, FaAudible, FaDribbble } from "react-icons/fa";
+import { FaChartPie, FaCheck, FaWallet, FaViadeo, FaAudible, FaDribbble, FaRegSmileWink, FaTencentWeibo } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
@@ -170,19 +170,41 @@ const Dashboard = () => {
           className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden 
           transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
         >
-          <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-amber-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
 
-          <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 
+          <div className="w-14 h-14 flex items-center justify-center bg-amber-100 rounded-xl mb-4 
           group-hover:rotate-12 transition duration-300">
-            <FaViadeo className="text-blue-500 text-2xl" />
+            <FaRegSmileWink className="text-amber-500 text-2xl" />
           </div>
 
-          <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+          <h2 className="text-lg font-semibold text-gray-800 group-hover:text-amber-600 transition">
             Sample Grid
           </h2>
 
           <p className="text-gray-500 text-sm mt-1">
             Update Grid
+          </p>
+        </div>
+
+        {/* Card 8 */}
+        <div
+          onClick={() => navigate("store")}
+          className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden 
+          transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+        >
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+
+          <div className="w-14 h-14 flex items-center justify-center bg-indigo-100 rounded-xl mb-4 
+          group-hover:rotate-12 transition duration-300">
+            <FaTencentWeibo className="text-indigo-500 text-2xl" />
+          </div>
+
+          <h2 className="text-lg font-semibold text-gray-800 group-hover:text-indigo-600 transition">
+            StoreGrid
+          </h2>
+
+          <p className="text-gray-500 text-sm mt-1">
+            Tbuyer and Torder Details
           </p>
         </div>
 

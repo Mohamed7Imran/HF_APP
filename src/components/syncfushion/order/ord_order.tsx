@@ -45,7 +45,7 @@ interface OrderData {
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
   shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;
-  actdaten: string; actyeardate: string; pono: string; u46: string; u37: string;
+  actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string
 }
 
@@ -787,7 +787,7 @@ const HeroFashionGrid13: React.FC = () => {
               <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="200" template={deliveryInfoTemplate} />
               <ColumnDirective field="reference" headerText="reference" width="200" template={genericHighlighter('reference')} />
               <ColumnDirective field="quality_controller" headerText="QC" width="90" template={genericHighlighter('quality_controller')} />
-              <ColumnDirective field="quality_controller" headerText="QC-MultiSalect" width="90" template={genericHighlighter('quality_controller')} />
+              <ColumnDirective field="qltycontroller" headerText="QC-MultiSalect" width="90" template={genericHighlighter('qltycontroller')} />
               <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="50" template={genericHighlighter('u14')} />
               <ColumnDirective field="prnfile1" headerText="PRN IMG" width="200" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile1')} />
               <ColumnDirective field="u7" headerText="udf allow 7" width="100" template={genericHighlighter('u7')} />

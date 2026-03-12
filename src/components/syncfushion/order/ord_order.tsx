@@ -745,7 +745,7 @@ const HeroFashionGrid13: React.FC = () => {
             dataSource={dataSource}
             dataBound={dataBound}
             height="700px"
-            enableVirtualization={true}
+            // enableVirtualization={true}
             rowHeight={95}
             allowSorting={true}
             allowFiltering={true}

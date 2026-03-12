@@ -15,7 +15,7 @@ function Dashboard() {
       </ol>
       {/* <Sidebar /> */}
       <div style={{ padding: "20px" }}>
-        <h2>Welcome HeroFashion Users</h2>
+        <h2>Welcome </h2>
       </div>
     </div>
   );

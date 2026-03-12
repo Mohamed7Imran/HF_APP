@@ -10,6 +10,7 @@ import Card1 from '../card/Card.jsx';
 import Card2 from '../card/Card2.jsx';
 import Sample from '../order/Sample.tsx';
 import StoreGrid from '../order/StoreGrid.tsx';
+import Autofit from '../order/autofit.tsx'; 
 
 
 function Home() {
@@ -28,6 +29,7 @@ function Home() {
          <Route path="/card2" element={<Card2 />} /> 
          <Route path="/sync" element={<App />} /> 
          <Route path="/sample" element={<Sample />} /> 
+         <Route path="/Autofit" element={<Autofit />} /> 
         
     </Routes>
   );

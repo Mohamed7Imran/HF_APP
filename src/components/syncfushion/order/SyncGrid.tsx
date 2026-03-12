@@ -296,6 +296,7 @@ export const App = () => {
     }
   ];
 
+  
     const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
       setSearchKey(value);

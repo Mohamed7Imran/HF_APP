@@ -351,6 +351,10 @@ const HeroFashionGrid13: React.FC = () => {
       }
     }
   };
+
+
+
+  
   const actionComplete = (args: AddEventArgs|SaveEventArgs|EditEventArgs|DeleteEventArgs|ActionEventArgs) => {
     if (args.requestType === 'beginEdit') {
       // buyerIdVal = args.rowData['buyerid_id'];
@@ -705,7 +709,7 @@ const HeroFashionGrid13: React.FC = () => {
             ref={gridRef}
             dataSource={dataSource}
             dataBound={dataBound}
-            height="100%"
+            height="700px"
             enableVirtualization={true}
             rowHeight={95}
             allowSorting={true}
@@ -747,8 +751,8 @@ const HeroFashionGrid13: React.FC = () => {
              
               <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="200" template={deliveryInfoTemplate} />
               <ColumnDirective field="reference" headerText="reference" width="200" template={genericHighlighter('reference')} />
-               <ColumnDirective field="quality_controller" headerText="QC" width="90" template={genericHighlighter('quality_controller')} />
-                 <ColumnDirective field="quality_controller" headerText="QC-MultiSalect" width="90" template={genericHighlighter('quality_controller')} />
+              <ColumnDirective field="quality_controller" headerText="QC" width="90" template={genericHighlighter('quality_controller')} />
+              <ColumnDirective field="quality_controller" headerText="QC-MultiSalect" width="90" template={genericHighlighter('quality_controller')} />
               <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="50" template={genericHighlighter('u14')} />
               <ColumnDirective field="prnfile1" headerText="PRN IMG" width="200" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile1')} />
               <ColumnDirective field="u7" headerText="udf allow 7" width="100" template={genericHighlighter('u7')} />

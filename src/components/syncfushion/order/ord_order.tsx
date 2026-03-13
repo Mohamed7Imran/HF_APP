@@ -32,6 +32,7 @@ import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
 import "../../../App.css"
+import { Bold } from 'lucide-react';
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX1cdHRUQ2ddUkV3XUpWYEs=');
 
@@ -377,7 +378,7 @@ const HeroFashionGrid13: React.FC = () => {
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br />
       <b>Dir:</b> {highlightText(p.director_sample_order)}<br />
-      <b>Sno:</b> {highlightText(p.styleno)}<br />
+      <b>ST:</b> {highlightText(p.styleno)}<br />
       <b>Uom:</b> {highlightText(p.uom)}<br />
       <b>Type:</b> {highlightText(p.production_type_inside_outside)}
     </div>
@@ -620,7 +621,7 @@ const HeroFashionGrid13: React.FC = () => {
             white-space: nowrap;
             border: 1px solid #dce1e6;
             display:block;
-            width: 60px;
+            width: 70px;
             float: right;
             }
             .count{
@@ -631,6 +632,7 @@ const HeroFashionGrid13: React.FC = () => {
                   text-align: center;
                   margin-right: 0;
                   margin-bottom: 5px;
+                  fontStyle:'Bold' ;
                   order: 1;
                   }
                   .header-controls {
@@ -693,7 +695,7 @@ const HeroFashionGrid13: React.FC = () => {
           />
         </div>
         <div style={{ padding: '12px 18px', borderBottom: '1px solid #eee', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8,fontStyle:'Bold' }}>
             {/* <label style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap' }}>Setting Name:</label> */}
             <TextBoxComponent
               ref={settingNameRef}
@@ -752,7 +754,7 @@ const HeroFashionGrid13: React.FC = () => {
             ref={gridRef}
             dataSource={dataSource}
             dataBound={dataBound}
-            height="550px"
+            height="340px"
             enableVirtualization={true}
             rowHeight={95}
             allowSorting={true}
@@ -764,7 +766,7 @@ const HeroFashionGrid13: React.FC = () => {
             enableAdaptiveUI={true}
             adaptiveUIMode = {'Mobile'}      
             allowReordering={true}
-            allowResizing={true}
+            allowResizing={false}
             // filterSettings={{ type: 'Excel' }}
             gridLines="Both"
             searchSettings={{ fields:["jobno_oms", "quality_controller"], operator: 'contains', ignoreCase: true }}
@@ -783,27 +785,26 @@ const HeroFashionGrid13: React.FC = () => {
 
           >
             <ColumnsDirective>
-              <ColumnDirective headerText='ROll No' width="80" textAlign="Center" template={rollnoTemplate} allowEditing={false}/>
+
+              <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120"  freeze='Left' template={orderSummaryTemplate} allowEditing={false}/>
+              <ColumnDirective field="mainimagepath" headerText="IMG" freeze='Left' width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
+
+              <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
+              <ColumnDirective headerText='fl' width="60" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false}/>
 
               <ColumnDirective
                 field="slno1"
-                headerText="SL NO"
-                width="60"
-                textAlign="Center"
-                freeze='Left'
+                headerText="No"
+                width="90"
+                textAlign="Center" 
 
               />
-
-              <ColumnDirective field="mainimagepath" headerText="IMG" width="150" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
-              <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="130" freeze='Left' template={orderSummaryTemplate} allowEditing={false}/>
-
-              <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="200" template={deliveryInfoTemplate} />
-              <ColumnDirective field="reference" headerText="reference" width="200" template={genericHighlighter('reference')} />
+              <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} />
               <ColumnDirective field="quality_controller" headerText="QC" width="90" template={genericHighlighter('quality_controller')} />
-              <ColumnDirective field="qltycontroller" headerText="QC-MultiSalect" width="90" template={genericHighlighter('qltycontroller')} />
-              <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="50" template={genericHighlighter('u14')} />
+              <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} />
+              <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} />
               <ColumnDirective field="prnfile1" headerText="PRN IMG" width="200" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile1')} />
-              <ColumnDirective field="u7" headerText="udf allow 7" width="100" template={genericHighlighter('u7')} />
+              <ColumnDirective field="u7" headerText="udf7" width="100" template={genericHighlighter('u7')} />
               <ColumnDirective field="prnfile2" headerText="MEAS IMG" width="200" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile2')} />
               <ColumnDirective field="img_fpath" headerText="AOP" width="200" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} />
 
@@ -818,9 +819,9 @@ const HeroFashionGrid13: React.FC = () => {
               <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} />
               <ColumnDirective field="u15" headerText="15" width="70" template={genericHighlighter('u15')} />
               <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
-              <ColumnDirective field="u31" headerText="31 ITS" width="80" template={genericHighlighter('u31')} />
+              <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
               <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} />
-              <ColumnDirective field="Emb" headerText="3 EMB" width="80" template={genericHighlighter('Emb')} />
+              <ColumnDirective field="Emb" headerText="3 EMB" width="90" template={genericHighlighter('Emb')} />
               <ColumnDirective field="buyer1" headerText="BUYER" width="110" template={genericHighlighter('buyer1')} />
               <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
               <ColumnDirective field="styleno" headerText="STYLE NO" width="110" template={genericHighlighter('styleno')} />
@@ -828,7 +829,7 @@ const HeroFashionGrid13: React.FC = () => {
               <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="130" template={genericHighlighter('order_follow_up')} />
 
               <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} />
-              <ColumnDirective field="quantity" headerText="QTY" width="80" textAlign="Right" template={genericHighlighter('quantity')} />
+              <ColumnDirective field="quantity" headerText="QTY" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
               <ColumnDirective field="company_name" headerText="COMPANY" width="120" template={genericHighlighter('company_name')} />
             </ColumnsDirective>
             <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu]} />

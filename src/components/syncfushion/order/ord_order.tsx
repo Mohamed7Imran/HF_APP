@@ -23,10 +23,12 @@ import {
   EditEventArgs,
   DeleteEventArgs,
   ActionEventArgs,
-
-}
-
-  from '@syncfusion/ej2-react-grids';
+  Aggregate,
+  AggregateColumnsDirective,
+  AggregateColumnDirective,
+  AggregateDirective,
+  AggregatesDirective
+}from '@syncfusion/ej2-react-grids';
 import { Ajax, registerLicense } from '@syncfusion/ej2-base';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
@@ -506,8 +508,11 @@ const HeroFashionGrid13: React.FC = () => {
     let rollno = props.index
     if(rollno){
       return (<span>{++rollno}</span>)
-    
     }
+  }
+
+  const footerSum = (props: any) =>{
+    return (<span className='font-bold'>Q: {props.Sum}</span>)
   }
 
   return (
@@ -751,10 +756,11 @@ const HeroFashionGrid13: React.FC = () => {
           <div style={{ padding: '50px', textAlign: 'center', color: 'red' }}>Error: {error}</div>
         ) : (
           <GridComponent
+            id="default-aggregate-grid"
             ref={gridRef}
             dataSource={dataSource}
             dataBound={dataBound}
-            height="340px"
+            height="440px"
             enableVirtualization={true}
             rowHeight={95}
             allowSorting={true}
@@ -766,7 +772,7 @@ const HeroFashionGrid13: React.FC = () => {
             enableAdaptiveUI={true}
             adaptiveUIMode = {'Mobile'}      
             allowReordering={true}
-            allowResizing={false}
+            allowResizing={true}
             // filterSettings={{ type: 'Excel' }}
             gridLines="Both"
             searchSettings={{ fields:["jobno_oms", "quality_controller"], operator: 'contains', ignoreCase: true }}
@@ -786,53 +792,51 @@ const HeroFashionGrid13: React.FC = () => {
           >
             <ColumnsDirective>
 
-              <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120"  freeze='Left' template={orderSummaryTemplate} allowEditing={false}/>
+              <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" freeze='Left' template={orderSummaryTemplate} allowEditing={false}/>
               <ColumnDirective field="mainimagepath" headerText="IMG" freeze='Left' width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
-
               <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
-              <ColumnDirective headerText='fl' width="60" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false}/>
-
-              <ColumnDirective
-                field="slno1"
-                headerText="No"
-                width="90"
-                textAlign="Center" 
-
-              />
-              <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} />
-              <ColumnDirective field="quality_controller" headerText="QC" width="90" template={genericHighlighter('quality_controller')} />
-              <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} />
-              <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} />
-              <ColumnDirective field="prnfile1" headerText="PRN IMG" width="200" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile1')} />
-              <ColumnDirective field="u7" headerText="udf7" width="100" template={genericHighlighter('u7')} />
-              <ColumnDirective field="prnfile2" headerText="MEAS IMG" width="200" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile2')} />
-              <ColumnDirective field="img_fpath" headerText="AOP" width="200" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} />
-
-              <ColumnDirective field="prnclr" headerText="PRN COL" width="200" template={genericHighlighter('prnclr')} />
-              <ColumnDirective field="u25" headerText="25 WEEK" width="200" template={genericHighlighter('u25')} />
-              <ColumnDirective field="abc" headerText="ABC" width="150" template={genericHighlighter('abc')} />
-              <ColumnDirective field="u46" headerText="46 EMPTY" width="150" template={genericHighlighter('u46')} />
-              <ColumnDirective field="production_type_inside_outside" headerText="PR TYPE" width="150" template={genericHighlighter('production_type_inside_outside')} />
-              <ColumnDirective field="u37" headerText="37 AOP" width="90" template={genericHighlighter('u37')} />
+              <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false}/>
+              <ColumnDirective field="prnfile1" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile1')} />
+              <ColumnDirective field="prnfile2" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnfile2')} />
+              <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} />
+              <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
+              <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} />
+              <ColumnDirective field="abc" headerText="ABC" width="100" template={genericHighlighter('abc')} />
+              <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} />
+              <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} />
+              <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} />
               <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} />
-              <ColumnDirective field="u8" headerText="8 FAB" width="90" template={genericHighlighter('u8')} />
+              <ColumnDirective field="u8" headerText="8 FAB" width="100" template={genericHighlighter('u8')} />
               <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} />
-              <ColumnDirective field="u15" headerText="15" width="70" template={genericHighlighter('u15')} />
+              <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} />
               <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
               <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
               <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} />
               <ColumnDirective field="Emb" headerText="3 EMB" width="90" template={genericHighlighter('Emb')} />
-              <ColumnDirective field="buyer1" headerText="BUYER" width="110" template={genericHighlighter('buyer1')} />
+              <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
               <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
               <ColumnDirective field="styleno" headerText="STYLE NO" width="110" template={genericHighlighter('styleno')} />
               <ColumnDirective field="director_sample_order" headerText="DIR S/O" width="100" template={genericHighlighter('director_sample_order')} />
-              <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="130" template={genericHighlighter('order_follow_up')} />
-
+              <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="100" template={genericHighlighter('order_follow_up')} />
+              <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
+              <ColumnDirective field="quality_controller" headerText="QC" width="90" template={genericHighlighter('quality_controller')} />
+              <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} />
+              <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
+              <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} />
               <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} />
+              <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} />
               <ColumnDirective field="quantity" headerText="QTY" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
-              <ColumnDirective field="company_name" headerText="COMPANY" width="120" template={genericHighlighter('company_name')} />
+              <ColumnDirective field="company_name" headerText="COMPANY" width="90" template={genericHighlighter('company_name')} />
+              
             </ColumnsDirective>
-            <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu]} />
+            <AggregatesDirective>
+              <AggregateDirective>
+                <AggregateColumnsDirective>
+                  <AggregateColumnDirective field='quantity'  type='Sum' footerTemplate={footerSum} format='N'> </AggregateColumnDirective>
+                </AggregateColumnsDirective>
+              </AggregateDirective>
+            </AggregatesDirective>
+            <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate]} />
           </GridComponent>
         )}
       </div>

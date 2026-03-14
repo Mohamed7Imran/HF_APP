@@ -10,6 +10,8 @@ import Card1 from '../card/Card.jsx';
 import Card2 from '../card/Card2.jsx';
 import Sample from '../order/Sample.tsx';
 import StoreGrid from '../order/StoreGrid.tsx';
+import PRN from '../order/ord_prn.tsx';
+import Excel from '../order/excel.tsx';
 import FabricForm from '../fabric/Fabric.jsx';
 
 
@@ -29,8 +31,10 @@ function Home() {
          <Route path="/card2" element={<Card2 />} /> 
          <Route path="/sync" element={<App />} /> 
          <Route path="/sample" element={<Sample />} /> 
+         <Route path="/PRN" element={<PRN />} /> 
+         <Route path="/Excel" element={<Excel />} /> 
          <Route path="/fabric" element={<FabricForm />} /> 
-
+      
     </Routes>
   );
 }

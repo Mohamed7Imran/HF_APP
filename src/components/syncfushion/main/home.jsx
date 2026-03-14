@@ -12,6 +12,7 @@ import Sample from '../order/Sample.tsx';
 import StoreGrid from '../order/StoreGrid.tsx';
 import FabricForm from '../fabric/Fabric.jsx';
 import Signin1 from '../layout/Signup.tsx';
+import OrderOms from "../order/Order_oms.tsx"
 
 function Home() {
   return (
@@ -31,7 +32,7 @@ function Home() {
          <Route path="/sample" element={<Sample />} /> 
          <Route path="/fabric" element={<FabricForm />} /> 
          <Route path='/signup' element={<Signin1 />} />
-
+        <Route path='/order_oms' element={<OrderOms />} />
     </Routes>
   );
 }

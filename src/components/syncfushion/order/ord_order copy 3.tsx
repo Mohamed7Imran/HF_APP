@@ -180,137 +180,117 @@ const HeroFashionGrid13: React.FC = () => {
       } finally { setLoading(false); }
     };
     fetchData();
-    // loadSettingsFromStorage();
-    fetchSavedSettings();
+    loadSettingsFromStorage();
   }, []);
 
   const STORAGE_KEY = 'MainSettings';
 
-  // const loadSettingsFromStorage = () => {
-  //   try {
-  //     const raw = localStorage.getItem(STORAGE_KEY);
-  //     if (!raw) {
-  //       setSavedSettings([]);
-  //       return;
-  //     }
-  //     const parsed = JSON.parse(raw);
-  //     if (Array.isArray(parsed)) {
-  //       setSavedSettings(parsed);
-  //     } else {
-  //       setSavedSettings([]);
-  //     }
-  //   } catch (e) {
-  //     console.error('Failed to load saved grid settings', e);
-  //     setSavedSettings([]);
-  //   }
-  // };
-
-  const fetchSavedSettings = async () => {
-  try {
-    const res = await fetch('https://hfapi.herofashion.com/syncfushion/api/grid-settings/');
-    const data = await res.json();
-    setSavedSettings(data);  // data is an array of {id, name, data}
-  } catch (e) {
-    console.error('Failed to fetch settings', e);
-  }
-};
-
-  const saveSetting = async () => {
-  const name = (settingNameRef.current?.value || '').trim();
-  if (!name) return alert('Enter a name');
-
-  if (!gridRef.current) return;
-
-  try {
-    let persist = gridRef.current.getPersistData();
-    let persistedSettings: any = persist;
-    try { persistedSettings = JSON.parse(persist); } catch {}
-
-    const gridColumns = Object.assign([], gridRef.current.getColumns());
-    if (persistedSettings.columns && Array.isArray(persistedSettings.columns)) {
-      persistedSettings.columns.forEach((col: any) => {
-        const origCol = gridColumns.find(c => c.field === col.field);
-        if (origCol) {
-          col.template = origCol.template;
-          col.headerTemplate = origCol.headerTemplate;
-        }
-      });
+  const loadSettingsFromStorage = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        setSavedSettings([]);
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setSavedSettings(parsed);
+      } else {
+        setSavedSettings([]);
+      }
+    } catch (e) {
+      console.error('Failed to load saved grid settings', e);
+      setSavedSettings([]);
     }
+  };
 
-    const payload = { name, data: persistedSettings };
+  const saveSetting = () => {
+    const name = (settingNameRef.current?.value || '').trim();
+    if (!name) {
+      alert('Please enter a name for the setting');
+      return;
+    }
+    if (!gridRef.current) return;
+    try {
+      // Get the persisted data (column width, order, sorting, filtering, etc.)
+      const persist = gridRef.current.getPersistData();
+      let persistedSettings: any = persist;
+      try { persistedSettings = JSON.parse(persist); } catch (e) { /* keep as-is if not JSON */ }
 
-    const existing = savedSettings.find(s => s.name === name);
-    const method = existing ? 'PUT' : 'POST';
-    const url = existing
-      ? `https://hfapi.herofashion.com/syncfushion/api/grid-settings/${existing.id}/`
-      : `https://hfapi.herofashion.com/syncfushion/api/grid-settings/`;
+      // Clone the grid columns to preserve templates, header templates, and custom properties
+      const gridColumns = Object.assign([], (gridRef.current as any).getColumns());
 
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error('Save failed');
+      // Manually attach templates and header templates to persisted column data
+      if (persistedSettings.columns && Array.isArray(persistedSettings.columns)) {
+        persistedSettings.columns.forEach((persistedColumn: any) => {
+          const column = gridColumns.find((col: any) => col.field === persistedColumn.field);
+          if (column) {
+            // Preserve template, headerTemplate, and other custom properties
+            persistedColumn.template = column.template;
+            persistedColumn.headerTemplate = column.headerTemplate;
+            persistedColumn.formatter = column.formatter;
+            persistedColumn.valueAccessor = column.valueAccessor;
+          }
+        });
+      }
 
-    const saved = await res.json();
-    await fetchSavedSettings();
-    setSelectedSetting(saved.name);
-    if (settingNameRef.current) settingNameRef.current.value = '';
-    alert('Setting saved');
-  } catch (err) {
-    console.error(err);
-    alert('Failed to save setting');
-  }
-};
+      const existingSettings = savedSettings.filter(s => s.name !== name);
+      const newSetting = { name, data: persistedSettings };
+      const updatedSettings = [...existingSettings, newSetting];
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSettings));
+      setSavedSettings(updatedSettings);
+      setSelectedSetting(name);
+      if (settingNameRef.current) {
+        settingNameRef.current.value = '';
+      }
+      alert('Setting saved with column templates');
+    } catch (err) {
+      console.error('Save error', err);
+      alert('Failed to save setting');
+    }
+  };
 
   const applySetting = () => {
-  const key = dropdownRef.current?.value;
-  if (!key) return alert('Select a setting');
+    const key = dropdownRef.current?.value as string;
+    if (!key) return alert('Select a saved setting to apply');
+    const settingData = savedSettings.find(s => s.name === key);
+    if (!settingData) return alert('Setting not found');
+    if (!gridRef.current) return;
+    try {
+      // Parse the persisted data if it's a string
+      let persistedState: any = settingData.data;
+      if (typeof persistedState === 'string') {
+        persistedState = JSON.parse(persistedState);
+      }
 
-  const setting = savedSettings.find(s => s.id === Number(key));
-  if (!setting) return alert('Setting not found');
-  if (!gridRef.current) return;
+      // Apply the persisted state to the grid
+      // This includes column width, order, sorting, filtering, AND the preserved templates
+      (gridRef.current as any).setProperties(persistedState, true);
 
-  try {
-    let persistedState = setting.data;
-    (gridRef.current as any).setProperties(persistedState, true);
-    setTimeout(() => {
-      gridRef.current?.freezeRefresh();
-      alert('Setting applied');
-    }, 500);
-  } catch (e) {
-    console.error('Apply error', e);
-    alert('Failed to apply');
-  }
-};
+      setTimeout(() => {
+        if (gridRef.current) {
+          (gridRef.current as any).freezeRefresh();
+        }
+        alert('Setting applied successfully');
+      }, 500);
+    } catch (e) {
+      console.error('Apply error', e);
+      alert('Failed to apply setting');
+    }
+  };
 
-  const deleteSetting = async () => {
-  const key = dropdownRef.current?.value;
-  if (!key) return alert('Select a saved setting to delete');
-
-  const setting = savedSettings.find(s => s.id === Number(key));
-  if (!setting) return alert('Setting not found');
-
-  try {
-    const res = await fetch(`https://hfapi.herofashion.com/syncfushion/api/grid-settings/${setting.id}/`, {
-      method: 'DELETE',
-    });
-
-    if (!res.ok) throw new Error('Delete failed');
-
-    // Refresh the saved settings from backend
-    await fetchSavedSettings();
-
-    // Clear dropdown and selection
-    if (dropdownRef.current) dropdownRef.current.value = null;
+  const deleteSetting = () => {
+    const key = dropdownRef.current?.value as string;
+    if (!key) return alert('Select a saved setting to delete');
+    const next = savedSettings.filter(s => s.name !== key);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setSavedSettings(next);
+    if (dropdownRef.current) {
+      dropdownRef.current.value = null;
+    }
     setSelectedSetting('');
-
-    alert('Setting deleted');
-  } catch (err) {
-    console.error(err);
-    alert('Failed to delete setting');
-  }
-};
+  };
 
   // --- Search & Highlight Logic ---
   const highlightText = (text: any) => {
@@ -785,51 +765,53 @@ const HeroFashionGrid13: React.FC = () => {
             className="search-input"
           />
         </div>
-        <div style={{ padding: '12px 18px', borderBottom: '1px solid #eee', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight:'bold' }}>
-    <TextBoxComponent
-      ref={settingNameRef}
-      placeholder="Enter setting name"
-      style={{ width: '120px' }}
-    />
-  </div>
+        <div style={{ padding: '12px 18px', borderBottom: '1px solid #eee', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8,fontStyle:'Bold' }}>
+            {/* <label style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap' }}>Setting Name:</label> */}
+            <TextBoxComponent
+              ref={settingNameRef}
+              placeholder="Enter setting name"
+              style={{ width: '80px' }}
+            />
+          </div>
 
-  <ButtonComponent
-    onClick={saveSetting}
-    cssClass="e-primary"
-    style={{ padding: '6px 12px', fontSize: '13px' }}
-  >
-    💾
-  </ButtonComponent>
+          <ButtonComponent
+            onClick={saveSetting}
+            cssClass="e-primary"
+            style={{ padding: '6px 12px', fontSize: '13px', border: "2px" }}
+          >
+            💾
+          </ButtonComponent>
 
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-    <DropDownListComponent
-      ref={dropdownRef}
-      id="settings-dropdown"
-      dataSource={savedSettings.map(s => ({ text: s.name, value: s.id }))}
-      fields={{ text: 'text', value: 'value' }}
-      placeholder="Select setting..."
-      style={{ minWidth: '150px' }}
-      change={() => setSelectedSetting(dropdownRef.current?.value as string)}
-    />
-  </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {/* <label style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap' }}>Saved Settings:</label> */}
+            <DropDownListComponent
+              ref={dropdownRef}
+              id="settings-dropdown"
+              dataSource={savedSettings.map(s => ({ text: s.name, value: s.name }))}
+              fields={{ text: 'text', value: 'value' }}
+              placeholder="Select setting..."
+              style={{ width: '50px' }}
+              change={() => setSelectedSetting(dropdownRef.current?.value as string)}
+            />
+          </div>
 
-  <ButtonComponent
-    onClick={applySetting}
-    cssClass="e-outline"
-    style={{ padding: '6px 12px', fontSize: '13px' }}
-  >
-   ✔
-  </ButtonComponent>
+          <ButtonComponent
+            onClick={applySetting}
+            cssClass="e-outline"
+            style={{ padding: '6px 12px', fontSize: '13px' }}
+          >
+           ✔
+          </ButtonComponent>
 
-  <ButtonComponent
-    onClick={deleteSetting}
-    cssClass="e-outline e-danger"
-    style={{ padding: '6px 12px', fontSize: '13px' }}
-  >
-    🗑
-  </ButtonComponent>
-</div>
+          <ButtonComponent
+            onClick={deleteSetting}
+            cssClass="e-outline e-danger"
+            style={{ padding: '6px 12px', fontSize: '13px' }}
+          >
+            🗑
+          </ButtonComponent>
+        </div>
       </div>
 
       {/* Grid Container */}

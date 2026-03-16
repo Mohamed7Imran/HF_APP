@@ -8,6 +8,7 @@ import {
   Resize,
   Filter,
   Group,
+  GroupSettingsModel,
   Reorder,
   Search,
   VirtualScroll,
@@ -29,6 +30,7 @@ import {
   AggregateDirective,
   AggregatesDirective,
   PdfExport,
+  ExcelExport
 }from '@syncfusion/ej2-react-grids';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { Ajax, registerLicense } from '@syncfusion/ej2-base';
@@ -36,6 +38,7 @@ import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
 import "../../../App.css"
+import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX1cdHRUQ2ddUkV3XUpWYEs=');
 
@@ -79,7 +82,11 @@ const HeroFashionGrid13: React.FC = () => {
     'printing_R', 'Emb', 'abc', 'u46', 'uom', 'final_delivery_date',
     'production_type_inside_outside', 'prnclr'
   ];
-
+//  const groupOptions = {
+//     columns: ["abc"], // Group by "Category" column
+//     showDropArea: true,
+//     showGroupedColumn: true
+//   };
   // --- Helpers ---
   const parseDate = (dateStr: string) => {
     if (!dateStr) return null;
@@ -183,6 +190,105 @@ const HeroFashionGrid13: React.FC = () => {
     // loadSettingsFromStorage();
     fetchSavedSettings();
   }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
+
+  //       // 1. Concurrent Fetching
+  //       const [orderResponse, printResponse, qcResponse] = await Promise.all([
+  //         fetch('https://app.herofashion.com/order_panda'),
+  //         // fetch('https://app.herofashion.com/PrintRgb/'),
+  //         fetch('https://app.herofashion.com/ord_prn/'),
+  //         fetch('https://app.herofashion.com/get_quality_controllers/')
+  //       ]);
+
+  //       if (!orderResponse.ok || !printResponse.ok || !qcResponse.ok) {
+  //         throw new Error("Failed to fetch data from APIs");
+  //       }
+
+  //       const orderData: OrderData[] = await orderResponse.json();
+  //       const printData: any[] = await printResponse.json();
+  //       const qcData: any[] = await qcResponse.json();
+
+  //       // 2. Efficient Mapping
+  //       const printMap: Record<string, any> = {};
+  //       printData.forEach(item => { if (item.jobno) printMap[item.jobno] = item; });
+
+  //       const processedData = orderData
+  //         .map((order) => {
+  //           const matchingPrintData = printMap[order.jobno_oms] || {};
+  //           return {
+  //             ...order,
+  //             clr: matchingPrintData.clr || null,
+  //             print_img: matchingPrintData.print_img || '',
+  //             prnmeaimg: matchingPrintData.prnmeaimg || '',
+  //             mpic: matchingPrintData.mpic || '',
+  //           };
+  //         })
+  //         // 3. Date Filtering (Preventing future-dated errors)
+  //         .filter((item) => {
+  //           const dateStr = item.finaldelvdate || item.final_delivery_date;
+  //           if (!dateStr) return true;
+  //           const dateParts = dateStr.split(/[-/]/);
+  //           let year = 0;
+  //           if (dateParts.length === 3) {
+  //             const p0 = parseInt(dateParts[0]);
+  //             const p2 = parseInt(dateParts[2]);
+  //             year = p0 > 1000 ? p0 : (p2 < 100 ? 2000 + p2 : p2);
+  //           }
+  //           return year <= 2127;
+  //         })
+  //         // 4. Sorting logic
+  //         .sort((a, b) => {
+  //           const typeA = (a.director_sample_order || '').toLowerCase();
+  //           const typeB = (b.director_sample_order || '').toLowerCase();
+  //           if (typeA !== typeB) {
+  //             if (typeA === 'sample') return -1;
+  //             if (typeB === 'sample') return 1;
+  //             return typeA.localeCompare(typeB);
+  //           }
+  //           const dateA = new Date(a.finaldelvdate || a.final_delivery_date || 0).getTime();
+  //           const dateB = new Date(b.finaldelvdate || b.final_delivery_date || 0).getTime();
+  //           return dateA - dateB;
+  //         })
+  //         // 5. Generate Serial Numbers
+  //         .map((item, index) => ({
+  //           ...item,
+  //           slno1: index + 1
+  //         }));
+
+  //       // 6. Update State
+  //       setDataSource(processedData);
+  //       setTotalCount(processedData.length);
+  //       setShowingCount(processedData.length);
+  //       setQualityControllers(qcData.slice(0, 10));
+
+  //       // 7. Grid Ref Manipulations (Added logic)
+  //         if (gridRef.current) {
+  //     setTimeout(() => {
+  //       // Cast to any to access the methods
+  //       (gridRef.current as any).collapseAll();
+        
+  //       setTimeout(() => {
+  //         (gridRef.current as any).expandGroup("ABC: A");
+  //       }, 2000);
+  //     }, 0);
+  //   }
+
+
+  //     } catch (err: any) {
+  //       console.error("Fetch error:", err);
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  //   loadSettingsFromStorage();
+  // }, []); // Mount only
 
   const STORAGE_KEY = 'MainSettings';
 
@@ -415,6 +521,21 @@ const HeroFashionGrid13: React.FC = () => {
       <b>Type:</b> {highlightText(p.production_type_inside_outside)}
     </div>
   );
+// Track state to know whether to expand or collapse
+const [isAllExpanded, setIsAllExpanded] = useState(false);
+
+const onToolbarClick = (args: any) => {
+  if (args.item.id === 'expand_icon') {
+    if (gridRef.current && gridRef.current.groupModule) {
+      if (isAllExpanded) {
+        gridRef.current.groupModule.collapseAll();
+      } else {
+        gridRef.current.groupModule.expandAll();
+      }
+      setIsAllExpanded(!isAllExpanded);
+    }
+  }
+};
 
   const toolbarOptions: any[] = [
     "Search",
@@ -439,6 +560,28 @@ const HeroFashionGrid13: React.FC = () => {
     { text: '', prefixIcon: 'e-pdfexport', id: 'export_pdf', tooltipText: 'Export PDF' },
     'ColumnChooser'
   ];
+
+  const toolbarClick = (args: ClickEventArgs) => {
+    if (gridRef.current && args.item.id === 'export_excel') {
+      gridRef.current.excelExport();
+    }
+    if (gridRef.current && args.item.id === 'export_pdf') {
+      gridRef.current.pdfExport();
+    }
+
+    if (args.item.id === 'expand_icon') {
+
+    if (gridRef.current && gridRef.current.groupModule) {
+      if (isAllExpanded) {
+        gridRef.current.groupModule.collapseAll();
+      } else {
+        gridRef.current.groupModule.expandAll();
+      }
+      setIsAllExpanded(!isAllExpanded);
+    }
+  }
+  };
+  
 
   const searchHighlightText = (key: string | undefined, gridElement: Node) => {
 
@@ -529,8 +672,8 @@ const HeroFashionGrid13: React.FC = () => {
   const dataBound = () => {
     if (gridRef.current) {
       const records = gridRef.current.getFilteredRecords();
-      setShowingCount(records ? (records as object[]).length : 0);
-      searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current?.element);
+      // setShowingCount(records ? (records as object[]).length : 0); Not working problem
+      
       searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current?.element);
     }
   };
@@ -581,6 +724,22 @@ const HeroFashionGrid13: React.FC = () => {
       multiSelect.appendTo(args.element);
     }
   };
+<TooltipComponent 
+  target=".image-tooltip-target" 
+  cssClass="custom-tooltip-size" // இந்த கிளாஸ் முக்கியம்
+  width="450px" 
+  height="450px"
+  content={(args: any) => (
+    <div style={{ width: '100%', height: '100%' }}>
+      <img 
+        src={args.target.src} 
+        style={{ width: '200%', height: '200%', objectFit: 'contain' }} 
+      />
+    </div>
+  )}
+>
+  {/* Unga Grid code inga varum */}
+</TooltipComponent>
 
   const tooltipOpen = (args: any) => {
     let img = args.target.querySelector('img')
@@ -623,6 +782,7 @@ const HeroFashionGrid13: React.FC = () => {
           border-bottom: 1px solid #dee2e6;
           flex-shrink: 0;
           flex-wrap: wrap; 
+          
           }
           
           .header-title {
@@ -839,7 +999,7 @@ const HeroFashionGrid13: React.FC = () => {
         ) : error ? (
           <div style={{ padding: '50px', textAlign: 'center', color: 'red' }}>Error: {error}</div>
         ) : (
-          <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" beforeOpen={tooltipOpen}>
+          <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" position="RightCenter"  width="200px" height="200px"  beforeOpen={tooltipOpen}>
           <GridComponent
             id="default-aggregate-grid"
             ref={gridRef}
@@ -854,6 +1014,7 @@ const HeroFashionGrid13: React.FC = () => {
             filterSettings={{type:'CheckBox'}}
             allowGrouping={true}
             allowTextWrap={true}
+            // groupSettings={groupOptions}
             showColumnMenu={true}
             showColumnChooser={true}
             enableAdaptiveUI={true}
@@ -861,6 +1022,9 @@ const HeroFashionGrid13: React.FC = () => {
             allowReordering={true}
             allowResizing={true}
             allowPdfExport={true}
+            
+            allowExcelExport={true}
+           toolbarClick={toolbarClick}
             // filterSettings={{ type: 'Excel' }}
             gridLines="Both"
             searchSettings={{ fields:["jobno_oms", "quality_controller"], operator: 'contains', ignoreCase: true }}
@@ -879,13 +1043,13 @@ const HeroFashionGrid13: React.FC = () => {
           >
             <ColumnsDirective>
 
-              <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" freeze='Left' template={orderSummaryTemplate} allowEditing={false}/>
+              <ColumnDirective isPrimaryKey={true}  field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" freeze='Left' template={orderSummaryTemplate} allowEditing={false}/>
               <ColumnDirective field="mainimagepath" headerText="IMG" freeze='Left' width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
               <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
               <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
               <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false}/>
-              <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
-              <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
+              <ColumnDirective field="print_img" headerText="PRN IMG" width="100" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
+              <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="100" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
               {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
               <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
               <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} />
@@ -917,8 +1081,32 @@ const HeroFashionGrid13: React.FC = () => {
               <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} />
               <ColumnDirective field="quantity" headerText="QTY" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
               <ColumnDirective field="company_name" headerText="COMPANY" width="90" template={genericHighlighter('company_name')} />
+              <ColumnDirective 
+                      headerText="IMAGE" 
+                      width="100" 
+                      textAlign="Center"
+                      template={(props: OrderData) => (
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                          <img 
+                            className="image-tooltip-target" // Tooltip looks for this class
+                            src={props.mainimagepath || 'placeholder.png'} 
+                            alt="Style" 
+                            style={{ 
+                              width: '90px', 
+                              height: '90px', 
+                              objectFit: 'contain', 
+                              cursor: 'zoom-in',
+                              border: '1px solid #ddd' 
+                            }} 
+                          />
+                        </div>
+                      )} 
+                    />
+
+      {/* ... other columns */}
 
             </ColumnsDirective>
+            
             <AggregatesDirective>
               <AggregateDirective>
                 <AggregateColumnsDirective>
@@ -927,7 +1115,7 @@ const HeroFashionGrid13: React.FC = () => {
                 </AggregateColumnsDirective>
               </AggregateDirective>
             </AggregatesDirective>
-            <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
+            <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, ExcelExport,VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
           </GridComponent></TooltipComponent></div></>
         )}
       </div>

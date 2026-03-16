@@ -17,6 +17,8 @@ import Excel from '../order/excel.tsx';
 import FabricForm from '../fabric/Fabric.jsx';
 import Signin1 from '../layout/Signup.tsx';
 import OrderOms from "../order/Order_oms.tsx"
+import Schedule from "../order/Schedule.tsx"
+// import Overview from "../order/chart.tsx"
 
 function Home() {
   return (
@@ -42,12 +44,14 @@ function Home() {
          <Route path="/TallyBalanceReport" element={<TallyBalanceReport />} /> 
          <Route path="/OrdPagination" element={<OrdPagination />} /> 
          <Route path="/PrnReportGrid" element={<PrnReportGrid />} /> 
+         <Route path="/Schedule" element={<Schedule />} /> 
          <Route path="/card1" element={<Card1 />} /> 
          <Route path="/card2" element={<Card2 />} /> 
          <Route path="/sync" element={<App />} /> 
          <Route path="/sample" element={<Sample />} /> 
          <Route path="/PRN" element={<PRN />} /> 
          <Route path="/Excel" element={<Excel />} /> 
+         {/* <Route path="/Overview" element={<Overview />} />  */}
          <Route path="/fabric" element={<FabricForm />} /> 
          <Route path='/signup' element={<Signin1 />} />
         <Route path='/order_oms' element={<OrderOms />} />

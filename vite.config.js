@@ -14,6 +14,11 @@ export default defineConfig({
   workbox: {
         maximumFileSizeToCacheInBytes: 10000000, // Increases limit to 10MB
       },
+        
+  optimizeDeps: {
+    include: ['react-simple-maps', 'd3-geo', 'topojson-client']
+  },
+
   manifest: {
     name: 'HF APP',
     short_name: 'HF APP',

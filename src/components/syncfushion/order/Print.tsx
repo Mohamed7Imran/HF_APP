@@ -422,11 +422,12 @@ const colorListTemplate = (p: PrnData) => {
             allowTextWrap={true}
             allowFiltering={true}
             allowResizing={true}
+             filterSettings={{type:'CheckBox'}}
             // allowTextWrap={true}
             // allowSorting={true}
             allowSelection={true}
             allowGrouping={true}
-            filterSettings={{ type: 'Excel' }}
+            // filterSettings={{ type: 'Excel' }}
             gridLines="Both"
           >
             <ColumnsDirective>

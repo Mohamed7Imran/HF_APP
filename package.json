@@ -27,6 +27,7 @@
     "@syncfusion/ej2-react-navigations": "^32.2.8",
     "@syncfusion/ej2-react-popups": "^32.2.8",
     "@syncfusion/ej2-react-progressbar": "^32.2.3",
+    "@syncfusion/ej2-react-schedule": "^32.2.3",
     "@syncfusion/ej2-react-treegrid": "^32.2.9",
     "@tailwindcss/vite": "^4.2.1",
     "axios": "^1.13.5",

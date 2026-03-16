@@ -733,6 +733,7 @@ const PRN: React.FC = () => {
             showColumnMenu={true}
             showColumnChooser={true}
             enableAdaptiveUI={true}
+            filterSettings={{type:'CheckBox'}}
             adaptiveUIMode = {'Mobile'}      
             allowReordering={true}
             allowResizing={true}

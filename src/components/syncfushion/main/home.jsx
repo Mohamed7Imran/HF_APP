@@ -6,8 +6,8 @@ import OrdPagination from "../order/ord_pagination.tsx"
 import PrnReportGrid from "../order/print.tsx"
 import CardGrid from './Card.jsx';
 import { App } from '../order/SyncGrid.tsx';
-import Card1 from '../card/Card.jsx';
-import Card2 from '../card/Card2.jsx';
+import Card1 from '../order/card/Card.jsx';
+import Card2 from '../order/card/Card2.jsx';
 import Sample from '../order/Sample.tsx';
 import StoreGrid from '../order/StoreGrid.tsx';
 import MultiQuality from '../order/MultiQuality.jsx';
@@ -18,6 +18,7 @@ import FabricForm from '../fabric/Fabric.jsx';
 import Signin1 from '../layout/Signup.tsx';
 import OrderOms from "../order/Order_oms.tsx"
 import Schedule from "../order/Schedule.tsx"
+import GanttChart from '../order/Gantt Chart/GanttChart.tsx';
 
 // import Overview from "../order/chart.tsx"
 
@@ -56,6 +57,7 @@ function Home() {
          <Route path="/fabric" element={<FabricForm />} /> 
          <Route path='/signup' element={<Signin1 />} />
         <Route path='/order_oms' element={<OrderOms />} />
+        <Route path='/chart' element={<GanttChart />} />
     </Routes>
   );
 }

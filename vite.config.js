@@ -12,7 +12,7 @@ export default defineConfig({
   registerType: 'autoUpdate',
   includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
   workbox: {
-        maximumFileSizeToCacheInBytes: 10000000, // Increases limit to 10MB
+        maximumFileSizeToCacheInBytes: 15000000, // Increases limit to 15MB
       },
         
   optimizeDeps: {

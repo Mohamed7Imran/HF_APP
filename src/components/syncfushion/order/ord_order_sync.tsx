@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import {
   GridComponent,
   ColumnsDirective,
@@ -8,7 +8,6 @@ import {
   Resize,
   Filter,
   Group,
-  GroupSettingsModel,
   Reorder,
   Search,
   VirtualScroll,
@@ -30,15 +29,13 @@ import {
   AggregateDirective,
   AggregatesDirective,
   PdfExport,
-  ExcelExport
-}from '@syncfusion/ej2-react-grids';
+} from '@syncfusion/ej2-react-grids';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { Ajax, registerLicense } from '@syncfusion/ej2-base';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
 import "../../../App.css"
-import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1JGaF5cXGpCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdlWX1cdHRUQ2ddUkV3XUpWYEs=');
 
@@ -52,14 +49,14 @@ interface OrderData {
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
   shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;
-  actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;Print:string;others1:string;
-  mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;
-  prnmeaimg?:String;mpic?:string;
-  
+  actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;
+  mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string; clr?: string; print_img?: string;
+  prnmeaimg?: String; mpic?: string;
+
 
 }
 
-const HeroFashionGrid13: React.FC = () => {
+const SyncordGrid: React.FC = () => {
   const [dataSource, setDataSource] = useState<OrderData[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [showingCount, setShowingCount] = useState<number>(0);
@@ -72,7 +69,7 @@ const HeroFashionGrid13: React.FC = () => {
 
   const settingNameRef = useRef<TextBoxComponent>(null);
   const dropdownRef = useRef<DropDownListComponent>(null);
-  const tooltipRef = useRef<TooltipComponent>(null);  
+  const tooltipRef = useRef<TooltipComponent>(null);
   const gridRef = useRef<GridComponent>(null);
   const searchTimeout = useRef<any>(null);
 
@@ -82,11 +79,7 @@ const HeroFashionGrid13: React.FC = () => {
     'printing_R', 'Emb', 'abc', 'u46', 'uom', 'final_delivery_date',
     'production_type_inside_outside', 'prnclr'
   ];
-//  const groupOptions = {
-//     columns: ["abc"], // Group by "Category" column
-//     showDropArea: true,
-//     showGroupedColumn: true
-//   };
+
   // --- Helpers ---
   const parseDate = (dateStr: string) => {
     if (!dateStr) return null;
@@ -133,7 +126,7 @@ const HeroFashionGrid13: React.FC = () => {
 
         const orderData: OrderData[] = await orderResponse.json();
         const printData: any[] = await printResponse.json();
-        const qcData : any[] = await qcResponse.json();
+        const qcData: any[] = await qcResponse.json();
 
         const printMap: Record<string, any> = {};
         printData.forEach(item => { if (item.jobno) printMap[item.jobno] = item; });
@@ -179,8 +172,8 @@ const HeroFashionGrid13: React.FC = () => {
           }));
 
         setDataSource(processedData);
-        setTotalCount(processedData.length);
-        setShowingCount(processedData.length);
+        // setTotalCount(processedData.length);
+        // setShowingCount(processedData.length);
         setQualityControllers(qcData.slice(0, 10));
       } catch (err: any) {
         console.error("Fetch error:", err); setError(err.message);
@@ -188,235 +181,116 @@ const HeroFashionGrid13: React.FC = () => {
     };
     fetchData();
     // loadSettingsFromStorage();
-    fetchSavedSettings();
   }, []);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       setLoading(true);
-  //       setError(null);
-
-  //       // 1. Concurrent Fetching
-  //       const [orderResponse, printResponse, qcResponse] = await Promise.all([
-  //         fetch('https://app.herofashion.com/order_panda'),
-  //         // fetch('https://app.herofashion.com/PrintRgb/'),
-  //         fetch('https://app.herofashion.com/ord_prn/'),
-  //         fetch('https://app.herofashion.com/get_quality_controllers/')
-  //       ]);
-
-  //       if (!orderResponse.ok || !printResponse.ok || !qcResponse.ok) {
-  //         throw new Error("Failed to fetch data from APIs");
-  //       }
-
-  //       const orderData: OrderData[] = await orderResponse.json();
-  //       const printData: any[] = await printResponse.json();
-  //       const qcData: any[] = await qcResponse.json();
-
-  //       // 2. Efficient Mapping
-  //       const printMap: Record<string, any> = {};
-  //       printData.forEach(item => { if (item.jobno) printMap[item.jobno] = item; });
-
-  //       const processedData = orderData
-  //         .map((order) => {
-  //           const matchingPrintData = printMap[order.jobno_oms] || {};
-  //           return {
-  //             ...order,
-  //             clr: matchingPrintData.clr || null,
-  //             print_img: matchingPrintData.print_img || '',
-  //             prnmeaimg: matchingPrintData.prnmeaimg || '',
-  //             mpic: matchingPrintData.mpic || '',
-  //           };
-  //         })
-  //         // 3. Date Filtering (Preventing future-dated errors)
-  //         .filter((item) => {
-  //           const dateStr = item.finaldelvdate || item.final_delivery_date;
-  //           if (!dateStr) return true;
-  //           const dateParts = dateStr.split(/[-/]/);
-  //           let year = 0;
-  //           if (dateParts.length === 3) {
-  //             const p0 = parseInt(dateParts[0]);
-  //             const p2 = parseInt(dateParts[2]);
-  //             year = p0 > 1000 ? p0 : (p2 < 100 ? 2000 + p2 : p2);
-  //           }
-  //           return year <= 2127;
-  //         })
-  //         // 4. Sorting logic
-  //         .sort((a, b) => {
-  //           const typeA = (a.director_sample_order || '').toLowerCase();
-  //           const typeB = (b.director_sample_order || '').toLowerCase();
-  //           if (typeA !== typeB) {
-  //             if (typeA === 'sample') return -1;
-  //             if (typeB === 'sample') return 1;
-  //             return typeA.localeCompare(typeB);
-  //           }
-  //           const dateA = new Date(a.finaldelvdate || a.final_delivery_date || 0).getTime();
-  //           const dateB = new Date(b.finaldelvdate || b.final_delivery_date || 0).getTime();
-  //           return dateA - dateB;
-  //         })
-  //         // 5. Generate Serial Numbers
-  //         .map((item, index) => ({
-  //           ...item,
-  //           slno1: index + 1
-  //         }));
-
-  //       // 6. Update State
-  //       setDataSource(processedData);
-  //       setTotalCount(processedData.length);
-  //       setShowingCount(processedData.length);
-  //       setQualityControllers(qcData.slice(0, 10));
-
-  //       // 7. Grid Ref Manipulations (Added logic)
-  //         if (gridRef.current) {
-  //     setTimeout(() => {
-  //       // Cast to any to access the methods
-  //       (gridRef.current as any).collapseAll();
-        
-  //       setTimeout(() => {
-  //         (gridRef.current as any).expandGroup("ABC: A");
-  //       }, 2000);
-  //     }, 0);
-  //   }
-
-
-  //     } catch (err: any) {
-  //       console.error("Fetch error:", err);
-  //       setError(err.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  //   loadSettingsFromStorage();
-  // }, []); // Mount only
 
   const STORAGE_KEY = 'MainSettings';
 
-  // const loadSettingsFromStorage = () => {
-  //   try {
-  //     const raw = localStorage.getItem(STORAGE_KEY);
-  //     if (!raw) {
-  //       setSavedSettings([]);
-  //       return;
-  //     }
-  //     const parsed = JSON.parse(raw);
-  //     if (Array.isArray(parsed)) {
-  //       setSavedSettings(parsed);
-  //     } else {
-  //       setSavedSettings([]);
-  //     }
-  //   } catch (e) {
-  //     console.error('Failed to load saved grid settings', e);
-  //     setSavedSettings([]);
-  //   }
-  // };
-
-  const fetchSavedSettings = async () => {
-  try {
-    const res = await fetch('https://hfapi.herofashion.com/syncfushion/api/grid-settings/');
-    const data = await res.json();
-    setSavedSettings(data);  // data is an array of {id, name, data}
-  } catch (e) {
-    console.error('Failed to fetch settings', e);
-  }
-};
-
-  const saveSetting = async () => {
-  const name = (settingNameRef.current?.value || '').trim();
-  if (!name) return alert('Enter a name');
-
-  if (!gridRef.current) return;
-
-  try {
-    let persist = gridRef.current.getPersistData();
-    let persistedSettings: any = persist;
-    try { persistedSettings = JSON.parse(persist); } catch {}
-
-    const gridColumns = Object.assign([], gridRef.current.getColumns());
-    if (persistedSettings.columns && Array.isArray(persistedSettings.columns)) {
-      persistedSettings.columns.forEach((col: any) => {
-        const origCol = gridColumns.find(c => c.field === col.field);
-        if (origCol) {
-          col.template = origCol.template;
-          col.headerTemplate = origCol.headerTemplate;
-        }
-      });
+  const loadSettingsFromStorage = () => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        setSavedSettings([]);
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setSavedSettings(parsed);
+      } else {
+        setSavedSettings([]);
+      }
+    } catch (e) {
+      console.error('Failed to load saved grid settings', e);
+      setSavedSettings([]);
     }
+  };
 
-    const payload = { name, data: persistedSettings };
+  const saveSetting = () => {
+    const name = (settingNameRef.current?.value || '').trim();
+    if (!name) {
+      alert('Please enter a name for the setting');
+      return;
+    }
+    if (!gridRef.current) return;
+    try {
+      // Get the persisted data (column width, order, sorting, filtering, etc.)
+      const persist = gridRef.current.getPersistData();
+      let persistedSettings: any = persist;
+      try { persistedSettings = JSON.parse(persist); } catch (e) { /* keep as-is if not JSON */ }
 
-    const existing = savedSettings.find(s => s.name === name);
-    const method = existing ? 'PUT' : 'POST';
-    const url = existing
-      ? `https://hfapi.herofashion.com/syncfushion/api/grid-settings/${existing.id}/`
-      : `https://hfapi.herofashion.com/syncfushion/api/grid-settings/`;
+      // Clone the grid columns to preserve templates, header templates, and custom properties
+      const gridColumns = Object.assign([], (gridRef.current as any).getColumns());
 
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error('Save failed');
+      // Manually attach templates and header templates to persisted column data
+      if (persistedSettings.columns && Array.isArray(persistedSettings.columns)) {
+        persistedSettings.columns.forEach((persistedColumn: any) => {
+          const column = gridColumns.find((col: any) => col.field === persistedColumn.field);
+          if (column) {
+            // Preserve template, headerTemplate, and other custom properties
+            persistedColumn.template = column.template;
+            persistedColumn.headerTemplate = column.headerTemplate;
+            persistedColumn.formatter = column.formatter;
+            persistedColumn.valueAccessor = column.valueAccessor;
+          }
+        });
+      }
 
-    const saved = await res.json();
-    await fetchSavedSettings();
-    setSelectedSetting(saved.name);
-    if (settingNameRef.current) settingNameRef.current.value = '';
-    alert('Setting saved');
-  } catch (err) {
-    console.error(err);
-    alert('Failed to save setting');
-  }
-};
+      const existingSettings = savedSettings.filter(s => s.name !== name);
+      const newSetting = { name, data: persistedSettings };
+      const updatedSettings = [...existingSettings, newSetting];
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedSettings));
+      setSavedSettings(updatedSettings);
+      setSelectedSetting(name);
+      if (settingNameRef.current) {
+        settingNameRef.current.value = '';
+      }
+      alert('Setting saved with column templates');
+    } catch (err) {
+      console.error('Save error', err);
+      alert('Failed to save setting');
+    }
+  };
 
   const applySetting = () => {
-  const key = dropdownRef.current?.value;
-  if (!key) return alert('Select a setting');
+    const key = dropdownRef.current?.value as string;
+    if (!key) return alert('Select a saved setting to apply');
+    const settingData = savedSettings.find(s => s.name === key);
+    if (!settingData) return alert('Setting not found');
+    if (!gridRef.current) return;
+    try {
+      // Parse the persisted data if it's a string
+      let persistedState: any = settingData.data;
+      if (typeof persistedState === 'string') {
+        persistedState = JSON.parse(persistedState);
+      }
 
-  const setting = savedSettings.find(s => s.id === Number(key));
-  if (!setting) return alert('Setting not found');
-  if (!gridRef.current) return;
+      // Apply the persisted state to the grid
+      // This includes column width, order, sorting, filtering, AND the preserved templates
+      (gridRef.current as any).setProperties(persistedState, true);
 
-  try {
-    let persistedState = setting.data;
-    (gridRef.current as any).setProperties(persistedState, true);
-    setTimeout(() => {
-      gridRef.current?.freezeRefresh();
-      alert('Setting applied');
-    }, 500);
-  } catch (e) {
-    console.error('Apply error', e);
-    alert('Failed to apply');
-  }
-};
+      setTimeout(() => {
+        if (gridRef.current) {
+          (gridRef.current as any).freezeRefresh();
+        }
+        alert('Setting applied successfully');
+      }, 500);
+    } catch (e) {
+      console.error('Apply error', e);
+      alert('Failed to apply setting');
+    }
+  };
 
-  const deleteSetting = async () => {
-  const key = dropdownRef.current?.value;
-  if (!key) return alert('Select a saved setting to delete');
-
-  const setting = savedSettings.find(s => s.id === Number(key));
-  if (!setting) return alert('Setting not found');
-
-  try {
-    const res = await fetch(`https://hfapi.herofashion.com/syncfushion/api/grid-settings/${setting.id}/`, {
-      method: 'DELETE',
-    });
-
-    if (!res.ok) throw new Error('Delete failed');
-
-    // Refresh the saved settings from backend
-    await fetchSavedSettings();
-
-    // Clear dropdown and selection
-    if (dropdownRef.current) dropdownRef.current.value = null;
+  const deleteSetting = () => {
+    const key = dropdownRef.current?.value as string;
+    if (!key) return alert('Select a saved setting to delete');
+    const next = savedSettings.filter(s => s.name !== key);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    setSavedSettings(next);
+    if (dropdownRef.current) {
+      dropdownRef.current.value = null;
+    }
     setSelectedSetting('');
-
-    alert('Setting deleted');
-  } catch (err) {
-    console.error(err);
-    alert('Failed to delete setting');
-  }
-};
+  };
 
   // --- Search & Highlight Logic ---
   const highlightText = (text: any) => {
@@ -443,7 +317,7 @@ const HeroFashionGrid13: React.FC = () => {
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setSearchKey(value);
+    // setSearchKey(value);
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
     searchTimeout.current = setTimeout(() => {
       if (gridRef.current) gridRef.current.search(value);
@@ -455,7 +329,7 @@ const HeroFashionGrid13: React.FC = () => {
   );
 
   // --- Templates ---
-  const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' | 'Others1'  ) => (p: OrderData) => { 
+  const imageFieldTemplate = (field: 'mainimagepath' | 'print_img' | 'prnmeaimg' | 'img_fpath') => (p: OrderData) => {
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
@@ -475,7 +349,13 @@ const HeroFashionGrid13: React.FC = () => {
         gridRef.current?.closeEdit();
       },
     });
-
+    console.log(args)
+    if(args.requestType==='searching')
+    {
+      if (gridRef.current?.element) {
+        // searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current.element);
+      }
+    }
     if (args.requestType === 'save') {
       if ((args as any).action === 'edit') {
         console.log(args)
@@ -521,21 +401,6 @@ const HeroFashionGrid13: React.FC = () => {
       <b>Type:</b> {highlightText(p.production_type_inside_outside)}
     </div>
   );
-// Track state to know whether to expand or collapse
-const [isAllExpanded, setIsAllExpanded] = useState(false);
-
-const onToolbarClick = (args: any) => {
-  if (args.item.id === 'expand_icon') {
-    if (gridRef.current && gridRef.current.groupModule) {
-      if (isAllExpanded) {
-        gridRef.current.groupModule.collapseAll();
-      } else {
-        gridRef.current.groupModule.expandAll();
-      }
-      setIsAllExpanded(!isAllExpanded);
-    }
-  }
-};
 
   const toolbarOptions: any[] = [
     "Search",
@@ -545,7 +410,7 @@ const onToolbarClick = (args: any) => {
     'Update',
     'Cancel',
     { type: 'Separator' },
-    { text: '', prefixIcon: 'sf-icon-expand-collapse', id: 'expand_icon', tooltipText: 'Expand/Collapse' },
+    // { text: '', prefixIcon: 'sf-icon-expand-collapse', id: 'expand_icon', tooltipText: 'Expand/Collapse' },
     { text: '', prefixIcon: 'sf-icon-clear-sorting', id: 'clearsorting_icon', tooltipText: 'Clear Sorting' },
     { text: '', prefixIcon: 'e-filter-clear icon', id: 'clearfilter_icon', tooltipText: 'Clear Filtering' },
     { type: 'Separator' },
@@ -558,30 +423,8 @@ const onToolbarClick = (args: any) => {
     { text: '', prefixIcon: 'e-csvexport', id: 'export_csv', tooltipText: 'Export CSV' },
     { text: '', prefixIcon: 'e-excelexport', id: 'export_excel', tooltipText: 'Export Excel' },
     { text: '', prefixIcon: 'e-pdfexport', id: 'export_pdf', tooltipText: 'Export PDF' },
-    'ColumnChooser'
+    // 'ColumnChooser'
   ];
-
-  const toolbarClick = (args: ClickEventArgs) => {
-    if (gridRef.current && args.item.id === 'export_excel') {
-      gridRef.current.excelExport();
-    }
-    if (gridRef.current && args.item.id === 'export_pdf') {
-      gridRef.current.pdfExport();
-    }
-
-    if (args.item.id === 'expand_icon') {
-
-    if (gridRef.current && gridRef.current.groupModule) {
-      if (isAllExpanded) {
-        gridRef.current.groupModule.collapseAll();
-      } else {
-        gridRef.current.groupModule.expandAll();
-      }
-      setIsAllExpanded(!isAllExpanded);
-    }
-  }
-  };
-  
 
   const searchHighlightText = (key: string | undefined, gridElement: Node) => {
 
@@ -672,24 +515,91 @@ const onToolbarClick = (args: any) => {
   const dataBound = () => {
     if (gridRef.current) {
       const records = gridRef.current.getFilteredRecords();
-      // setShowingCount(records ? (records as object[]).length : 0); Not working problem
-      
-      searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current?.element);
+      setShowingCount(records ? (records as object[]).length : 0);
+      if(gridRef.current.searchSettings.key &&gridRef.current.searchSettings.key.length>0 )
+      {
+        searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current?.element);
+      }
+    }
+  };
+
+  const toolbarClick = (args: any) => {
+    if (!gridRef.current) return;
+
+    const itemId = args.item?.id;
+
+    switch (itemId) {
+      case 'add_icon':
+        console.log('Add Records clicked');
+        gridRef.current.addRecord();
+        break;
+
+ 
+
+      case 'clearsorting_icon':
+        console.log('Clear Sorting clicked');
+        gridRef.current.clearSorting();
+        break;
+
+      case 'clearfilter_icon':
+        console.log('Clear Filtering clicked');
+        gridRef.current.clearFiltering();
+        break;
+
+      case 'clear_selection':
+        console.log('Clear Selection clicked');
+        gridRef.current.clearSelection();
+        break;
+
+      case 'clear_row_selection':
+        console.log('Clear Row Selection clicked');
+        gridRef.current.selectRows([]);
+        break;
+
+      case 'clear_column_selection':
+        console.log('Clear Column Selection clicked');
+        // Clear all selections
+        gridRef.current.clearSelection();
+        break;
+
+      case 'clear_cell_selection':
+        console.log('Clear Cell Selection clicked');
+        gridRef.current.clearCellSelection();
+        break;
+
+      case 'export_csv':
+        console.log('Export CSV clicked');
+        gridRef.current.csvExport();
+        break;
+
+      case 'export_excel':
+        console.log('Export Excel clicked');
+        gridRef.current.excelExport();
+        break;
+
+      case 'export_pdf':
+        console.log('Export PDF clicked');
+        gridRef.current.pdfExport();
+        break;
+
+      default:
+        console.log('Toolbar item clicked:', itemId);
+        break;
     }
   };
 
   const rollnoTemplate = (props: any) => {
     let rollno = props.index
-    if(rollno){
+    if (rollno) {
       return (<span>{++rollno}</span>)
     }
   }
 
-  const footerSum = (props: any) =>{
+  const footerSum = (props: any) => {
     return (<span className='font-bold'>Q: {props.Sum}</span>)
   }
 
-  const footerCount = (props: any) =>{
+  const footerCount = (props: any) => {
     return (<span className='font-bold'>C: {props.Count}</span>)
   }
 
@@ -724,41 +634,154 @@ const onToolbarClick = (args: any) => {
       multiSelect.appendTo(args.element);
     }
   };
-<TooltipComponent 
-  target=".image-tooltip-target" 
-  cssClass="custom-tooltip-size" // இந்த கிளாஸ் முக்கியம்
-  width="450px" 
-  height="450px"
-  content={(args: any) => (
-    <div style={{ width: '100%', height: '100%' }}>
-      <img 
-        src={args.target.src} 
-        style={{ width: '200%', height: '200%', objectFit: 'contain' }} 
-      />
-    </div>
-  )}
->
-  {/* Unga Grid code inga varum */}
-</TooltipComponent>
 
   const tooltipOpen = (args: any) => {
-    let img = args.target.querySelector('img')
-    if (img) {
-      (tooltipRef.current as TooltipComponent).content = args.target.innerHTML
+
+    const isHeaderCell = args.target.closest('.e-headercell');
+    const isRowCell = args.target.closest('.e-rowcell');
+
+    if (isRowCell || isHeaderCell) {
+      let img = args.target.querySelector('img')
+      if (img) {
+        let imgElem:any= args.target.innerHTML;
+        // Create a wrapper div with increased image height
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = imgElem;
+        const tooltipImg = wrapper.querySelector('img');
+        if (tooltipImg) {
+          tooltipImg.style.width = '500px';
+          tooltipImg.style.height = '500px';
+          tooltipImg.style.objectFit = 'contain';
+        }
+        (tooltipRef.current as TooltipComponent).content = wrapper.innerHTML;
+        
+        // Set different dimensions for header cells
+        if (isHeaderCell) {
+          (tooltipRef.current as TooltipComponent).width = '100px';
+          (tooltipRef.current as TooltipComponent).height = '100px';
+        } else {
+          (tooltipRef.current as TooltipComponent).width = '500px';
+          (tooltipRef.current as TooltipComponent).height = '500px';
+        }
+      }
+      else {
+        // Create a wrapper div for text content with styling
+        const textWrapper = document.createElement('div');
+        textWrapper.style.padding = '8px';
+        textWrapper.style.maxHeight = '150px';
+        textWrapper.style.overflowY = 'auto';
+        textWrapper.style.fontSize = '14px';
+        textWrapper.style.lineHeight = '1.5';
+        textWrapper.innerText = args.target.innerText;
+        (tooltipRef.current as TooltipComponent).content = textWrapper.outerHTML;
+        
+        // Set different dimensions for header cells
+        if (isHeaderCell) {
+          (tooltipRef.current as TooltipComponent).width = '100px';
+          (tooltipRef.current as TooltipComponent).height = '100px';
+        } else {
+          (tooltipRef.current as TooltipComponent).width = '200px';
+          (tooltipRef.current as TooltipComponent).height = '200px';
+        }
+      }
     }
-    else {
-      (tooltipRef.current as TooltipComponent).content = args.target.innerText;
-    }
+
   }
 
-  // const toolbarClick = (args: any) => {
-  //   if (gridRef && args.item.id === 'export_pdf') { // 'Grid_pdfexport' -> Grid component id + _ + toolbar item name
-  //     const exportProperties = {
-  //       exportType: 'CurrentPage'
-  //     };
-  //     gridRef.pdfExport(exportProperties);
-  //   }
-  // }
+  // Memoize the grid component to prevent unnecessary re-renders
+  const memoizedGridComponent = useMemo(() => (
+    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" position={"RightCenter"} width="200px" height="200px" beforeOpen={tooltipOpen}>
+      <GridComponent
+        id="default-aggregate-grid"
+        ref={gridRef}
+        dataSource={dataSource}
+        dataBound={dataBound}
+        pageSettings={{pageSize:10}}
+        height="440px"
+        enableVirtualization={true}
+        allowSorting={true}
+        allowFiltering={true}
+        allowMultiSorting={true}
+        filterSettings={{type:'CheckBox'}}
+        allowGrouping={true}
+        showColumnMenu={true}
+        // showColumnChooser={true}
+        enableAdaptiveUI={true}
+        adaptiveUIMode={'Mobile'}
+
+        allowReordering={true}
+        allowResizing={true}
+        allowPdfExport={true}
+
+        gridLines="Both"
+        searchSettings={{  operator: 'contains', ignoreCase: true }}
+        toolbar={toolbarOptions}
+        editSettings={{
+          allowDeleting: true,
+          allowEditing: true,
+          allowEditOnDblClick: false,
+          allowAdding: true,
+          mode: "Dialog"
+        }}
+        actionBegin={actionBegin}
+        actionComplete={actionComplete}
+        created={created}
+        frozenColumns={2}
+        toolbarClick={toolbarClick}
+      >
+        <ColumnsDirective>
+
+          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} />
+          <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
+          <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
+          <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
+          <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
+          <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
+          <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
+          {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
+          <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
+          <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} />
+          <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} />
+          <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} />
+          <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} />
+          <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} />
+          <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} />
+          <ColumnDirective field="u8" headerText="8 FAB" width="100" template={genericHighlighter('u8')} />
+          <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} />
+          <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} />
+          <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
+          <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
+          <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} />
+          <ColumnDirective field="Emb" headerText="3 EMB" width="90" template={genericHighlighter('Emb')} />
+          <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
+          <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
+          <ColumnDirective field='punit_sh' headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} />
+
+
+          <ColumnDirective field="styleno" headerText="STYLE NO" width="110" template={genericHighlighter('styleno')} />
+          <ColumnDirective field="director_sample_order" headerText="DIR S/O" width="100" template={genericHighlighter('director_sample_order')} />
+          <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="100" template={genericHighlighter('order_follow_up')} />
+          <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
+          <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')} />
+          <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
+          <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} />
+          <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} />
+          <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} />
+          <ColumnDirective field="quantity" headerText="QTY" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
+          <ColumnDirective field="company_name" headerText="COMPANY" width="90" template={genericHighlighter('company_name')} />
+
+        </ColumnsDirective>
+        <AggregatesDirective>
+          <AggregateDirective>
+            <AggregateColumnsDirective>
+              <AggregateColumnDirective field='slno1' type='Count' footerTemplate={footerCount} format='N'> </AggregateColumnDirective>
+              <AggregateColumnDirective field='quantity' type='Sum' footerTemplate={footerSum} format='N'> </AggregateColumnDirective>
+            </AggregateColumnsDirective>
+          </AggregateDirective>
+        </AggregatesDirective>
+        <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
+      </GridComponent></TooltipComponent></div></>
+  ), [dataSource]);
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fff', minWidth: 0, overflow: 'hidden' }}>
@@ -782,7 +805,6 @@ const onToolbarClick = (args: any) => {
           border-bottom: 1px solid #dee2e6;
           flex-shrink: 0;
           flex-wrap: wrap; 
-          
           }
           
           .header-title {
@@ -945,51 +967,53 @@ const onToolbarClick = (args: any) => {
             className="search-input"
           />
         </div>
-        <div style={{ padding: '12px 18px', borderBottom: '1px solid #eee', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight:'bold' }}>
-    <TextBoxComponent
-      ref={settingNameRef}
-      placeholder="Enter setting name"
-      style={{ width: '120px' }}
-    />
-  </div>
+        <div style={{ padding: '12px 18px', borderBottom: '1px solid #eee', display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontStyle: 'Bold' }}>
+            {/* <label style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap' }}>Setting Name:</label> */}
+            <TextBoxComponent
+              ref={settingNameRef}
+              placeholder="Enter setting name"
+              style={{ width: '80px' }}
+            />
+          </div>
 
-  <ButtonComponent
-    onClick={saveSetting}
-    cssClass="e-primary"
-    style={{ padding: '6px 12px', fontSize: '13px' }}
-  >
-    💾
-  </ButtonComponent>
+          <ButtonComponent
+            onClick={saveSetting}
+            cssClass="e-primary"
+            style={{ padding: '6px 12px', fontSize: '13px', border: "2px" }}
+          >
+            💾
+          </ButtonComponent>
 
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-    <DropDownListComponent
-      ref={dropdownRef}
-      id="settings-dropdown"
-      dataSource={savedSettings.map(s => ({ text: s.name, value: s.id }))}
-      fields={{ text: 'text', value: 'value' }}
-      placeholder="Select setting..."
-      style={{ minWidth: '150px' }}
-      change={() => setSelectedSetting(dropdownRef.current?.value as string)}
-    />
-  </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {/* <label style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap' }}>Saved Settings:</label> */}
+            <DropDownListComponent
+              ref={dropdownRef}
+              id="settings-dropdown"
+              dataSource={savedSettings.map(s => ({ text: s.name, value: s.name }))}
+              fields={{ text: 'text', value: 'value' }}
+              placeholder="Select setting..."
+              style={{ width: '50px' }}
+              change={() => setSelectedSetting(dropdownRef.current?.value as string)}
+            />
+          </div>
 
-  <ButtonComponent
-    onClick={applySetting}
-    cssClass="e-outline"
-    style={{ padding: '6px 12px', fontSize: '13px' }}
-  >
-   ✔
-  </ButtonComponent>
+          <ButtonComponent
+            onClick={applySetting}
+            cssClass="e-outline"
+            style={{ padding: '6px 12px', fontSize: '13px' }}
+          >
+            ✔
+          </ButtonComponent>
 
-  <ButtonComponent
-    onClick={deleteSetting}
-    cssClass="e-outline e-danger"
-    style={{ padding: '6px 12px', fontSize: '13px' }}
-  >
-    🗑
-  </ButtonComponent>
-</div>
+          <ButtonComponent
+            onClick={deleteSetting}
+            cssClass="e-outline e-danger"
+            style={{ padding: '6px 12px', fontSize: '13px' }}
+          >
+            🗑
+          </ButtonComponent>
+        </div>
       </div>
 
       {/* Grid Container */}
@@ -999,131 +1023,11 @@ const onToolbarClick = (args: any) => {
         ) : error ? (
           <div style={{ padding: '50px', textAlign: 'center', color: 'red' }}>Error: {error}</div>
         ) : (
-          <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" position="RightCenter"  width="200px" height="200px"  beforeOpen={tooltipOpen}>
-          <GridComponent
-            id="default-aggregate-grid"
-            ref={gridRef}
-            dataSource={dataSource}
-            dataBound={dataBound}
-            height="440px"
-            enableVirtualization={true}
-            rowHeight={95}
-            allowSorting={true}
-            allowFiltering={true}
-            allowMultiSorting={true}
-            filterSettings={{type:'CheckBox'}}
-            allowGrouping={true}
-            allowTextWrap={true}
-            // groupSettings={groupOptions}
-            showColumnMenu={true}
-            showColumnChooser={true}
-            enableAdaptiveUI={true}
-            adaptiveUIMode = {'Mobile'}      
-            allowReordering={true}
-            allowResizing={true}
-            allowPdfExport={true}
-            
-            allowExcelExport={true}
-           toolbarClick={toolbarClick}
-            // filterSettings={{ type: 'Excel' }}
-            gridLines="Both"
-            searchSettings={{ fields:["jobno_oms", "quality_controller"], operator: 'contains', ignoreCase: true }}
-            toolbar={toolbarOptions}
-            editSettings={{
-              allowDeleting: true,
-              allowEditing: true,
-              allowEditOnDblClick: false,
-              allowAdding: true, 
-              mode: "Dialog"
-            }}
-            actionBegin={actionBegin}
-            actionComplete={actionComplete}
-            created={created}
-            // toolbarClick={toolbarClick}
-          >
-            <ColumnsDirective>
-
-              <ColumnDirective isPrimaryKey={true}  field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" freeze='Left' template={orderSummaryTemplate} allowEditing={false}/>
-              <ColumnDirective field="mainimagepath" headerText="IMG" freeze='Left' width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
-              <ColumnDirective field="Print" headerText="Print_IMG" freeze='Left' width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
-              <ColumnDirective field="Others1" headerText="AOP_IMG" freeze='Left' width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} />
-              <ColumnDirective field="Emb" headerText="Emb_IMG" freeze='Left' width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
-              <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
-              <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
-              <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false}/>
-              <ColumnDirective field="print_img" headerText="PRN IMG" width="100" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
-              <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="100" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
-              {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
-              <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
-              <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} />
-              <ColumnDirective field="abc" headerText="ABC" width="100" template={genericHighlighter('abc')} />
-              <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} />
-              <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} />
-              <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} />
-              <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} />
-              <ColumnDirective field="u8" headerText="8 FAB" width="100" template={genericHighlighter('u8')} />
-              <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} />
-              <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} />
-              <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
-              <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
-              <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} />
-              <ColumnDirective field="Emb" headerText="3 EMB" width="90" template={genericHighlighter('Emb')} />
-              <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
-              <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
-              <ColumnDirective field='punit_sh' headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} />
-
-
-              <ColumnDirective field="styleno" headerText="STYLE NO" width="110" template={genericHighlighter('styleno')} />
-              <ColumnDirective field="director_sample_order" headerText="DIR S/O" width="100" template={genericHighlighter('director_sample_order')} />
-              <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="100" template={genericHighlighter('order_follow_up')} />
-              <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
-              <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')}/>
-              <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
-              <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} />
-              <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} />
-              <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} />
-              <ColumnDirective field="quantity" headerText="QTY" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
-              <ColumnDirective field="company_name" headerText="COMPANY" width="90" template={genericHighlighter('company_name')} />
-              <ColumnDirective 
-                      headerText="IMAGE" 
-                      width="100" 
-                      textAlign="Center"
-                      template={(props: OrderData) => (
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                          <img 
-                            className="image-tooltip-target" // Tooltip looks for this class
-                            src={props.mainimagepath || 'placeholder.png'} 
-                            alt="Style" 
-                            style={{ 
-                              width: '90px', 
-                              height: '90px', 
-                              objectFit: 'contain', 
-                              cursor: 'zoom-in',
-                              border: '1px solid #ddd' 
-                            }} 
-                          />
-                        </div>
-                      )} 
-                    />
-
-      {/* ... other columns */}
-
-            </ColumnsDirective>
-            
-            <AggregatesDirective>
-              <AggregateDirective>
-                <AggregateColumnsDirective>
-                  <AggregateColumnDirective field='slno1'  type='Count' footerTemplate={footerCount} format='N'> </AggregateColumnDirective>
-                  <AggregateColumnDirective field='quantity'  type='Sum' footerTemplate={footerSum} format='N'> </AggregateColumnDirective>
-                </AggregateColumnsDirective>
-              </AggregateDirective>
-            </AggregatesDirective>
-            <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, ExcelExport,VirtualScroll, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
-          </GridComponent></TooltipComponent></div></>
+          memoizedGridComponent
         )}
       </div>
     </div>
   );
 };
 
-export default HeroFashionGrid13;
+export default SyncordGrid;

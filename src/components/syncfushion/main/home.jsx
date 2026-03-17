@@ -18,6 +18,7 @@ import FabricForm from '../fabric/Fabric.jsx';
 import Signin1 from '../layout/Signup.tsx';
 import OrderOms from "../order/Order_oms.tsx"
 import Schedule from "../order/Schedule.tsx"
+import SyncordGrid from "../order/ord_order_sync.tsx"
 // import Overview from "../order/chart.tsx"
 
 function Home() {
@@ -53,6 +54,7 @@ function Home() {
          <Route path="/Excel" element={<Excel />} /> 
          {/* <Route path="/Overview" element={<Overview />} />  */}
          <Route path="/fabric" element={<FabricForm />} /> 
+         <Route path="/SyncordGrid" element={<SyncordGrid />} /> 
          <Route path='/signup' element={<Signin1 />} />
         <Route path='/order_oms' element={<OrderOms />} />
     </Routes>

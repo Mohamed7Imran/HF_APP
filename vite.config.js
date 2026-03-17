@@ -16,7 +16,7 @@ export default defineConfig({
       },
         
   optimizeDeps: {
-    include: ['react-simple-maps', 'd3-geo', 'topojson-client']
+    include: ['react-simple-maps', 'd3-geo', 'topojson-client','@syncfusion/ej2-react-gantt']
   },
 
   manifest: {

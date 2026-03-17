@@ -1,8 +1,8 @@
 // import * as ReactDOM from 'react-dom';
 // import * as React from 'react';
 // import { GanttComponent, DayMarkers, Inject, Edit, Selection, Toolbar, ColumnsDirective, ColumnDirective, EventMarkersDirective, EventMarkerDirective, HolidaysDirective, HolidayDirective, ColumnMenu, Filter, Sort, Resize, ExcelExport, PdfExport } from '@syncfusion/ej2-react-gantt';
-// // import { overviewData, editingResources } from './data';
-// // import './overview.css'
+// import { overviewData, editingResources } from './data';
+// import "../../../App.css"
 // import { useEffect } from 'react';
 // import { DropDownList } from '@syncfusion/ej2-react-dropdowns';
 // import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
@@ -19,7 +19,7 @@
 
 // const Overview = () =>  {
 //     let theme: any;
-//     let ganttInstance = useRef<GanttComponent>(null);
+//     // let ganttInstance = useRef<GanttComponent>(null);
 //     let CurrentTheme: any;
 //     let statusStyleColor: any;
 //     let priorityStyle: any;

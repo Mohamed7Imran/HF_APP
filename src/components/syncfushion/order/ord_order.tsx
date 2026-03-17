@@ -469,9 +469,7 @@ const HeroFashionGrid13: React.FC = () => {
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
-
-
-
+  
   let serverUpdated = false;
   let newPrimaryKey: number | null = null;
   const actionBegin = (args: AddEventArgs | SaveEventArgs | EditEventArgs | DeleteEventArgs | ActionEventArgs) => {

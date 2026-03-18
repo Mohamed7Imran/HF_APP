@@ -435,7 +435,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         if (!serverUpdated) {
           args.cancel = true;
           ajax.url =
-            'http://10.1.21.13:7004/udf7_update/';
+            'https://app.herofashion.com/udf7_update/';
           ajax.type = 'POST';
           ajax.data = JSON.stringify((args as any).data);
           ajax.send();

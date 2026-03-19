@@ -53,7 +53,7 @@ interface OrderData {
   quality_controller: string; reference: string; insdatenew: string; styledesc: string;
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
   shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
-  u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;
+  u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;number_03_emb:string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;Print:string;others1:string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;
   prnmeaimg?:string;mpic?:string;
@@ -470,6 +470,47 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     </div>
   );
 
+const  udf= (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      <b>1-Print:</b> {highlightText(p.printing_R)}<br />
+      <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
+      <b>7:</b> {highlightText(p.u7)}<br />
+      <b>8-Fab:</b> {highlightText(p.u8)}<br />
+      <b>14-Fabdy:</b> {highlightText(p.u14)}<br />
+      <b>25-week:</b> {highlightText(p.u25)}<br />
+      {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
+      <b>Qty:</b> {highlightText(p.quantity)} */}
+    </div>
+  );
+  const  udf2= (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      <b>31:</b> {highlightText(p.u31)}<br />
+      <b>36-ITS:</b> {highlightText(p.u36)}<br />
+      <b>u45:</b> {highlightText(p.u45)}<br />
+      <b>u46:</b> {highlightText(p.u46)}<br />
+      <b>u141:</b> {highlightText(p.u141)}<br />
+      {/* <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
+      <b>8-Fab:</b> {highlightText(p.u8)}<br />
+      <b>14-Fabdy:</b> {highlightText(p.u14)}<br /> */}
+      {/* <b>31:</b> {highlightText(p.u31)}<br /> */}
+      {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
+      {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
+      <b>Qty:</b> {highlightText(p.quantity)} */}
+    </div>
+  );
+
+
+
+const   qualy= (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      <b>styleno:</b> {highlightText(p.styleno)}<br />
+      <b>styledesc:</b> {highlightText(p.styledesc)}<br />
+      <b>quality_controller:</b> {highlightText(p.quality_controller)}<br />
+      <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br />
+      {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
+  </div>
+  );
+
   const deliveryInfoTemplate = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br />
@@ -828,17 +869,23 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         <ColumnsDirective>
 
           <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} />
+          
           <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={true} />
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
           <ColumnDirective field="others1" headerText="others1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} />
           <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
           <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
+          <ColumnDirective field="printing_R" headerText="udf1" width="150" maxWidth="150" template={udf} />
+          <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} />
+          <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} />
           <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
           <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
           {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
           <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
+          <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
+          <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
           <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />

@@ -112,6 +112,10 @@ const QualityInspectionFullScreen = () => {
     "NEPS": "neps", "NA HOLES": "na_holes",
   };
 
+  useEffect(()=> {
+    document.title = `Machine ${id}`;
+  }, [id])
+
   // --- API SYNC ---
   // -- POST
   useEffect(() => {

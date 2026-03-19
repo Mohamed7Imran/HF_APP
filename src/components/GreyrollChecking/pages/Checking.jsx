@@ -28,6 +28,10 @@ const CombinedCheckUICentered = () => {
 
     const handleReport = () => navigate(`/grey-app/machine/${id}/report`);
 
+    useEffect(()=> {
+        document.title = `Machine ${id}` 
+    }, [id])
+
     useEffect(() => {
         fetch(`https://app.herofashion.com/empd/${id}`)
             .then(res => res.json())

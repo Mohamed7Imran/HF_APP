@@ -646,7 +646,23 @@ const   Alldate= (p: OrderData) => (
     }
 
   };
+const firstTruthy = (...vals: Array<any>) =>
+  vals.find((v) => typeof v === "string" && v.trim().length > 0) || "";
 
+/** NEW: show any non-empty value (string/number/boolean) else dash */
+const showVal = (val: any): string => {
+  if (val === null || val === undefined) return "–";
+  if (typeof val === "string") {
+    const t = val.trim();
+    return t.length ? t : "–";
+  }
+  // number/boolean/object: stringify safely
+  try {
+    return String(val);
+  } catch {
+    return "–";
+  }
+};
 
 
   const clearHighlights = () => {
@@ -841,7 +857,7 @@ const   Alldate= (p: OrderData) => (
     return (
       <div style={{ padding: "20px" }}>
         {printGroups.map((grp: any, idx: number) => {
-          const colours = getUniqueColours(grp.rows);
+          // const colours = getUniqueColours(grp.rows);
 
           const imageCount =
             (grp.image ? 1 : 0) + (grp.image1 ? 1 : 0) + (grp.image2 ? 1 : 0);

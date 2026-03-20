@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.9",
     "@mui/styled-engine": "^7.3.6",
     "@syncfusion/ej2-base": "*",
+    "@syncfusion/ej2-react-blockeditor": "^33.1.44",
     "@syncfusion/ej2-react-buttons": "*",
     "@syncfusion/ej2-react-calendars": "*",
     "@syncfusion/ej2-react-dropdowns": "*",

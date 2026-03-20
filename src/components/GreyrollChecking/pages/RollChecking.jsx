@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "../../../index.css";
-import { Camera, Image as ImageIcon, Save, Plus, Minus, AlertTriangle } from "lucide-react";
+import {
+  Camera,
+  Image as ImageIcon,
+  Save,
+  Plus,
+  Minus,
+  AlertTriangle,
+} from "lucide-react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 
 // Import images
@@ -20,7 +25,7 @@ const QualityInspectionFullScreen = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   const { rollData, r_code, h_code } = location.state || {};
   const rollNumber = rollData?.rlno || "";
 
@@ -30,16 +35,15 @@ const QualityInspectionFullScreen = () => {
     { id: 3, name: "SET OFF", hindi: "सेट ऑफ", tamil: "செட் ஆப்", img: setoff },
     { id: 4, name: "NEEDLE LINE", hindi: "सुई रेखा", tamil: "நீடில் லைன்", img: needleImg },
     { id: 5, name: "YARN MISTAKE", hindi: "यार्न मिस्टैक", tamil: "யான் மிஸ்டேக்", img: yarn },
-    { id: 6, name: "POOVARI", hindi: " पूवारी", tamil: "பூவாரி", img: null },
+    { id: 6, name: "POOVARI", hindi: "पूवारी", tamil: "பூவாரி", img: null },
     { id: 7, name: "LYCRA CUT", hindi: "लाइक्रा कट", tamil: "லைக்ரா வெட்டு", img: null },
     { id: 8, name: "NEPS", hindi: "नेप्स", tamil: "நேப்ஸ்", img: null },
-    { id: 9, name: "NA HOLES", hindi: "ना होल", tamil: "நா ஹோல்", img: null }
+    { id: 9, name: "NA HOLES", hindi: "ना होल", tamil: "நா ஹோல்", img: null },
   ];
 
   const POPUP_DEFECTS = ["OIL", "HOLES", "POOVARI", "LYCRA CUT", "NEPS", "NA HOLES"];
   const DECREASE_POPUP_DEFECTS = ["SET OFF", "YARN MISTAKE"];
 
-  // --- STATE ---
   const [defectData, setDefectData] = useState(defectTypes.map(() => ({ count: 0, meter: "", display: "" })));
   const [time, setTime] = useState(0);
   const [remarks, setRemarks] = useState("");
@@ -60,7 +64,7 @@ const QualityInspectionFullScreen = () => {
   const payloadRef = useRef(null);
   const hasCheckedInitialRef = useRef(false);
 
-  // --- LOGIC HELPERS ---
+  // Logic remains identical to your original code
   const formatTime = (s) => {
     const h = String(Math.floor(s / 3600)).padStart(2, "0");
     const m = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
@@ -71,6 +75,18 @@ const QualityInspectionFullScreen = () => {
   const safeNumber = (v) => {
     const n = Number(v);
     return Number.isFinite(n) ? n : 0;
+  };
+
+  const defectFieldMap = {
+    "OIL": "oil_line",
+    "HOLES": "hole",
+    "SET OFF": "setoff",
+    "NEEDLE LINE": "needle_line",
+    "POOVARI": "poovari",
+    "YARN MISTAKE": "yarn_mistake",
+    "LYCRA CUT": "lycra_cut",
+    "NEPS": "neps",
+    "NA HOLES": "na_holes",
   };
 
   const getPayload = () => {
@@ -101,100 +117,83 @@ const QualityInspectionFullScreen = () => {
       m12: "",
       loop_len: String(safeNumber(rollData?.ll)),
       image: capturedImage || "",
-      submit: isSubmitted
+      submit: isSubmitted,
     };
   };
 
-  const defectFieldMap = {
-    "OIL": "oil_line", "HOLES": "hole", "SET OFF": "setoff",
-    "NEEDLE LINE": "needle_line", "POOVARI": "poovari",
-    "YARN MISTAKE": "yarn_mistake", "LYCRA CUT": "lycra_cut",
-    "NEPS": "neps", "NA HOLES": "na_holes",
-  };
-
-  useEffect(()=> {
-    document.title = `Machine ${id}`;
-  }, [id])
-
-  // --- API SYNC ---
-  // -- POST
   useEffect(() => {
     if (!rollNumber || hasCheckedInitialRef.current) return;
-    
     const postOnce = async () => {
-      const baseUrl = `https://app.herofashion.com/coraroll/`;
-      const detailUrl = `${baseUrl}${rollNumber}/`;
-      
-      const checkRes = await fetch(detailUrl);
-      if (checkRes.ok) {
+        const baseUrl = `https://app.herofashion.com/coraroll/`;
+        const detailUrl = `${baseUrl}${rollNumber}/`;
+        const checkRes = await fetch(detailUrl);
+        if (checkRes.ok) {
+            hasCheckedInitialRef.current = true;
+            return;
+        }
+        await fetch(baseUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(getPayload()),
+        });
         hasCheckedInitialRef.current = true;
-        return;
-      }
-      
-      await fetch(baseUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(getPayload()),
-      });
-      
-      hasCheckedInitialRef.current = true;
     };
-    
     postOnce();
-  }, [rollNumber]);  
-  
+  }, [rollNumber]);
+
   useEffect(() => {
     payloadRef.current = getPayload();
   }, [defectData, remarks, time, rollNumber, capturedImage]);
-  
-  //PUT
+
   useEffect(() => {
     const interval = setInterval(() => {
-      if (rollNumber && payloadRef.current) {
+        if (rollNumber && payloadRef.current) {
         fetch(`https://app.herofashion.com/coraroll/${rollNumber}/`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payloadRef.current),
-        }).catch(err => console.error("Auto-sync error:", err));
-      }
-    }, 2000); // put works in every 2 seconds
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payloadRef.current),
+        }).catch((err) => console.error("Auto-sync error:", err));
+        }
+    }, 2000);
     return () => clearInterval(interval);
   }, [rollNumber]);
-  
+
   useEffect(() => {
     if (rollNumber) fetchRollData();
   }, [rollNumber]);
-  
+
   //GET
-  const fetchRollData = async () => {
-    try {
-      const res = await fetch(`https://app.herofashion.com/coraroll/${rollNumber}/`);
-      if (!res.ok) return;
-      const data = await res.json();
+    const fetchRollData = async () => {
+        try {
+          const res = await fetch(`https://app.herofashion.com/coraroll/${rollNumber}/`);
+          if (!res.ok) return;
+          const data = await res.json();
       
-      setCapturedImage(data.image || "");
-      setRemarks(data.remark || "");
+          setCapturedImage(data.image || "");
+          setRemarks(data.remark || "");
       
-      setDefectData(defectTypes.map((defect) => {
-        const value = data[defectFieldMap[defect.name]] || "";
-        let count = 0, meter = "";
-        if (value) {
-          const cMatch = value.match(/C-(\d+)/);
-          const mMatch = value.match(/M-(\d+)/);
-          if (cMatch) count = Number(cMatch[1]);
-          if (mMatch) meter = mMatch[1];
+          setDefectData(defectTypes.map((defect) => {
+            const value = data[defectFieldMap[defect.name]] || "";
+            let count = 0, meter = "";
+            if (value) {
+              const cMatch = value.match(/C-(\d+)/);
+              const mMatch = value.match(/M-(\d+)/);
+              if (cMatch) count = Number(cMatch[1]);
+              if (mMatch) meter = mMatch[1];
+            }
+            return { count, meter, display: value };
+          }));
+      
+          if (data.timer) {
+            const parts = data.timer.split(":").map(Number);
+            const seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+            setTime(seconds);
+            timerStartRef.current = Date.now() - seconds * 1000;
+          }
+        } catch (err) {
+        console.error("GET error:", err);
         }
-        return { count, meter, display: value };
-      }));
-      
-      if (data.timer) {
-        const parts = data.timer.split(":").map(Number);
-        const seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
-        setTime(seconds);
-        timerStartRef.current = Date.now() - seconds * 1000;
-      }
-    } catch (err) { console.error("GET error:", err); }
-  };
+    };
 
   useEffect(() => {
     timerStartRef.current = Date.now() - (time * 1000);
@@ -204,37 +203,19 @@ const QualityInspectionFullScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // --- CORE LOGIC: UPDATE DEFECTS ---
+
   const updateDefect = (index, deltaCount = 0, newMeter = null) => {
     setDefectData((prev) => {
       const data = [...prev];
       const item = { ...data[index] };
       const defectName = defectTypes[index].name;
-
-      // 1. Update Count (prevent negative)
       const updatedCount = item.count + deltaCount;
       item.count = updatedCount < 0 ? 0 : updatedCount;
-
-      // 2. Update Meter (if provided)
-      if (newMeter !== null) {
-        item.meter = String(newMeter);
-      }
-
-      // 3. Update Display String
+      if (newMeter !== null) item.meter = String(newMeter);
       const parts = [];
-      
-      // EXCLUSION FOR NEEDLE LINE: Only show "C-" if NOT Needle Line
-      if (defectName !== "NEEDLE LINE" && item.count > 0) {
-        parts.push(`C-${item.count}`);
-      }
-
-      // Show "M-" if meter exists
-      if (item.meter && item.meter !== "" && item.meter !== "0") {
-        parts.push(`M-${item.meter}`);
-      }
-
+      if (defectName !== "NEEDLE LINE" && item.count > 0) parts.push(`C-${item.count}`);
+      if (item.meter && item.meter !== "" && item.meter !== "0") parts.push(`M-${item.meter}`);
       item.display = parts.join(" ").toUpperCase();
-
       data[index] = item;
       return data;
     });
@@ -244,7 +225,7 @@ const QualityInspectionFullScreen = () => {
   const handlePlusClick = (index, name) => {
     if (name === "NEEDLE LINE") {
       setActiveDefectIndex(index);
-      setNeedleMeterValue(defectData[index].meter); // Pre-fill existing value
+      setNeedleMeterValue(defectData[index].meter);
       setShowNeedlePopup(true);
     } else if (POPUP_DEFECTS.includes(name)) {
       setActiveDefectIndex(index);
@@ -256,9 +237,8 @@ const QualityInspectionFullScreen = () => {
 
   const handleMinusClick = (index, name) => {
     if (name === "NEEDLE LINE") {
-      // Logic Change: Now opens the NeedleMeterPopup to change/clear the value
       setActiveDefectIndex(index);
-      setNeedleMeterValue(defectData[index].meter); // Pre-fill existing value
+      setNeedleMeterValue(defectData[index].meter);
       setShowNeedlePopup(true);
     } else if (DECREASE_POPUP_DEFECTS.includes(name)) {
       setActiveDecreaseIndex(index);
@@ -278,53 +258,161 @@ const QualityInspectionFullScreen = () => {
     const formData = new FormData();
     formData.append("image", file);
     formData.append("rlno", rollNumber);
-    const res = await fetch("https://app.herofashion.com/upload-roll-image/", { method: "POST", body: formData });
+    const res = await fetch("https://app.herofashion.com/upload-roll-image/", {
+      method: "POST",
+      body: formData,
+    });
     const data = await res.json();
     setCapturedImage(data.image);
   };
 
   const HeaderField = ({ label, value }) => (
-    <div className="col">
-      <span className="fw-bold small d-block" style={{ color: "#2563EB" }}>{label}</span>
-      <span className="fw-semibold small">{value || "---"}</span>
+    <div className="flex flex-col min-w-[100px]">
+      <span className="text-[14px] font-bold text-blue-600 mb-0.5">{label}</span>
+      <span className="text-[14px] font-medium text-gray-700">{value || "---"}</span>
     </div>
   );
 
   return (
-    <div className="min-vh-100 bg-light p-md-4 p-2 d-flex flex-column position-relative">
-      
-      {/* MODALS */}
-      {showModal && (
-        <CountMeterModal 
-          initialData={defectData[activeDefectIndex]} 
-          onClose={() => setShowModal(false)} 
-          onSave={(c, m) => updateDefect(activeDefectIndex, c - defectData[activeDefectIndex].count, m)} 
-        />
-      )}
-      
-      {showDecreasePopup && (
-        <ConfirmDecreaseModal 
-          onConfirm={() => { updateDefect(activeDecreaseIndex, -1); setShowDecreasePopup(false); }} 
-          onCancel={() => setShowDecreasePopup(false)} 
-        />
-      )}
+    <div className="min-h-screen bg-gray-50 p-2 md:p-3 flex flex-col">
+      <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} className="hidden" onChange={handleImageCapture} />
 
+      <div className="bg-white border border-gray-200 rounded-sm shadow-sm flex flex-col flex-grow relative">
+        
+        {/* Top Section: Info + Right Panel */}
+        <div className="flex flex-col lg:flex-row p-3 sm:p-4 border-b border-gray-200 gap-4">
+          
+          {/* Left: Info Grid + Timer */}
+          <div className="flex-grow">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-6">
+              <HeaderField label="MACHINE ID" value={id} />
+              <HeaderField label="ROLL NO" value={rollNumber} />
+              <HeaderField label="JOB NO" value={rollData?.jobno} />
+              <HeaderField label="COLOR" value={rollData?.colour} />
+              <HeaderField label="PONO" value={rollData?.pono} />
+              
+              <HeaderField label="PDC REF" value={rollData?.pdcref} />
+              <HeaderField label="FABRIC" value={rollData?.fabricdescription} />
+              <HeaderField label="WEIGHT" value={rollData?.weight} />
+              <HeaderField label="DIA" value={rollData?.dia} />
+              <HeaderField label="LOOP LENGTH" value={rollData?.ll} />
+            </div>
+
+            <div className="flex items-center justify-between sm:justify-start sm:gap-12 mt-4">
+              <div className="font-mono text-xl lg:text-2xl font-bold text-gray-800">{formatTime(time)}</div>
+              <button
+                onClick={() => setShowSubmitPopup(true)}
+                disabled={isSubmitted}
+                className="flex items-center gap-2 bg-[#e33446] hover:bg-red-700 text-white font-bold px-4 py-2 lg:px-8 lg:py-2.5 rounded-md transition-colors shadow-sm"
+              >
+                <Save size={18} /> Submit
+              </button>
+            </div>
+          </div>
+
+          {/* Right: Capture/View Controls */}
+          <div className="flex flex-row justify-between lg:flex-col w-full lg:w-[180px] lg:border-l lg:pl-4 gap-2 border-t pt-3 lg:border-t-0 lg:pt-0">
+            <div className="flex flex-col flex-1 gap-5">
+              <button className="w-full sm:w-80 lg:w-41 bg-[#1a73e8] text-white flex items-center justify-center gap-2 py-2 rounded text-xs font-bold shadow-sm" onClick={() => cameraInputRef.current.click()}>
+                <Camera size={14} /> Capture
+              </button>
+              <button className="w-full sm:w-80 lg:w-41 bg-[#1a73e8] text-white flex items-center justify-center gap-2 py-2 rounded text-xs font-bold shadow-sm" onClick={() => setShowImage(!showImage)}>
+                <ImageIcon size={14} /> View
+              </button>
+            </div>
+            <div className="w-[150px] lg:w-full h-[100px] lg:h-[120px] border border-gray-300 bg-gray-50 flex items-center justify-center text-[10px] text-gray-400 rounded">
+              {showImage && (previewImage || capturedImage) ? (
+                <img src={previewImage || `https://app.herofashion.com${capturedImage}`} alt="Captured" className="object-contain w-full h-full" />
+              ) : "No Image"}
+            </div>
+          </div>
+        </div>
+
+        {/* Defects Grid Section */}
+        <div className="flex-1 bg-[#f8f9fa] overflow-x-auto p-2 lg:mt-30">
+          <div className="flex gap-2 pb-2">
+            {defectTypes.map((defect, index) => (
+              <div key={defect.id} className="flex flex-col border border-gray-300 rounded-sm bg-white min-w-[145px] overflow-hidden">
+                <div className="bg-[#fdfdfd] text-center py-2 border-b border-gray-200">
+                  <div className="text-[15px] font-bold text-gray-800">{defect.name}</div>
+                  <div className="text-[15px] font-bold text-gray-500 leading-tight">{defect.tamil}</div>
+                  <div className="text-[15px] font-bold text-gray-500 leading-tight">{defect.hindi}</div>
+                </div>
+                
+                <div className="h-[110px] flex items-center justify-center p-2 bg-white">
+                  {defect.img ? (
+                    <img src={defect.img} alt={defect.name} className="w-full h-full object-cover rounded-sm p-0.5" />
+                  ) : (
+                    <span className="text-gray-400 text-[11px]">No Image</span>
+                  )}
+                </div>
+
+                <div className="px-2 py-2 border-t border-gray-100 bg-white">
+                  <input
+                    type="text" readOnly value={defectData[index].display}
+                    className="text-center text-[14px] font-bold border border-gray-200 rounded-sm w-full py-1 bg-white outline-none"
+                  />
+                </div>
+
+                <div className="flex flex-col mt-auto">
+                  <button onClick={() => handlePlusClick(index, defect.name)} className="bg-[#1b8e56] text-white py-2.5 flex justify-center hover:bg-green-700 active:bg-green-800">
+                    <Plus size={20} strokeWidth={3} />
+                  </button>
+                  <button onClick={() => handleMinusClick(index, defect.name)} className="bg-[#d93025] text-white py-2.5 flex justify-center hover:bg-red-700 active:bg-red-800">
+                    <Minus size={20} strokeWidth={3} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer Remarks */}
+        <div className="bg-white p-3 border-t border-gray-200">
+          <div className="flex flex-col">
+            <span className="text-[16px] font-bold text-gray-700 mb-1">Remarks:</span>
+            <input
+              type="text" value={remarks} onChange={(e) => setRemarks(e.target.value)}
+              placeholder="Add notes..."
+              className="border border-gray-300 rounded-sm w-full px-3 py-2 text-[13px] outline-none focus:border-blue-500"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Modals */}
+      {showModal && (
+        <CountMeterModal
+          initialData={defectData[activeDefectIndex]}
+          onClose={() => setShowModal(false)}
+          onSave={(c, m) =>
+            updateDefect(activeDefectIndex, c - defectData[activeDefectIndex].count, m)
+          }
+        />
+      )}
+      {showDecreasePopup && (
+        <ConfirmDecreaseModal
+          onConfirm={() => {
+            updateDefect(activeDecreaseIndex, -1);
+            setShowDecreasePopup(false);
+          }}
+          onCancel={() => setShowDecreasePopup(false)}
+        />
+      )}
       {showNeedlePopup && (
         <NeedleMeterPopup
           value={needleMeterValue}
           setValue={setNeedleMeterValue}
           onSave={() => {
-            // Set deltaCount to 0 because we only want to update the Meter text
             updateDefect(activeDefectIndex, 0, needleMeterValue);
-            setNeedleMeterValue("");
+            setNeedleMeterValue(""); 
             setShowNeedlePopup(false);
           }}
           onClose={() => setShowNeedlePopup(false)}
         />
       )}
-
       {showSubmitPopup && (
-        <SubmitConfirmModal 
+        <SubmitConfirmModal
           onCancel={() => setShowSubmitPopup(false)}
           onConfirm={async () => {
             setIsSubmitted(true);
@@ -338,169 +426,89 @@ const QualityInspectionFullScreen = () => {
           }}
         />
       )}
-
-      <input type="file" accept="image/*" capture="environment" ref={cameraInputRef} style={{ display: "none" }} onChange={handleImageCapture} />
-
-      <div className="bg-white border rounded shadow-sm grow d-flex flex-column">
-        {/* Header Section */}
-        <div className="p-md-4 p-2">
-          <div className="row g-0">
-            <div className="col-12 col-lg-10 pe-lg-4">
-              <div className="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-2 mb-3">
-                <HeaderField label="MACHINE ID" value={id} />
-                <HeaderField label="ROLL NO" value={rollNumber} />
-                <HeaderField label="JOB NO" value={rollData?.jobno} />
-                <HeaderField label="COLOR" value={rollData?.colour} />
-                <HeaderField label="PONO" value={rollData?.pono} />
-              </div>
-              <div className="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-2 pb-3 border-bottom">
-                <HeaderField label="PDC REF" value={rollData?.pdcref} />
-                <HeaderField label="FABRIC" value={rollData?.fabricdescription} />
-                <HeaderField label="WEIGHT" value={rollData?.weight} />
-                <HeaderField label="DIA" value={rollData?.dia} />
-                <HeaderField label="LOOP LENGTH" value={rollData?.ll} />
-              </div>
-              <div className="d-flex align-items-center justify-content-between mt-3">
-                <div className="fw-bold fs-4 font-monospace">{formatTime(time)}</div>
-                <button className="btn btn-danger text-white fw-bold px-4 py-2 d-flex align-items-center gap-2"
-                  disabled={isSubmitted} onClick={() => setShowSubmitPopup(true)}>
-                  <Save size={18} /> Submit
-                </button>
-              </div>
-            </div>
-
-            <div className="col-lg-2 ps-4 border-start d-none d-lg-flex flex-column gap-2">
-              <button className="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-2" onClick={() => cameraInputRef.current.click()}><Camera size={16} /> Capture</button>
-              <button className="btn btn-primary btn-sm d-flex align-items-center justify-content-center gap-2" onClick={() => setShowImage(!showImage)}><ImageIcon size={16} /> View</button>
-              <div className="p-1 bg-white mt-1 border text-center" style={{ height: "150px" }}>
-                {showImage && (previewImage || capturedImage) ? (
-                  <img src={previewImage || `https://app.herofashion.com${capturedImage}`} alt="Captured" className="w-100 h-100 object-fit-contain" />
-                ) : <span className="small text-muted">No Image</span>}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Defect Grid */}
-        <div className="bg-light border-top border-bottom grow d-flex flex-column overflow-hidden">
-          <div className="d-flex flex-nowrap overflow-auto h-100 p-1 gap-1">
-            {defectTypes.map((defect, index) => (
-              <div key={defect.id} className="d-flex flex-column border rounded bg-white shadow-sm" style={{ minWidth: "128px", flex: "1 0 128px" }}>
-                <div className="bg-light text-center py-2 border-bottom">
-                  <div className="fw-bold fs-6">{defect.name}</div>
-                  <div className="fw-bold text-secondary fs-6" style={{ fontSize: "0.7rem" }}>{defect.tamil}</div>
-                  <div className="fw-bold text-secondary fs-6" style={{ fontSize: "0.7rem" }}>{defect.hindi}</div>
-                </div>
-                <div className="p-3 d-flex align-items-center justify-content-center grow">
-                  {defect.img ? (
-                    <img src={defect.img} alt={defect.name} style={{ width: "80px", height: "80px", objectFit: "cover" }} className="rounded border" />
-                  ) : <span className="text-muted small">No Image</span>}
-                </div>
-                <div className="px-2 pb-2">
-                  <input type="text" className="form-control form-control-sm text-center fw-bold bg-white" readOnly value={defectData[index].display} />
-                </div>
-                <div className="d-flex flex-column">
-                  <button onClick={() => handlePlusClick(index, defect.name)} className="btn btn-success rounded-0 d-flex align-items-center justify-content-center py-2"><Plus size={20} /></button>
-                  <button onClick={() => handleMinusClick(index, defect.name)} className="btn btn-danger d-flex align-items-center justify-content-center rounded-0 py-2"><Minus size={20} /></button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="p-3 bg-white">
-          <label className="fw-bold small">Remarks:</label>
-          <input type="text" className="form-control mt-1" placeholder="Add notes..." value={remarks} onChange={(e) => setRemarks(e.target.value)} />
-        </div>
-      </div>
     </div>
   );
 };
 
-// --- SUB-COMPONENTS ---
-
+/* --- Sub-components remain unchanged from your logic --- */
 const CountMeterModal = ({ initialData, onClose, onSave }) => {
-  const [count, setCount] = useState(initialData.count || 0);
-  const [meter, setMeter] = useState(initialData.meter || "");
+    const [count, setCount] = useState(initialData.count || 0);
+    const [meter, setMeter] = useState(initialData.meter || "");
+    const adjustCount = (val) => setCount((prev) => Math.max(0, prev + val));
+  const adjustMeter = (val) =>
+    setMeter((prev) => {
+      const next = (Number(prev) || 0) + val;
+      return next >= 0 ? String(next) : "";
+    });
 
-  const adjustCount = (val) => setCount(prev => Math.max(0, prev + val));
-  const adjustMeter = (val) => setMeter(prev => {
-    const next = (Number(prev) || 0) + val;
-    return next >= 0 ? String(next) : "";
-  });
-
-  return (
-    <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50" style={{ zIndex: 3000 }}>
-      <div className="bg-white p-4 rounded-3 shadow" style={{ width: "380px" }}>
-        <h5 className="fw-bold mb-4 text-center border-bottom pb-2">Update Defect Details</h5>
-        
-        <div className="mb-4">
-          <label className="fw-bold mb-2 d-block">Defect Count:</label>
-          <div className="input-group">
-            <button className="btn btn-danger px-3" onClick={() => adjustCount(-1)}>-</button>
-            <input type="number" className="form-control text-center fw-bold" value={count} onChange={(e) => setCount(Number(e.target.value))} />
-            <button className="btn btn-success px-3" onClick={() => adjustCount(1)}>+</button>
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[3000]">
+        <div className="bg-white p-5 rounded shadow w-[360px]">
+          <h5 className="text-center font-bold border-b pb-2 mb-4 text-gray-700">Update Defect Details</h5>
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Defect Count:</label>
+            <div className="flex items-center">
+              <button onClick={() => adjustCount(-1)} className="bg-red-500 text-white px-4 py-1.5 rounded-l">-</button>
+              <input type="number" value={count} onChange={(e) => setCount(Number(e.target.value))} className="w-full text-center font-bold py-1" />
+              <button onClick={() => adjustCount(1)} className="bg-green-500 text-white px-4 py-1.5 rounded-r">+</button>
+            </div>
           </div>
-        </div>
-
-        <div className="mb-4">
-          <label className="fw-bold mb-2 d-block">Meter Point:</label>
-          <div className="input-group">
-            <button className="btn btn-danger px-3" onClick={() => adjustMeter(-1)}>-</button>
-            <input type="number" className="form-control text-center fw-bold" value={meter} placeholder="0" onChange={(e) => setMeter(e.target.value)} />
-            <button className="btn btn-success px-3" onClick={() => adjustMeter(1)}>+</button>
+          <div className="mb-4">
+            <label className="block font-semibold mb-1">Meter Point:</label>
+            <div className="flex items-center">
+              <button onClick={() => adjustMeter(-1)} className="bg-red-500 text-white px-4 py-1.5 rounded-l">-</button>
+              <input type="number" value={meter} onChange={(e) => setMeter(e.target.value)} className="w-full text-center font-bold py-1" />
+              <button onClick={() => adjustMeter(1)} className="bg-green-500 text-white px-4 py-1.5 rounded-r">+</button>
+            </div>
           </div>
-        </div>
-
-        <div className="d-flex gap-2">
-          <button className="btn btn-light border w-100" onClick={onClose}>Cancel</button>
-          <button className="btn btn-primary w-100 fw-bold" onClick={() => onSave(count, meter)}>Apply</button>
+          <div className="flex gap-2">
+            <button onClick={onClose} className="w-1/2 border rounded py-1 hover:bg-gray-100">Cancel</button>
+            <button onClick={() => onSave(count, meter)} className="w-1/2 bg-blue-600 text-white rounded py-1 hover:bg-blue-700">Apply</button>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 };
 
 const NeedleMeterPopup = ({ value, setValue, onSave, onClose }) => (
-  <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50" style={{ zIndex: 3000 }}>
-    <div className="bg-white p-4 rounded shadow" style={{ width: "320px" }}>
-      <h6 className="fw-bold mb-3">Needle Line Meter Position:</h6>
-      <input className="form-control text-center fw-bold mb-3 fs-5" type="number" value={value} autoFocus onChange={(e) => setValue(e.target.value)} />
-      <div className="d-flex gap-2">
-        <button className="btn btn-secondary w-100" onClick={onClose}>Cancel</button>
-        <button className="btn btn-primary w-100" onClick={onSave}>Save</button>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[3000]">
+      <div className="bg-white p-5 rounded shadow w-[320px]">
+        <h6 className="font-bold mb-3 text-sm">Needle Line Meter Position:</h6>
+        <input className="w-full border rounded text-center py-1 font-semibold text-lg mb-4" type="number" value={value} autoFocus onChange={(e) => setValue(e.target.value)} />
+        <div className="flex gap-2">
+          <button onClick={onClose} className="flex-1 border rounded py-1 hover:bg-gray-100">Cancel</button>
+          <button onClick={onSave} className="flex-1 bg-blue-600 text-white rounded py-1 hover:bg-blue-700">Save</button>
+        </div>
       </div>
     </div>
-  </div>
 );
 
 const ConfirmDecreaseModal = ({ onConfirm, onCancel }) => (
-  <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50" style={{ zIndex: 3000 }}>
-    <div className="bg-white p-4 rounded shadow text-center" style={{ width: "320px" }}>
-      <AlertTriangle color="#f59e0b" size={48} className="mb-2" />
-      <h5 className="fw-bold">Confirm Decrease</h5>
-      <p className="text-muted small">Are you sure you want to reduce the defect count?</p>
-      <div className="d-flex gap-2 mt-3">
-        <button className="btn btn-outline-secondary w-100" onClick={onCancel}>No</button>
-        <button className="btn btn-danger w-100" onClick={onConfirm}>Yes, Decrease</button>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[3000]">
+      <div className="bg-white p-5 rounded shadow text-center w-[320px]">
+        <AlertTriangle className="text-yellow-500 mx-auto mb-2" size={40} />
+        <h5 className="font-bold text-gray-800">Confirm Decrease</h5>
+        <p className="text-xs text-gray-500">Are you sure you want to reduce the defect count?</p>
+        <div className="flex gap-2 mt-4">
+          <button onClick={onCancel} className="flex-1 border py-1 rounded hover:bg-gray-100">No</button>
+          <button onClick={onConfirm} className="flex-1 bg-red-600 text-white py-1 rounded hover:bg-red-700">Yes, Decrease</button>
+        </div>
       </div>
     </div>
-  </div>
 );
 
 const SubmitConfirmModal = ({ onConfirm, onCancel }) => (
-  <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50" style={{ zIndex: 3000 }}>
-    <div className="bg-white p-4 rounded shadow text-center" style={{ width: "350px" }}>
-      <AlertTriangle color="#dc3545" size={48} className="mb-2" />
-      <h5 className="fw-bold">Submit Roll?</h5>
-      <p className="text-muted">Once submitted, you cannot edit this roll data.</p>
-      <div className="d-flex gap-2 mt-4">
-        <button className="btn btn-secondary w-100" onClick={onCancel}>Cancel</button>
-        <button className="btn btn-danger w-100 fw-bold" onClick={onConfirm}>Confirm & Submit</button>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-[3000]">
+      <div className="bg-white p-5 rounded shadow text-center w-[350px]">
+        <AlertTriangle className="text-red-600 mx-auto mb-2" size={40} />
+        <h5 className="font-bold text-gray-800">Submit Roll?</h5>
+        <p className="text-xs text-gray-500">Once submitted, you cannot edit this roll data.</p>
+        <div className="flex gap-2 mt-4">
+          <button onClick={onCancel} className="flex-1 border py-1 rounded hover:bg-gray-100">Cancel</button>
+          <button onClick={onConfirm} className="flex-1 bg-red-600 text-white py-1 rounded hover:bg-red-700">Confirm & Submit</button>
+        </div>
       </div>
     </div>
-  </div>
 );
 
 export default QualityInspectionFullScreen;

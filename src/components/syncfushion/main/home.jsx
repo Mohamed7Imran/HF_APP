@@ -13,6 +13,7 @@ import StoreGrid from '../order/StoreGrid.tsx';
 import MultiQuality from '../order/MultiQuality.jsx';
 
 import PRN from '../order/ord_prn.tsx';
+import TemplateGallery from '../order/eblockeditor.tsx';
 import Excel from '../order/excel.tsx';
 import FabricForm from '../fabric/Fabric.jsx';
 import Signin1 from '../layout/Signup.tsx';
@@ -52,6 +53,7 @@ function Home() {
          <Route path="/sample" element={<Sample />} /> 
          <Route path="/PRN" element={<PRN />} /> 
          <Route path="/Excel" element={<Excel />} /> 
+         <Route path="/TemplateGallery" element={<TemplateGallery />} /> 
          {/* <Route path="/Overview" element={<Overview />} />  */}
          <Route path="/fabric" element={<FabricForm />} /> 
          <Route path='/signup' element={<Signin1 />} />

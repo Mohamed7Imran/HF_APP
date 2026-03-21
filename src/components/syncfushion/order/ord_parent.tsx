@@ -84,6 +84,7 @@ interface OrderData {
   production_type_inside_outside: string;
   quantity: string;
   director_sample_order: string;
+  reference: string;
   mainimagepath: string;
   finaldelvdate: string;
   Printing?: PrintingRow[];
@@ -371,6 +372,18 @@ const  udf= (p: OrderData) => (
       <b>7:</b> {highlightText(p.u7)}<br />
       <b>8-Fab:</b> {highlightText(p.u8)}<br />
       <b>14-Fabdy:</b> {highlightText(p.u14)}<br />
+      {/* <b>25-week:</b> {highlightText(p.u25)}<br /> */}
+      {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
+      <b>Qty:</b> {highlightText(p.quantity)} */}
+    </div>
+  );
+const  udf11= (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      {/* <b>1-Print:</b> {highlightText(p.printing_R)}<br />
+      <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
+      <b>7:</b> {highlightText(p.u7)}<br />
+      <b>8-Fab:</b> {highlightText(p.u8)}<br />
+      <b>14-Fabdy:</b> {highlightText(p.u14)}<br /> */}
       <b>25-week:</b> {highlightText(p.u25)}<br />
       {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
       <b>Qty:</b> {highlightText(p.quantity)} */}
@@ -435,6 +448,7 @@ const   prdty= (p: OrderData) => (
                         <div><b>Job No:</b> {showVal(props.jobno_oms)}</div>
                         <div><b>Buyer:</b> {showVal(props.buyer1)}</div>
                         <div><b>Company:</b> {showVal(props.company_name)}</div>
+                        <div><b>ref:</b> {showVal(props.reference)}</div>
 
                         <div><b>Style Name:</b> {showVal(props.stylename)}</div>
                         <div><b>Style No:</b> {showVal(props.styleno)}</div>
@@ -567,6 +581,8 @@ const   prdty= (p: OrderData) => (
             filterSettings={{ type: 'Menu' }}
             // allowTextWrap={true}
             allowResizing={true}
+            allowReordering={true}
+            searchSettings={{  operator: 'contains', ignoreCase: true }}
             toolbar={toolbarOptions}
             editSettings={{ allowEditing: true, allowDeleting: true, mode: 'Dialog' }}
             actionBegin={actionBegin}
@@ -576,17 +592,20 @@ const   prdty= (p: OrderData) => (
             detailTemplate={detailTemplate}
           >
             <ColumnsDirective>
-              <ColumnDirective field="jobno_oms" headerText="OR" width="120" isPrimaryKey={true} />
-              <ColumnDirective headerText="Photo" width="80" template={photoTemplate} textAlign="Center" allowFiltering={false} />
-              <ColumnDirective field="buyer1" headerText="Buy" width="100" template={genericHighlighter('buyer1')} />
+              {/* <ColumnDirective field="jobno_oms" headerText="OR" width="120" isPrimaryKey={true} /> */}
               <ColumnDirective field="jobno_oms" headerText="Order Info" width="100" template={orderSummaryTemplate} />
+              <ColumnDirective headerText="Photo" width="80" template={photoTemplate} textAlign="Center" allowFiltering={false} />
               <ColumnDirective field="Fdt" headerText="Delivery Info" width="100" template={deliveryInfoTemplate} />
+              {/* <ColumnDirective field="buyer1" headerText="Buy" width="100" template={genericHighlighter('buyer1')} /> */}
+              {/* <ColumnDirective field="jobno_oms" headerText="Order Info" width="100" template={orderSummaryTemplate} /> */}
+              {/* <ColumnDirective field="Fdt" headerText="Delivery Info" width="100" template={deliveryInfoTemplate} /> */}
               <ColumnDirective field="Fdt" headerText="udf1" width="100" template={udf} />
               <ColumnDirective field="udf2" headerText="udf2" width="100" template={udf2} />
+              <ColumnDirective field="udf" headerText="udf" width="120" template={udf11} />
               <ColumnDirective field="qualy" headerText="qualy" width="120" template={qualy} />
               <ColumnDirective field="prdty" headerText="prdty" width="120" template={prdty} />
-              <ColumnDirective field="merch" headerText="Mer" width="100" template={genericHighlighter('merch')} />
-              <ColumnDirective field="punit_sh" headerText="Unit" width="80" template={genericHighlighter('punit_sh')} />
+              {/* <ColumnDirective field="merch" headerText="Mer" width="100" template={genericHighlighter('merch')} /> */}
+              {/* <ColumnDirective field="punit_sh" headerText="Unit" width="80" template={genericHighlighter('punit_sh')} /> */}
               <ColumnDirective field="quantity" headerText="Qty" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
               <ColumnDirective field="final_delivery_date" headerText="Fdt" width="120" template={genericHighlighter('final_delivery_date')} />
               <ColumnDirective field="production_type_inside_outside" headerText="Type" width="120" template={genericHighlighter('production_type_inside_outside')} />

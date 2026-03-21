@@ -55,7 +55,7 @@ interface OrderData {
   quality_controller: string; reference: string; insdatenew: string; styledesc: string;
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
   shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
-  u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;
+  u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;number_03_emb:string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;Print:string;others1:string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;
   prnmeaimg?:string;mpic?:string;
@@ -482,6 +482,31 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
       <b>Type:</b> {highlightText(p.production_type_inside_outside)}
     </div>
   );
+
+  const  udf= (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      <b>1-Print:</b> {highlightText(p.printing_R)}<br />
+      <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
+      <b>7:</b> {highlightText(p.u7)}<br />
+      <b>8-Fab:</b> {highlightText(p.u8)}<br />
+      <b>14-Fabdy:</b> {highlightText(p.u14)}<br />
+      <b>25-week:</b> {highlightText(p.u25)}<br />
+      {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
+      <b>Qty:</b> {highlightText(p.quantity)} */}
+    </div>
+  );
+
+  
+  const  udf2= (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      <b>31:</b> {highlightText(p.u31)}<br />
+      <b>36-ITS:</b> {highlightText(p.u36)}<br />
+      <b>u45:</b> {highlightText(p.u45)}<br />
+      <b>u46:</b> {highlightText(p.u46)}<br />
+      <b>u141:</b> {highlightText(p.u141)}<br />
+    </div>
+  );
+
 
   const toolbarOptions: any[] = [
     "Search",
@@ -981,11 +1006,13 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
           <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} />
           <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={true} />
+          <ColumnDirective headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
+          <ColumnDirective headerText="UDF1" width="150" maxWidth="150" template={udf} />
+          <ColumnDirective headerText="UDF2" width="150" maxWidth="150" template={udf2} />
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
           <ColumnDirective field="others1" headerText="others1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} />
           <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
-          <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
           <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
           <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
@@ -1015,7 +1042,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
           <ColumnDirective field="director_sample_order" headerText="DIR S/O" width="100" template={genericHighlighter('director_sample_order')} />
           <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="100" template={genericHighlighter('order_follow_up')} />
           <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
-          <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')} />
+          <ColumnDirective field="quality_controller" headerText="QC" width="120" template={genericHighlighter('quality_controller')} />
           <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
           <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} />
           <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} />

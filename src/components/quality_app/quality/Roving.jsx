@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import Defects from "../quality/Defects"
 
-export default function ProductionDetails() {
+export default function Roving() {
 
   const { unit, line } = useParams();
   const navigate = useNavigate();
@@ -86,7 +86,7 @@ const fillBundleData = async (bundle) => {
   const handleContinue = () => {
     if (!canContinue) return;
     // navigate(Defects);
-    navigate(`/qc-admin/defects/${unit}/${line}`, {
+    navigate(`/qc-admin/roving/${unit}/${line}`, {
     state: {
       bundleNo,
       jobNo,
@@ -122,7 +122,7 @@ const fillBundleData = async (bundle) => {
         {/* Header */}
         <div className="flex justify-between items-start mb-10">
           <div>
-            <h1 className="text-[28px] font-bold text-[#0F172A]">Bundle Details</h1>
+            <h1 className="text-[28px] font-bold text-[#0F172A]">Roving Qc</h1>
             <p className="text-slate-400 font-medium text-lg">Enter or scan job information</p>
             <p className="text-blue-600 text-md font-extrabold">Unit - {unit} / Line - {line}</p>
           </div>

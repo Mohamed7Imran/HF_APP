@@ -15,6 +15,7 @@ import Syncfushion from "./components/syncfushion/main/home"
 import HeroFashionGrid13 from "./components/syncfushion/order/ord_order";
 import GreyRollChecking from "./components/GreyrollChecking/main/App";
 import FabricForm from "./components/syncfushion/fabric/Fabric";
+import Machine_Allocate from "./components/machine_allocate/main"
 function App() {
 
   useEffect(() => {
@@ -141,6 +142,16 @@ function App() {
             <ProtectedRoute>
               <ProtectedLayout>
                 <GreyRollChecking />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/machine/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Machine_Allocate />
               </ProtectedLayout>
             </ProtectedRoute>
           }

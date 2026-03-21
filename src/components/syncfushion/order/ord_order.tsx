@@ -854,10 +854,26 @@ const showVal = (val: any): string => {
     const ord = Array.isArray(props.jobno_oms) ? props.jobno_oms : [];
     const printGroups = groupByPrint(ord);
 
+    const getUniqueColours = (rows: any[] = []) => {
+      const seen = new Set<string>();
+
+      return rows
+        .filter((r: any) => {
+          const key = `${r?.colour || ""}-${r?.rgb || ""}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        })
+        .map((r: any) => ({
+          colour: r?.colour || "",
+          rgb: r?.rgb || "",
+        }));
+    };
+
     return (
       <div style={{ padding: "20px" }}>
         {printGroups.map((grp: any, idx: number) => {
-          // const colours = getUniqueColours(grp.rows);
+          const colours = getUniqueColours(Array.isArray(grp?.rows) ? grp.rows : []);
 
           const imageCount =
             (grp.image ? 1 : 0) + (grp.image1 ? 1 : 0) + (grp.image2 ? 1 : 0);

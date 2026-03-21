@@ -182,7 +182,7 @@ function Sidebar({ children }) {
 
       {/* --- MOBILE TOP BAR (Fixed Header) --- */}
      
-        <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-emerald-600 text-white flex items-center justify-between px-5 z-[100] shadow-md flex-row-reverse">
+        <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-cyan-700 text-white flex items-center justify-between px-5 z-[100] shadow-md flex-row-reverse">
         <div className="flex items-center gap-6">
          
           <input
@@ -221,7 +221,7 @@ function Sidebar({ children }) {
         />
 
         <div
-          className={`absolute top-0 left-0 bottom-0 w-[280px] bg-emerald-700 text-white shadow-2xl transition-transform duration-300 flex flex-col ${
+          className={`absolute top-0 left-0 bottom-0 w-[280px] bg-cyan-700 text-white shadow-2xl transition-transform duration-300 flex flex-col ${
             mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -238,7 +238,7 @@ function Sidebar({ children }) {
       {/* ---------------- DESKTOP SIDEBAR ---------------- */}
 
       <aside
-        className={`hidden lg:flex flex-col h-full bg-emerald-600 text-white transition-all duration-300 relative z-50 shadow-2xl ${
+        className={`hidden lg:flex flex-col h-full bg-cyan-700 text-white transition-all duration-300 relative z-50 shadow-2xl ${
           sidebarOpen ? "w-64" : "w-20"
         }`}
       >
@@ -290,7 +290,7 @@ function Sidebar({ children }) {
 
               <button
                 onClick={logoutUser}
-                className="text-xs bg-emerald-500 hover:bg-emerald-600 px-2 py-1 rounded"
+                className="text-xs bg-cyan-700 hover:bg-blue-600 px-2 py-1 rounded"
               >
                 Logout
               </button>

@@ -53,7 +53,7 @@ interface OrderData {
   quality_controller: string; reference: string; insdatenew: string; styledesc: string;
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
   shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
-  u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;
+  u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;Print:string;others1:string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;
   prnmeaimg?:String;mpic?:string;
@@ -289,6 +289,19 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
   try {
     let persistedState = setting.data;
+    const gridColumns = Object.assign([], (gridRef.current as any).getColumns());
+    if (persistedState.columns && Array.isArray(persistedState.columns)) {
+      persistedState.columns.forEach((persistedColumn: any) => {
+        const origCol = gridColumns.find((c: any) => c.field === persistedColumn.field);
+        if (origCol) {
+          persistedColumn.template = origCol.template;
+          persistedColumn.headerTemplate = origCol.headerTemplate;
+          persistedColumn.formatter = origCol.formatter;
+          persistedColumn.valueAccessor = origCol.valueAccessor;
+        }
+      });
+    }
+
     (gridRef.current as any).setProperties(persistedState, true);
       setTimeout(() => {
         if (gridRef.current) {
@@ -371,7 +384,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
-  
+
   let serverUpdated = false;
   let newPrimaryKey: number | null = null;
   const actionBegin = (args: AddEventArgs | SaveEventArgs | EditEventArgs | DeleteEventArgs | ActionEventArgs) => {
@@ -392,6 +405,30 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         // searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current.element);
       }
     }
+     if (gridRef.current && args.requestType === 'beginEdit') {
+            const cols: any = gridRef.current?.columns;
+            for (const col of cols) {
+                if (col.field === "jobno_oms" || col.field === "Print") {
+                    col.visible = false;
+                }
+            }
+        }
+        // if (gridRef.current && args.requestType === 'add') {
+        //     const cols: any = gridRef.current?.columns;
+        //     for (const col of cols) {
+        //         if (col.field === "jobno_oms" || col.field === "mainimagepath") {
+        //             col.visible = true;
+        //         }
+        //     }
+        // }
+        if (gridRef.current && args.requestType === 'save') {
+            const cols: any = gridRef.current?.columns;
+            for (const col of cols) {
+                if (col.field === "jobno_oms" || col.field === "Print") {
+                    col.visible = true;
+                }
+            }
+        }
     if (args.requestType === 'save') {
       if ((args as any).action === 'edit') {
         console.log(args)
@@ -761,7 +798,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         // showColumnChooser={true}
         enableAdaptiveUI={true}
         adaptiveUIMode={'Mobile'}
-
+        allowTextWrap={true}
         allowReordering={true}
         allowResizing={true}
         allowPdfExport={true}
@@ -785,7 +822,10 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         <ColumnsDirective>
 
           <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} />
-          <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
+          <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={true} />
+          <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
+          <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
+          <ColumnDirective field="others1" headerText="others1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} />
           <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
           <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
           <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
@@ -793,6 +833,10 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
           <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
           {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
           <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
+          <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="100" template={genericHighlighter('finaldelvdate1')} />
+          <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
+          <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
+          <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
           <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} />
           <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} />
           <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} />

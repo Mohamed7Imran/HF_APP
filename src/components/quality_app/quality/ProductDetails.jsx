@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import Defects from "../quality/Defects"
@@ -7,6 +7,7 @@ export default function ProductionDetails() {
 
   const { unit, line } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [jobNo, setJobNo] = useState("");
   const [product, setProduct] = useState("");
@@ -14,6 +15,7 @@ export default function ProductionDetails() {
   const [size, setSize] = useState("");
   const [bundleNo, setBundleNo] = useState("");
   const [pieces, setPieces] = useState("");
+  const [bundleid, setBundleid] = useState("");
 
   const [isScanning, setIsScanning] = useState(false);
 
@@ -25,7 +27,7 @@ const fillBundleData = async (bundle) => {
 
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/qcapp/get_bundle_data/?bundle_id=${bundle}`
+      `https://hfapi.herofashion.com/qcapp/get_bundle_data/?bundle_id=${bundle}`
     );
 
     const data = await response.json();
@@ -45,6 +47,7 @@ const fillBundleData = async (bundle) => {
     setSize(item.SizeName || "");
     setPieces(item.pc || "");
     setBundleNo(item.Bdl || "");
+    setBundleid(item.BundID || "");
 
   } catch (error) {
     console.error("API Error:", error);
@@ -54,24 +57,26 @@ const fillBundleData = async (bundle) => {
   
   useEffect(() => {
     let scanner = null;
-    if (isScanning) {
-      scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 } });
+     if (isScanning) {
+       scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 } });
       scanner.render(onScanSuccess, onScanError);
-    }
+     } 
 
-    function onScanSuccess(decodedText) {
-      setBundleNo(decodedText);
-      fillBundleData(decodedText);
-      setIsScanning(false);
-      if (scanner) scanner.clear();
-    }
+      function onScanSuccess(decodedText) {
+       setBundleNo(decodedText);
+       fillBundleData(decodedText);
+       setIsScanning(false);
+       if (scanner) scanner.clear();
+      }
 
-    function onScanError(err) {}
+     function onScanError(err) {}
 
-    return () => {
-      if (scanner) scanner.clear();
-    };
-  }, [isScanning]);
+     return () => {
+       if (scanner) scanner.clear();
+     };
+   }, [isScanning]);
+
+
 
   const handleBundleChange = (value) => {
     setBundleNo(value);
@@ -81,7 +86,17 @@ const fillBundleData = async (bundle) => {
   const handleContinue = () => {
     if (!canContinue) return;
     // navigate(Defects);
-    navigate(`/qc-admin/defects/${unit}/${line}`);
+    navigate(`/qc-admin/defects/${unit}/${line}`, {
+    state: {
+      bundleNo,
+      jobNo,
+      product,
+      colour,
+      size,
+      pieces,
+      bundle_id: bundleid,
+    },
+  });
   };
 
   return (

@@ -110,9 +110,61 @@
   color: inherit;
   }
 
+/* Grid font styling - all elements */
+.e-grid {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
 .e-grid .e-headertext {
   color: black;
-  /* font-weight: 400; */
-  font-size: 10px;
+  font-size: 12px;
+  font-weight: 400;
 }
+ 
+.e-grid .e-headercell {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
+.e-grid .e-rowcell {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
+.e-grid .e-grouppaddingcell {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
+.e-grid .e-groupcaptionrow {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
+.e-grid .e-summaryrow {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
+.e-grid .e-filterbarcell {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
+.e-grid .e-gridcontent * {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
+.e-grid .e-templatecell {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
+.e-grid .e-templatecell * {
+  font-size: 12px;
+  font-weight: 400;
+}
+ 
 

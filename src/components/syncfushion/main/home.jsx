@@ -39,8 +39,7 @@ function Home() {
         <Route path="/sync" element={<App />} /> 
         <Route path="/sample" element={<Sample />} /> 
         <Route path="/mulitquality" element={<MultiQuality/>} />
-        
-         <Route path="/HrReportGrid" element={<HrReportGrid />} /> 
+        <Route path="/HrReportGrid" element={<HrReportGrid />} /> 
          <Route path="/OrdPagination" element={<OrdPagination />} /> 
          <Route path='/store' element= {<StoreGrid />} />
          <Route path="/TallyBalanceReport" element={<TallyBalanceReport />} /> 

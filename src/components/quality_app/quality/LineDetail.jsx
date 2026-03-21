@@ -19,10 +19,54 @@ export default function LineDetail() {
         }
     ];
 
-    const handleSelect = (inspectionId) => {
-        // 🔥 Dynamic navigation based on clicked item
-        navigate(`/qc-admin/qc-entry/${unit}/${line}/${inspectionId}`);
-    };
+    // const handleSelect = (inspectionId) => {
+    //     navigate(`/qc-admin/qc-entry/${unit}/${line}/${inspectionId}`);
+    // };
+
+    const handleSelect = async (inspectionId) => {
+  if (inspectionId !== "first-piece") {
+    navigate(`/qc-admin/qc-entry/${unit}/${line}/${inspectionId}`);
+    return;
+  }
+
+  try {
+    const res = await fetch(`https://hfapi.herofashion.com/qcapp/get_last_bundle/?unit=${unit}&line=${line}`);
+    const data = await res.json();
+
+    if (!data.bundle_id) {
+    //   alert("No bundle found");
+      navigate(`/qc-admin/qc-entry/${unit}/${line}/${inspectionId}`);
+      return;
+    }
+
+    // ✅ COMPLETED → go to scan page
+    if (data.is_completed) {
+      navigate(`/qc-admin/qc-entry/${unit}/${line}/first-piece`, {
+        state: { bundle_id: data.bundle_id }
+      });
+    }
+
+    // 🔄 NOT COMPLETED → resume defects page
+    else {
+      navigate(`/qc-admin/defects/${unit}/${line}`, {
+        state: {
+          bundle_id: data.bundle_id,
+          bundleNo: data.bundle_no,
+          jobNo: data.jobno,
+          product: data.product,
+          colour: data.color,
+          size: data.size,
+          pieces: data.total_pieces,
+          inspected: data.piece_no
+        }
+      });
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Server error");
+  }
+};
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">

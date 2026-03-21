@@ -779,7 +779,7 @@ const PRN: React.FC = () => {
               <ColumnDirective field="ordimg" headerText="ord_img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('ordimg')} />
                <ColumnDirective field="tbimg" headerText="top_bot" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('tbimg')} />
               <ColumnDirective field="print_img" headerText="PRN IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
-              <ColumnDirective field="prnmeaimg" headerText="PLT" width="80" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
+              <ColumnDirective field="prnmeaimg" headerText="Emb" width="80" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
 
               {/* <ColumnDirective field="prnmeaimg" headerText="PLT" width="80" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} /> */}
               <ColumnDirective field="mpic" headerText="MMC" width="80" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mpic')} />

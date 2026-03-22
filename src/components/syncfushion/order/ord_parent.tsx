@@ -113,7 +113,7 @@ const showVal = (val: any): string => {
 };
   const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' | 'others1'  ) => (p: OrderData) => { 
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
-    return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
+    return <img src={p[field]} alt="img" style={{ width: '100px', height: '100px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
 
 const groupByPrint = (printing: PrintingRow[]) => {
@@ -335,7 +335,7 @@ const HeroFashionGrid13: React.FC = () => {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
         {src ? (
-          <img src={src} alt="photo" style={{ width: "55px", height: "55px", objectFit: "contain", border: "1px solid #ccc", borderRadius: "6px" }}
+          <img src={src} alt="photo" style={{ width: "85px", height: "85px", objectFit: "contain", border: "1px solid #ccc", borderRadius: "6px" }}
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
         ) : <div style={{width:55, height:55, background:'#eee', borderRadius:6}}></div>}
       </div>

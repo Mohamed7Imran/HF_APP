@@ -810,12 +810,8 @@ const HeroFashionGrid13: React.FC = () => {
             detailTemplate={detailTemplate}
           >
             <ColumnsDirective>
-<<<<<<< HEAD
-              <ColumnDirective field="jobno_oms" headerText="Order Info" width="100" template={orderSummaryTemplate} isPrimaryKey={true} /> 
-=======
               <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
               <ColumnDirective field="jobno_oms" headerText="Order Info" width="100" template={orderSummaryTemplate} isPrimaryKey={true} />
->>>>>>> 80850bd7e891055b6ff4252f48a189de94774857
               <ColumnDirective headerText="Photo" width="80" template={photoTemplate} textAlign="Center" allowFiltering={false} />
               {/* <ColumnDirective field="Fdt" headerText="Delivery Info" width="100" template={deliveryInfoTemplate} />
               <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />

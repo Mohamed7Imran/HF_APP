@@ -112,7 +112,7 @@ const showVal = (val: any): string => {
   }
   try { return String(val); } catch { return "–"; }
 };
-  const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' | 'others1'  ) => (p: OrderData) => { 
+  const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' | 'others1' | 'others2' | 'others3' | 'others4' | 'others5' | 'others6' | 'others7') => (p: OrderData) => { 
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" style={{ width: '100px', height: '100px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
@@ -398,6 +398,17 @@ const HeroFashionGrid13: React.FC = () => {
     </div>
   );
 
+  //   const deliveryInfoTemplate = (p: OrderData) => (
+  //   <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+  //     {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
+  //     <b>Dir:</b> {highlightText(p.director_sample_order)}<br />
+  //     <b>ST:</b> {highlightText(p.styleno)}<br />
+  //     <b>Uom:</b> {highlightText(p.uom)}<br />
+  //     <b>Type:</b> {highlightText(p.production_type_inside_outside)}
+  //   </div>
+  // );
+
+
   const qualy= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>styleno:</b> {highlightText(p.styleno)}<br />
@@ -426,7 +437,7 @@ const HeroFashionGrid13: React.FC = () => {
     };
 
     return (
-      <div style={{ padding: "10px" }}>
+      <div style={{ padding: "10px"}}>
         <TabComponent heightAdjustMode="Auto">
             <div className="e-tab-header">
                 <div> Order Details </div>
@@ -435,9 +446,11 @@ const HeroFashionGrid13: React.FC = () => {
                 <div> New OrdImageTab </div>
             </div>
             <div className="e-content">
+
                 {/* TAB 1: ORDER DETAILS */}
-                <div style={{ padding: '10px' }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", columnGap: "20px", rowGap: "12px", fontSize: "14px" }}>
+                <div style={{ padding: '5px' ,height:'10px' }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "0.2fr 0.2fr 0.2fr", columnGap: "2px", rowGap: "1px", fontSize: "14px",height:"50px" }}>
+                      
                         <div><b>Job No:</b> {showVal(props.jobno_oms)}</div>
                         <div><b>Buyer:</b> {showVal(props.buyer1)}</div>
                         <div><b>Company:</b> {showVal(props.company_name)}</div>
@@ -472,7 +485,7 @@ const HeroFashionGrid13: React.FC = () => {
                                     {/* Left: Image */}
                                     <div style={{ border: '1px solid #eee', padding: '5px', background: '#fff' }}>
                                         {images.length > 0 ? (
-                                            <img src={images[0]} alt="print" style={{ width: "100%", height: "auto", objectFit: "contain" }}
+                                            <img src={images[0]} alt="print" style={{ width: "100px", height: "100px", objectFit: "contain" }}
                                                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
                                         ) : (
                                             <div style={{width: '100%', height: '150px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc'}}>
@@ -483,7 +496,7 @@ const HeroFashionGrid13: React.FC = () => {
 
                                     {/* Right: Data & Colors */}
                                     <div style={{ width: '100%' }}>
-                                        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1.2fr 0.8fr", columnGap: "20px", rowGap: "10px", fontSize: "13px", marginBottom: "15px" }}>
+                                        <div style={{ display: "grid", gridTemplateColumns: "0.4fr 0.4fr 0.4fr 0.4fr", columnGap: "1px", rowGap: "1px", fontSize: "13px", marginBottom: "15px" }}>
                                             <div><b>Job No:</b> {showVal(grp.jobno)}</div>
                                             <div><b>Print Type:</b> {showVal(grp.print_type)}</div>
                                             <div><b>Print Description:</b> {showVal(grp.print_description)}</div>
@@ -491,14 +504,23 @@ const HeroFashionGrid13: React.FC = () => {
                                             <div><b>Inside / Outside:</b> {showVal(grp.inside_outside_print_emb)}</div>
                                             <div><b>Individual Part:</b> {showVal(grp.individual_part_print_emb)}</div>
                                             <div><b>Top / Bottom:</b> {showVal(grp.top_bottom)}</div>
-
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                    {colours.map((c: any, i: number) => (
+                                                        <div key={i} style={{ display: "flex", alignItems: "center", gap: "4px", background: '#f5f5f5', padding: '2px 6px', borderRadius: '4px' }}>
+                                                            <div style={{ width: "16px", height: "16px", background: c.rgb || "#fff", border: "1px solid #ccc" }} />
+                                                            <span style={{ fontSize: '12px' }}>{showVal(c.colour)}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            
                                             <div><b>Print Screen 1:</b> {showVal(grp.print_screen_1)}</div>
                                             <div><b>Print Screen 2:</b> {showVal(grp.print_screen_2)}</div>
                                             <div><b>Print Screen 3:</b> {showVal(grp.print_screen_3)}</div>
+                                        
                                         </div>
 
                                         {/* Colors Row */}
-                                        {colours.length > 0 && (
+                                        {/* {colours.length > 0 && (
                                             <div style={{ marginTop: '10px', borderTop: '1px solid #eee', paddingTop: '10px' }}>
                                                 <b style={{ fontSize: '13px', display: 'block', marginBottom: '5px' }}>Colours:</b>
                                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
@@ -510,7 +532,7 @@ const HeroFashionGrid13: React.FC = () => {
                                                     ))}
                                                 </div>
                                             </div>
-                                        )}
+                                        )} */}
                                     </div>
                                 </div>
                             </div>
@@ -519,7 +541,7 @@ const HeroFashionGrid13: React.FC = () => {
                 </div>
 
                 {/* TAB 3: NEWDATA (Product Card Style) */}
-                <div style={{ padding: '15px', background: '#f5f5f5' }}>
+                {/* <div style={{ padding: '15px', background: '#f5f5f5' }}>
                     <h4 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>PRINTING MENU</h4>
                     
                     {printGroups.length === 0 && <div style={{color: '#999', textAlign: 'center', padding: '40px', background: '#fff', borderRadius: '8px'}}>No Print Details Available</div>}
@@ -545,7 +567,7 @@ const HeroFashionGrid13: React.FC = () => {
                                         alignItems: 'center', 
                                         justifyContent: 'center',
                                         padding: '5px',
-                                        borderRight: '1px solid #eee'
+                                        borderRight: '1px solid #eee' 
                                     }}>
                                         {grp.image ? (
                                             <img src={grp.image} alt="print" style={{ width: "100%", height: "auto", maxHeight: "100px", objectFit: "contain", display: 'block' }}
@@ -603,7 +625,7 @@ const HeroFashionGrid13: React.FC = () => {
                             );
                         })}
                     </div>
-                </div>
+                </div> */}
 
                 {/* TAB 4: NEW ORDIMAGETAB (Exact Pizza Layout with Order Data) */}
                 <div style={{ padding: '0' }}>
@@ -625,20 +647,21 @@ const HeroFashionGrid13: React.FC = () => {
                                 <div className="e-info-text-separator">
                                     <span className="e-pizza-title">{showVal(props.stylename)}</span>
                                     <span className="e-pizza-size">({showVal(props.styleno)} size)</span>
-                                    <span className="e-pizza-price-text">Ref &nbsp;</span>
+                                    {/* <span className="e-pizza-price-text">Ref &nbsp;</span> */}
                                     <span className="e-pizza-size">({showVal(props.reference)})</span>
                                 </div>
                                 <div className="e-info-text-separator">
                                     <span>{showVal(props.buyer1)} - {showVal(props.company_name)}</span>
                                 </div>
-                                <div> <span className="e-pizza-size">({showVal(props.reference)})</span></div>
+                                {/* <div> <span className="e-pizza-size">({showVal(props.reference)})</span></div> */}
                                
                                 <div className="e-info-text-separator">
                                     {chipTags([showVal(props.punit_sh), showVal(props.production_type_inside_outside), showVal(props.director_sample_order)])}
                                 </div>
-                                  <div className="e-pizza-price-min-layout e-info-text-separator">
+                                  {/* <div className="e-pizza-price-min-layout e-info-text-separator">
                                     <span className="e-pizza-price-text">({showVal(props.reference)})</span>
                                   </div>
+                                  */}
                                 <div className="e-pizza-price-min-layout e-info-text-separator">
                                     <span className="e-pizza-price-text">Total Qty&nbsp;</span>
                                     <span className="e-pizza-price">{showVal(props.quantity)}</span>
@@ -813,11 +836,11 @@ const HeroFashionGrid13: React.FC = () => {
               <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
               <ColumnDirective field="jobno_oms" headerText="Order Info" width="100" template={orderSummaryTemplate} isPrimaryKey={true} />
               <ColumnDirective headerText="Photo" width="80" template={photoTemplate} textAlign="Center" allowFiltering={false} />
-              {/* <ColumnDirective field="Fdt" headerText="Delivery Info" width="100" template={deliveryInfoTemplate} />
+              <ColumnDirective field="Fdt" headerText="Delivery Info" width="100" template={deliveryInfoTemplate} />
               <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
-              <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />*/}
-                <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
-                 <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
+              <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
+              <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
+              <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
               <ColumnDirective field="others1" headerText="others1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} />
               <ColumnDirective field="printing_R" headerText="udf1" width="100" template={udf} />
               <ColumnDirective field="udf2" headerText="udf2" width="100" template={udf2} />

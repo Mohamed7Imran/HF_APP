@@ -58,7 +58,7 @@ interface OrderData {
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;Fab_R:string;
   ITS_R:string;Order_R:string;Dy_R:string;Sample_R:string;Week_R:string;
   prnmeaimg?:string;mpic?:string;
-  
+  Others2:string;Others3:string;Others4:string;Others5:string;Others6:string;Others7:string
 
 }
 
@@ -381,7 +381,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
   );
 
   // --- Templates ---
-  const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' | 'others1'  ) => (p: OrderData) => { 
+  const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' |  'others1' | 'others2' | 'others3' | 'others4' | 'others5' | 'others6' | 'others7'  ) => (p: OrderData) => { 
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
@@ -478,11 +478,12 @@ const  udf= (p: OrderData) => (
       <b>7:</b> {highlightText(p.u7)}<br />
       <b>8-Fab:</b> {highlightText(p.Fab_R)}<br />
       <b>14-Fabdy:</b> {highlightText(p.Dy_R)}<br />
-      <b>25-week:</b> {highlightText(p.Week_R)}<br />
+      {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
       {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
       <b>Qty:</b> {highlightText(p.quantity)} */}
     </div>
   );
+
   const  udf2= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>31:</b> {highlightText(p.ITS_R)}<br />
@@ -507,7 +508,7 @@ const   qualy= (p: OrderData) => (
       <b>styleno:</b> {highlightText(p.styleno)}<br />
       <b>styledesc:</b> {highlightText(p.styledesc)}<br />
       <b>qcontr:</b> {highlightText(p.quality_controller)}<br />
-      <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br />
+
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
   </div>
   );
@@ -517,6 +518,8 @@ const   prdty= (p: OrderData) => (
       <b>ptype:</b> {highlightText(p.production_type_inside_outside)}<br />
       <b>dir_sam_ord:</b> {highlightText(p.director_sample_order)}<br />
       <b>comp:</b> {highlightText(p.company_name)}<br />
+      {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
+      <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br />
       {/* <b>ref:</b> {highlightText(p.reference)}<br /> */}
       {/* <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br /> */}
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
@@ -540,6 +543,16 @@ const   Alldate= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br />
       <b>Dir:</b> {highlightText(p.director_sample_order)}<br />
+      <b>ST:</b> {highlightText(p.styleno)}<br />
+      <b>Uom:</b> {highlightText(p.uom)}<br />
+      <b>Type:</b> {highlightText(p.production_type_inside_outside)}
+    </div>
+  );
+
+  const udf4 = (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
+      <b>Week_R:</b> {highlightText(p.Week_R)}<br />
       <b>ST:</b> {highlightText(p.styleno)}<br />
       <b>Uom:</b> {highlightText(p.uom)}<br />
       <b>Type:</b> {highlightText(p.production_type_inside_outside)}
@@ -1076,10 +1089,11 @@ const showVal = (val: any): string => {
         allowSorting={true}
         allowFiltering={true}
         allowMultiSorting={true}
-        filterSettings={{type:'CheckBox'}}
+        // filterSettings={{type:'CheckBox'}}
+        filterSettings={{ type: 'Menu' }}
         statelessTemplates={['directiveTemplates']}
         allowGrouping={true}
-        showColumnMenu={true}
+        // showColumnMenu={true}
         // showColumnChooser={true}
         enableAdaptiveUI={true}
         adaptiveUIMode={'Mobile'}
@@ -1110,10 +1124,13 @@ const showVal = (val: any): string => {
           <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
+          <ColumnDirective field="others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} />
+          <ColumnDirective field="others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others2')} allowEditing={false} />
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
           <ColumnDirective field="printing_R" headerText="udf1" width="150" maxWidth="150" template={udf} />
           <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} />
           <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} />
+          <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} />
           <ColumnDirective field="prdty" headerText="prdty" width="150" maxWidth="250" template={prdty} />
           <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective headerText='All ' width="90" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
@@ -1127,11 +1144,15 @@ const showVal = (val: any): string => {
           
           <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
-          <ColumnDirective field="others1" headerText="others1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} />
-          <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
+          <ColumnDirective field="others3" headerText="imgs3" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others3')} allowEditing={false} />
+          <ColumnDirective field="others4" headerText="imgs4" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others4')} allowEditing={false} />
+          <ColumnDirective field="others5" headerText="imgs5" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others5')} allowEditing={false} />
+          <ColumnDirective field="others6" headerText="imgs6" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others6')} allowEditing={false} />
+          <ColumnDirective field="others7" headerText="imgs7" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others7')} allowEditing={false} />
+          {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
           <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
-          {/* <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} /> */}
-          {/* <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
+          <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
+          <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
           {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
           {/* <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} /> */}
           {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
@@ -1158,7 +1179,7 @@ const showVal = (val: any): string => {
           {/* <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} /> */}
           {/* <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} /> */}
           {/* <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} /> */}
-          <ColumnDirective field="quantity" headerText="QTY" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
+          {/* <ColumnDirective field="quantity" headerText="QTY" width="90" textAlign="Right" template={genericHighlighter('quantity')} /> */}
           {/* <ColumnDirective field="company_name" headerText="COMPANY" width="90" template={genericHighlighter('company_name')} /> */}
 
         </ColumnsDirective>
@@ -1248,7 +1269,14 @@ const showVal = (val: any): string => {
             border: 1px solid #dce1e6;
             display: none
             }
-            
+
+
+             @media (max-width: 1023px){
+               .dashboard-header {
+               margin-top:60px
+               }
+             }
+
             /* --- Mobile Layout --- */
             @media (max-width: 768px) {
               .dashboard-header {

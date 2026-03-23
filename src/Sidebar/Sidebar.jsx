@@ -182,7 +182,7 @@ function Sidebar({ children }) {
 
       {/* --- MOBILE TOP BAR (Fixed Header) --- */}
      
-        <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-cyan-700 text-white flex items-center justify-between px-5 z-[100] shadow-md flex-row-reverse">
+        <header className="lg:hidden fixed left-0 right-0 h-16 bg-cyan-700 text-white flex items-center justify-between px-5 z-[100] shadow-md flex-row-reverse">
         <div className="flex items-center gap-6">
          
           <input

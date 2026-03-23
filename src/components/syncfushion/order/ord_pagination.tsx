@@ -274,6 +274,12 @@ const OrdPagination: React.FC = () => {
           font-size: 13px;
         }
 
+           @media (max-width: 1023px){
+            .dashboard-header {
+              margin-top: 60px
+            }
+          }
+
         /* Mobile View Rules */
         @media (max-width: 768px) {
           .responsive-header {

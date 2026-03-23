@@ -1247,6 +1247,12 @@ const showVal = (val: any): string => {
             border: 1px solid #dce1e6;
             display: none
             }
+
+            @media (max-width: 1023px){
+            .dashboard-header {
+              margin-top: 60px
+            }
+            }
             
             /* --- Mobile Layout --- */
             @media (max-width: 768px) {
@@ -1254,7 +1260,8 @@ const showVal = (val: any): string => {
                 flex-direction: column;
                 padding: 10px;
                 align-items: stretch;
-                gap: 10px;
+                gap: 10px;             
+                margin-top: 60px
                 }
 
                 .breadcromp{

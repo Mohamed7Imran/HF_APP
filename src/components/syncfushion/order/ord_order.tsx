@@ -1270,20 +1270,20 @@ const showVal = (val: any): string => {
             display: none
             }
 
-
-             @media (max-width: 1023px){
-               .dashboard-header {
-               margin-top:60px
-               }
-             }
-
+            @media (max-width: 1023px){
+            .dashboard-header {
+              margin-top: 60px
+            }
+            }
+            
             /* --- Mobile Layout --- */
             @media (max-width: 768px) {
               .dashboard-header {
                 flex-direction: column;
                 padding: 10px;
                 align-items: stretch;
-                gap: 10px;
+                gap: 10px;             
+                margin-top: 60px
                 }
 
                 .breadcromp{

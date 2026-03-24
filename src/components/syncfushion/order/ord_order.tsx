@@ -95,11 +95,26 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
   const gridRef = useRef<GridComponent>(null);
   const searchTimeout = useRef<any>(null);
 
-  const searchableFields = [
-    'jobno_oms', 'company_name', 'buyer1', 'stylename', 'merch',
-    'punit_sh', 'styleno', 'quantity', 'director_sample_order',
-    'printing_R', 'Emb', 'abc', 'u46', 'uom', 'final_delivery_date',
-    'production_type_inside_outside', 'prnclr'
+  // const searchableFields = [
+  //   'jobno_oms', 'company_name', 'buyer1', 'stylename', 'merch',
+  //   'punit_sh', 'styleno', 'quantity', 'director_sample_order',
+  //   'printing_R', 'Emb', 'abc', 'u46', 'uom', 'final_delivery_date',
+  //   'production_type_inside_outside', 'prnclr'
+  // ];
+    const searchableFields = [
+    'slno1', 'jobno_oms', 'company_name', 'buyer1', 'stylename', 'uom',
+    'final_delivery_date', 'merch', 'punit_sh', 'styleno',
+    'production_type_inside_outside', 'quantity', 'director_sample_order',
+    'printing_R', 'Fdt', 'Emb', 'abc', 'order_follow_up',
+    'quality_controller', 'reference', 'insdatenew', 'styledesc',
+    'date', 'ourdelvdate', 'podate', 'vessel_dt', 'vessel_yr',
+    'shipment_complete', 'u7', 'u141', 'u45', 'u36', 'u31',
+    'u15', 'u14', 'u8', 'u25', 'insdate', 'insdateyear', 'finaldelvdate1',
+    'number_03_emb', 'actdate', 'actdaten', 'actyeardate', 'pono', 'u46', 'u37',
+    'qltycontroller', 'Print', 'others1', 'mainimagepath', 'finaldelvdate',
+    'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img',
+    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R',
+    'prnmeaimg', 'mpic', 'Others2', 'Others3', 'Others4', 'Others5', 'Others6', 'Others7'
   ];
 //  const groupOptions = {
 //     columns: ["abc"], // Group by "Category" column
@@ -477,7 +492,7 @@ const  udf= (p: OrderData) => (
       <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
       <b>7:</b> {highlightText(p.u7)}<br />
       <b>8-Fab:</b> {highlightText(p.Fab_R)}<br />
-      <b>14-Fabdy:</b> {highlightText(p.Dy_R)}<br />
+      <b>14-dy:</b> {highlightText(p.Dy_R)}<br />
       {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
       {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
       <b>Qty:</b> {highlightText(p.quantity)} */}
@@ -559,6 +574,7 @@ const   Alldate= (p: OrderData) => (
     </div>
   );
 
+  
   const toolbarOptions: any[] = [
     "Search",
     { text: '', prefixIcon: 'e-add', id: 'add_icon', tooltipText: 'Add Records' },
@@ -1101,9 +1117,9 @@ const showVal = (val: any): string => {
         allowReordering={true}
         allowResizing={true}
         allowPdfExport={true}
-
+         
         gridLines="Both"
-        searchSettings={{  operator: 'contains', ignoreCase: true }}
+         searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
         toolbar={toolbarOptions}
         editSettings={{
           allowDeleting: true,
@@ -1119,7 +1135,7 @@ const showVal = (val: any): string => {
         toolbarClick={toolbarClick} 
       >
         <ColumnsDirective>
-          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} />
+          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} />                 
           <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
           <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
@@ -1128,20 +1144,20 @@ const showVal = (val: any): string => {
           <ColumnDirective field="others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others2')} allowEditing={false} />
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
           <ColumnDirective field="printing_R" headerText="udf1" width="150" maxWidth="150" template={udf} />
-          <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} />
           <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} />
           <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} />
           <ColumnDirective field="prdty" headerText="prdty" width="150" maxWidth="250" template={prdty} />
+          <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} />
           <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective headerText='All ' width="90" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
           <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
           <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
           {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
           <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
-          <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} />
+          <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} />
           <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
-          <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
-          
+          {/* <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} /> */}
+          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
           <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="others3" headerText="imgs3" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others3')} allowEditing={false} />
@@ -1303,6 +1319,7 @@ const showVal = (val: any): string => {
             border: 1px solid #dce1e6;
             display:none
             }
+          
                           .count-display1 {
             background: #e9ecef;
             color: #007bff;

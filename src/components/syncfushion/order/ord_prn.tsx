@@ -593,6 +593,12 @@ const PRN: React.FC = () => {
             width: 60px;
             float: right;
             }
+              @media (max-width: 1023px){
+            .dashboard-header {
+              margin-top: 60px
+            }
+            }
+            
             .count{
               margin-top: -30px;
               margin-left: 30px

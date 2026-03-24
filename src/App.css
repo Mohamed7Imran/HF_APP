@@ -15,6 +15,32 @@
 /* Tailwind must come after all other @import rules */
 @import "tailwindcss";
  
+.e-grid .editCss .e-headertext {
+
+  color: blue;
+}
+
+
+
+     .e-grid .e-rowcell
+
+        {
+
+          border-top:2px solid gray !important;
+
+        }
+
+        .e-grid .e-detailrowexpand{
+
+          border-top:2px solid gray !important;
+
+        }
+
+        .e-grid .e-detailrowcollapse{
+
+          border-top:2px solid gray !important;
+
+        }
 #Overview .e-gantt-child-taskbar,
 #Overview .e-gantt-parent-taskbar {
     border-radius: 10px;

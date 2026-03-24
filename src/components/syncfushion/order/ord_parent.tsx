@@ -712,6 +712,7 @@ const HeroFashionGrid13: React.FC = () => {
             align-items: center;
             min-height: 120px;
         }
+            
         .e-pizza-image-layout {
             width: 120px;
             height: 120px;

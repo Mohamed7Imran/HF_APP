@@ -1202,7 +1202,7 @@ const showVal = (val: any): string => {
         <AggregatesDirective>
           <AggregateDirective>
             <AggregateColumnsDirective>
-              <AggregateColumnDirective field='slno1' type='Count' footerTemplate={footerCount} format='N'> </AggregateColumnDirective>
+              {/* <AggregateColumnDirective field='slno1' type='Count' footerTemplate={footerCount} format='N'> </AggregateColumnDirective> */}
               <AggregateColumnDirective field='quantity' type='Sum' footerTemplate={footerSum} format='N'> </AggregateColumnDirective>
             </AggregateColumnsDirective>
           </AggregateDirective>

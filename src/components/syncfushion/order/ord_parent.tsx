@@ -777,10 +777,16 @@ const HeroFashionGrid13: React.FC = () => {
             font-size: 12px;
             margin: 2px;
         }
+
+          @media (max-width: 1023px){
+            .dashboard-header {
+              margin-top: 60px
+            }
+            }
       `}</style>
 
       {/* Header */}
-      <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: '#0ff180', alignItems: 'center' }}>
+      <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: '#0ff180', alignItems: 'center'}}>
         <div className="count-display" style={{ background: '#e9ecef', padding: '8px', borderRadius: '4px' }}>
           {showingCount} / {totalCount}
         </div>

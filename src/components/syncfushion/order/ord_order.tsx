@@ -58,8 +58,7 @@ interface OrderData {
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;Fab_R:string;
   ITS_R:string;Order_R:string;Dy_R:string;Sample_R:string;Week_R:string;
   prnmeaimg?:string;mpic?:string;
-  Others2:string;Others3:string;Others4:string;Others5:string;Others6:string;Others7:string
-
+  others2:string;others3:string;others4:string;others5:string;others6:string;others7:string,
 }
 
 const HeroFashionGrid131: React.FC = () => {

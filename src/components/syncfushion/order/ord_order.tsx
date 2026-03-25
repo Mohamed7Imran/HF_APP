@@ -1187,7 +1187,7 @@ const showVal = (val: any): string => {
         allowPdfExport={true}
         autoFit={true}
         gridLines="Both"
-         searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
+        searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
         toolbar={toolbarOptions}
         editSettings={{
           allowDeleting: true,

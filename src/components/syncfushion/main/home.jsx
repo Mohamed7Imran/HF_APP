@@ -37,24 +37,13 @@ function Home() {
         <Route path="/OrdPagination" element={<OrdPagination />} /> 
         <Route path='/store' element= {<StoreGrid />} />
         <Route path="/TallyBalanceReport" element={<TallyBalanceReport />} /> 
-        <Route path="/OrdPagination" element={<OrdPagination />} /> 
         <Route path="/PrnReportGrid" element={<PrnReportGrid />} /> 
         <Route path="/card1" element={<Card1 />} /> 
         <Route path="/card2" element={<Card2 />} /> 
         <Route path="/sync" element={<App />} /> 
         <Route path="/sample" element={<Sample />} /> 
         <Route path="/mulitquality" element={<MultiQuality/>} />
-        <Route path="/HrReportGrid" element={<HrReportGrid />} /> 
-         <Route path="/OrdPagination" element={<OrdPagination />} /> 
-         <Route path='/store' element= {<StoreGrid />} />
-         <Route path="/TallyBalanceReport" element={<TallyBalanceReport />} /> 
-         <Route path="/OrdPagination" element={<OrdPagination />} /> 
-         <Route path="/PrnReportGrid" element={<PrnReportGrid />} /> 
          <Route path="/Schedule" element={<Schedule />} /> 
-         <Route path="/card1" element={<Card1 />} /> 
-         <Route path="/card2" element={<Card2 />} /> 
-         <Route path="/sync" element={<App />} /> 
-         <Route path="/sample" element={<Sample />} /> 
          <Route path="/PRN" element={<PRN />} /> 
          <Route path="/Excel" element={<Excel />} /> 
          <Route path="/TemplateGallery" element={<TemplateGallery />} /> 

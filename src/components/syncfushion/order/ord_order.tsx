@@ -36,7 +36,7 @@ import {
   recordClick
 }from '@syncfusion/ej2-react-grids';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { Ajax, registerLicense } from '@syncfusion/ej2-base';
+import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
@@ -488,11 +488,11 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
 const  udf= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>1-Print:</b> {highlightText(p.printing_R)}<br />
-      <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
-      <b>7:</b> {highlightText(p.u7)}<br />
-      <b>8-Fab:</b> {highlightText(p.Fab_R)}<br />
-      <b>14-dy:</b> {highlightText(p.Dy_R)}<br />
+      <b className='no-highlight'>1-Print:</b> {highlightText(p.printing_R)}<br />
+      <b className='no-highlight'>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
+      <b className='no-highlight'>7:</b> {highlightText(p.u7)}<br />
+      <b className='no-highlight'>8-Fab:</b> {highlightText(p.Fab_R)}<br />
+      <b className='no-highlight'>14-dy:</b> {highlightText(p.Dy_R)}<br />
       {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
       {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
       <b>Qty:</b> {highlightText(p.quantity)} */}
@@ -576,7 +576,7 @@ const   Alldate= (p: OrderData) => (
 
   
   const toolbarOptions: any[] = [
-    { text: 'Search', prefixIcon: 'e-icons e-search', id: 'Grid_search', align: 'Left' as any },
+    { text: 'Search', prefixIcon: 'e-icons e-search', id: 'default-aggregate-grid_search', align: 'Left' as any },
     { text: '', prefixIcon: 'e-add', id: 'add_icon', tooltipText: 'Add Records' },
     'Edit',
     'Delete',
@@ -648,6 +648,10 @@ const   Alldate= (p: OrderData) => (
     const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
 
     while ((node = walker.nextNode())) {
+      const parentElem:any = node.parentNode;
+      if (parentElem?.classList?.contains('no-highlight')) {
+        continue;
+      }
 
       const text = node.textContent || '';
 
@@ -1163,14 +1167,16 @@ const showVal = (val: any): string => {
         dataBound={dataBound}
         pageSettings={{pageSize:10}}
         height="500px"
-        enableVirtualization={true}
+        // enableVirtualization={true}
+        allowPaging={true}
         allowSorting={true}
         allowFiltering={true}
         allowMultiSorting={true}
         // filterSettings={{type:'CheckBox'}}
         filterSettings={{ type: 'Menu' }}
         statelessTemplates={['directiveTemplates']}
-        // allowGrouping={true}
+        allowGrouping={true}
+        groupSettings={{showDropArea : !Browser.isDevice}}
         // showColumnMenu={true}
         // showColumnChooser={true}
         enableAdaptiveUI={true}
@@ -1179,7 +1185,7 @@ const showVal = (val: any): string => {
         allowReordering={true}
         allowResizing={true}
         allowPdfExport={true}
-         
+        autoFit={true}
         gridLines="Both"
          searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
         toolbar={toolbarOptions}
@@ -1291,7 +1297,6 @@ const showVal = (val: any): string => {
           align-items: center;
           padding: 5px 10px;
           background-color: #0ff180;
-          border-bottom: 1px solid #dee2e6;
           flex-shrink: 0;
           flex-wrap: wrap; 
           }
@@ -1310,10 +1315,9 @@ const showVal = (val: any): string => {
               gap: 15px;
               }
               
-              .search-input {
+          .search-input {
           padding: 8px 16px;
           border-radius: 4px;
-          border: 1px solid #ced4da;
           outline: none;
           width: 250px;
           transition: width 0.3s;
@@ -1332,10 +1336,9 @@ const showVal = (val: any): string => {
             font-weight: bold;
             font-size: 14px;
             white-space: nowrap;
-            border: 1px solid #dce1e6;
             }
 
-                      .count-display1 {
+            .count-display1 {
             background: #e9ecef;
             color: #007bff;
             padding: 8px 12px;
@@ -1343,7 +1346,6 @@ const showVal = (val: any): string => {
             font-weight: bold;
             font-size: 14px;
             white-space: nowrap;
-            border: 1px solid #dce1e6;
             display: none
             }
 
@@ -1369,7 +1371,7 @@ const showVal = (val: any): string => {
                 }
                  
         
-                          .count-display {
+             .count-display {
             background: #e9ecef;
             color: #007bff;
             padding: 8px 12px;
@@ -1377,11 +1379,10 @@ const showVal = (val: any): string => {
             font-weight: bold;
             font-size: 14px;
             white-space: nowrap;
-            border: 1px solid #dce1e6;
             display:none
             }
           
-                          .count-display1 {
+            .count-display1 {
             background: #e9ecef;
             color: #007bff;
             padding: 2px 4px;
@@ -1389,7 +1390,6 @@ const showVal = (val: any): string => {
             font-weight: bold;
             font-size: 14px;
             white-space: nowrap;
-            border: 1px solid #dce1e6;
             display:block;
             width: 70px;
             float: right;

@@ -541,7 +541,7 @@ const HeroFashionGrid13: React.FC = () => {
                 </div>
 
                 {/* TAB 3: NEWDATA (Product Card Style) */}
-                {/* <div style={{ padding: '15px', background: '#f5f5f5' }}>
+                <div style={{ padding: '15px', background: '#f5f5f5' }}>
                     <h4 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>PRINTING MENU</h4>
                     
                     {printGroups.length === 0 && <div style={{color: '#999', textAlign: 'center', padding: '40px', background: '#fff', borderRadius: '8px'}}>No Print Details Available</div>}
@@ -570,7 +570,7 @@ const HeroFashionGrid13: React.FC = () => {
                                         borderRight: '1px solid #eee' 
                                     }}>
                                         {grp.image ? (
-                                            <img src={grp.image} alt="print" style={{ width: "100%", height: "auto", maxHeight: "100px", objectFit: "contain", display: 'block' }}
+                                            <img src={grp.image} alt="print" style={{ width: "100%", height: "auto", maxHeight: "50px", objectFit: "contain", display: 'block' }}
                                                 onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/100x80?text=No+Img'; }} />
                                         ) : (
                                             <div style={{color: '#ccc', fontSize: '10px', textAlign: 'center'}}>No Image</div>
@@ -625,7 +625,7 @@ const HeroFashionGrid13: React.FC = () => {
                             );
                         })}
                     </div>
-                </div> */}
+                </div>
 
                 {/* TAB 4: NEW ORDIMAGETAB (Exact Pizza Layout with Order Data) */}
                 <div style={{ padding: '0' }}>
@@ -700,6 +700,19 @@ const HeroFashionGrid13: React.FC = () => {
         .e-rowcell { vertical-align: top !important; font-size: 12px !important; line-height: 1.3 !important; padding-top: 8px !important; }
         .e-detailrow .e-tab { border: none; }
         .e-dtdiagonal, .e-dtvertical { display: none !important; }
+
+        .e-grid .e-rowcell
+        {
+          border-top:2px solid gray !important;
+        }
+
+        .e-grid .e-detailrowexpand{
+          border-top:2px solid gray !important;
+        }
+          
+        .e-grid .e-detailrowcollapse{
+          border-top:2px solid gray !important;
+        }
 
         /* --- Pizza Menu Layout Styles (Ref Code) --- */
         .e-pizza-cell { 
@@ -1033,6 +1046,8 @@ const HeroFashionGrid13: React.FC = () => {
             allowFiltering={true}
             filterSettings={{ type: 'Menu' }}
             allowResizing={true}
+            enableAdaptiveUI={true}
+            adaptiveUIMode={'Mobile'}
             allowReordering={true}
             searchSettings={{  operator: 'contains', ignoreCase: true }}
             toolbar={toolbarOptions}
@@ -1044,9 +1059,9 @@ const HeroFashionGrid13: React.FC = () => {
             detailTemplate={detailTemplate}
           >
             <ColumnsDirective>
-              <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
               <ColumnDirective field="jobno_oms" headerText="Order Info" width="100" template={orderSummaryTemplate} isPrimaryKey={true} />
               <ColumnDirective headerText="Photo" width="150" template={photoTemplate} textAlign="Center" allowFiltering={false} />
+              <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
               <ColumnDirective field="Fdt" headerText="Delivery Info" width="100" template={deliveryInfoTemplate} />
               <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
               <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />

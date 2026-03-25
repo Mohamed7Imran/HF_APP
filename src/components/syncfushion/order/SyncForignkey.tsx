@@ -66,6 +66,7 @@ function ForeignKeyColumn() {
         <ColumnsDirective>
 
           <ColumnDirective field="jobno_oms" headerText="RGB Job" width="180" foreignKeyField="jobno_oms" foreignKeyValue="print_type" dataSource={printData} />
+          <ColumnDirective field="buyer1" headerText="Emp" width="180" foreignKeyField="buyer1" foreignKeyValue="print_img_pen" dataSource={printData} />
           <ColumnDirective headerText="Image" width="150" template={imageTemplate} />
           <ColumnDirective field="buyer" headerText="Buyer" width="150" />
           <ColumnDirective field="style" headerText="Style" width="150" />

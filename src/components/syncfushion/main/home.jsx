@@ -11,7 +11,6 @@ import Card2 from '../order/card/Card2.jsx';
 import Sample from '../order/Sample.tsx';
 import StoreGrid from '../order/StoreGrid.tsx';
 import MultiQuality from '../order/MultiQuality.jsx';
-
 import PRN from '../order/ord_prn.tsx';
 import TemplateGallery from '../order/eblockeditor.tsx';
 import Excel from '../order/excel.tsx';
@@ -19,12 +18,11 @@ import FabricForm from '../fabric/Fabric.jsx';
 import Signin1 from '../layout/Signup.tsx';
 import OrderOms from "../order/Order_oms.tsx"
 import HeroFashionGrid131 from "../order/ord_parent.tsx"
-
 import Schedule from "../order/Schedule.tsx"
 import GanttChart from '../order/Gantt Chart/GanttChart.tsx';
 import OrderDetails from '../order/OrderDetails.tsx';
+import PivotTableExporting from '../order/pivot.tsx';
 import ForeignKeyColumn from '../order/SyncForignkey.tsx';
-
 // import Overview from "../order/chart.tsx"
 
 function Home() {
@@ -32,7 +30,6 @@ function Home() {
     <Routes>
         <Route path="/" element={<CardGrid />} />
         <Route path="/order" element={<HeroFashionGrid13 />} />
-        <Route path="god/" element={<h1>Good</h1> } />
         <Route path="/HrReportGrid" element={<HrReportGrid />} /> 
         <Route path="/OrdPagination" element={<OrdPagination />} /> 
         <Route path='/store' element= {<StoreGrid />} />
@@ -54,6 +51,7 @@ function Home() {
         <Route path='/HeroFashionGrid131' element={<HeroFashionGrid131 />} />
         <Route path='/chart' element={<GanttChart />} />
         <Route path='/order_detail' element={<OrderDetails />} />
+        <Route path='/PivotTableExporting' element={<PivotTableExporting />} />
         <Route path='/forign' element={<ForeignKeyColumn />} />
     </Routes>
   );

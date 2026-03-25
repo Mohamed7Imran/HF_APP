@@ -962,7 +962,7 @@ const HeroFashionGrid13: React.FC = () => {
             {showingCount} / {totalCount}
           </div>
         </div>
-        <div className="header-controls bg-white">
+        {/* <div className="header-controls bg-white">
           <input 
             type="text" 
             placeholder="Search all columns..."
@@ -970,7 +970,7 @@ const HeroFashionGrid13: React.FC = () => {
             onChange={onSearchChange}
             className="search-input"
           />
-        </div>
+        </div> */}
         <div style={{ padding: '8px 5px', borderBottom: '1px solid #eee', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight:'bold' }}>
     <TextBoxComponent

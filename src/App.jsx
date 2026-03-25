@@ -12,7 +12,7 @@ import SubMenuPermissionPage from "./components/user_control/SubMenuPermissionPa
 import QualityApp from "./components/quality_app/main/Quality_main"
 import Qc_entry from "./components/quality_app/quality/Qc"
 import Syncfushion from "./components/syncfushion/main/home"
-import HeroFashionGrid13 from "./components/syncfushion/order/ord_order";
+import Visuva from "./components/syncfushion/order/ord_pagination";
 import GreyRollChecking from "./components/GreyrollChecking/main/App";
 import FabricForm from "./components/syncfushion/fabric/Fabric";
 import Machine_Allocate from "./components/machine_allocate/main"
@@ -97,7 +97,7 @@ function App() {
           element={
             <ProtectedRoute>
               <ProtectedLayout>
-                <HeroFashionGrid13 />
+                <Visuva />
               </ProtectedLayout>
             </ProtectedRoute>
           }

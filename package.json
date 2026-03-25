@@ -27,6 +27,7 @@
     "@syncfusion/ej2-react-interactive-chat": "*",
     "@syncfusion/ej2-react-lists": "*",
     "@syncfusion/ej2-react-navigations": "*",
+    "@syncfusion/ej2-react-pivotview": "^33.1.44",
     "@syncfusion/ej2-react-popups": "*",
     "@syncfusion/ej2-react-progressbar": "*",
     "@syncfusion/ej2-react-schedule": "*",

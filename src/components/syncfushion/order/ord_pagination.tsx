@@ -207,7 +207,7 @@ const OrdPagination: React.FC = () => {
     </div>
   );
 
-  const imageFieldTemplate = (field: 'mainimagepath' | 'prnfile1' | 'prnfile2') => (p: OrderData) => {
+  const imageFieldTemplate = (field: 'mainimagepath' | 'prnfile1' | 'prnfile2' | 'img_fpath') => (p: OrderData) => {
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" loading="lazy" style={{ width: '75px', height: '75px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
@@ -273,6 +273,12 @@ const OrdPagination: React.FC = () => {
           outline: none;
           font-size: 13px;
         }
+
+           @media (max-width: 1023px){
+            .dashboard-header {
+              margin-top: 60px
+            }
+          }
 
         /* Mobile View Rules */
         @media (max-width: 768px) {

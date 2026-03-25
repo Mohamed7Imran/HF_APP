@@ -32,10 +32,11 @@ import {
   AggregateDirective,
   AggregatesDirective,
   PdfExport,DetailRow,
-  ExcelExport
+  ExcelExport,
+  recordClick
 }from '@syncfusion/ej2-react-grids';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { Ajax, registerLicense } from '@syncfusion/ej2-base';
+import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
@@ -55,10 +56,10 @@ interface OrderData {
   shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;number_03_emb:string;actdate:string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;Print:string;others1:string;
-  mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;
+  mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;Fab_R:string;
+  ITS_R:string;Order_R:string;Dy_R:string;Sample_R:string;Week_R:string;
   prnmeaimg?:string;mpic?:string;
-  
-
+  others2:string;others3:string;others4:string;others5:string;others6:string;others7:string,
 }
 
 const HeroFashionGrid131: React.FC = () => {
@@ -91,14 +92,30 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
   const settingNameRef = useRef<TextBoxComponent>(null);
   const dropdownRef = useRef<DropDownListComponent>(null);
   const tooltipRef = useRef<TooltipComponent>(null);  
+  const previousCellRef = useRef<HTMLElement | null>(null);
   const gridRef = useRef<GridComponent>(null);
   const searchTimeout = useRef<any>(null);
 
-  const searchableFields = [
-    'jobno_oms', 'company_name', 'buyer1', 'stylename', 'merch',
-    'punit_sh', 'styleno', 'quantity', 'director_sample_order',
-    'printing_R', 'Emb', 'abc', 'u46', 'uom', 'final_delivery_date',
-    'production_type_inside_outside', 'prnclr'
+  // const searchableFields = [
+  //   'jobno_oms', 'company_name', 'buyer1', 'stylename', 'merch',
+  //   'punit_sh', 'styleno', 'quantity', 'director_sample_order',
+  //   'printing_R', 'Emb', 'abc', 'u46', 'uom', 'final_delivery_date',
+  //   'production_type_inside_outside', 'prnclr'
+  // ];
+    const searchableFields = [
+    'slno1', 'jobno_oms', 'company_name', 'buyer1', 'stylename', 'uom',
+    'final_delivery_date', 'merch', 'punit_sh', 'styleno',
+    'production_type_inside_outside', 'quantity', 'director_sample_order',
+    'printing_R', 'Fdt', 'Emb', 'abc', 'order_follow_up',
+    'quality_controller', 'reference', 'insdatenew', 'styledesc',
+    'date', 'ourdelvdate', 'podate', 'vessel_dt', 'vessel_yr',
+    'shipment_complete', 'u7', 'u141', 'u45', 'u36', 'u31',
+    'u15', 'u14', 'u8', 'u25', 'insdate', 'insdateyear', 'finaldelvdate1',
+    'number_03_emb', 'actdate', 'actdaten', 'actyeardate', 'pono', 'u46', 'u37',
+    'qltycontroller', 'Print', 'others1', 'mainimagepath', 'finaldelvdate',
+    'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img',
+    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R',
+    'prnmeaimg', 'mpic', 'Others2', 'Others3', 'Others4', 'Others5', 'Others6', 'Others7'
   ];
 //  const groupOptions = {
 //     columns: ["abc"], // Group by "Category" column
@@ -359,28 +376,27 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     );
   };
 
-
   const created = () => {
     document.getElementById(gridRef.current?.element.id + "_searchbar")?.addEventListener('keyup', (event: any) => {
       gridRef.current?.search(event.target?.value);
     });
   };
 
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchKey(value);
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    searchTimeout.current = setTimeout(() => {
-      if (gridRef.current) gridRef.current.search(value);
-    }, 400);
-  };
+  // const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setSearchKey(value);
+  //   if (searchTimeout.current) clearTimeout(searchTimeout.current);
+  //   searchTimeout.current = setTimeout(() => {
+  //     if (gridRef.current) gridRef.current.search(value);
+  //   }, 400);
+  // };
 
   const genericHighlighter = (field: keyof OrderData) => (props: OrderData) => (
     <>{highlightText(props[field])}</>
   );
 
   // --- Templates ---
-  const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' | 'others1'  ) => (p: OrderData) => { 
+  const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' |  'others1' | 'others2' | 'others3' | 'others4' | 'others5' | 'others6' | 'others7'  ) => (p: OrderData) => { 
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
@@ -411,7 +427,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
                 if (col.field === "jobno_oms" || col.field === "Print" || col.field==="print_img" || col.field==="prnclr" || col.field==="merch" || col.field==="buyer1"
                   || col.field==="punit_sh" || col.field==="punit_sh" || col.field==="styleno" ||  col.field==="director_sample_order"  ||  col.field==="director_sample_order" ||
                     col.field==="abc"  ||  col.field==="order_follow_up" ||  col.field==="styledesc" ||  col.field==="company_name" ||  col.field==="quantity" ||  col.field==="production_type_inside_outside"
-                  ||  col.field==="prnmeaimg" || col.field==="mainimagepath" ||  col.field==="Emb"  ||  col.field==="others1"  ||  col.field==="u25" ||  col.field==="u45" ||  col.field==="slno1" || col.field==="u37" ||  col.field==="actdaten"  ||  col.field==="u46"  ||  col.field==="date" ||  col.field==="ourdelvdate" ||  col.field==="finaldelvdate1" ||  col.field==="u15" ||  col.field==="u14" 
+                  ||  col.field==="prnmeaimg" || col.field==="mainimagepath" ||  col.field==="Emb"   ||  col.field==="udf4"  ||  col.field==="All"  ||  col.field==="fsn"  || col.field==="prdty"  ||  col.field==="others1"  || col.field==="others7" ||   col.field==="u25" ||  col.field==="u45" ||  col.field==="slno1" || col.field==="u37" ||  col.field==="actdaten"  ||  col.field==="u46"  ||  col.field==="date" ||  col.field==="ourdelvdate" ||  col.field==="finaldelvdate1" ||  col.field==="u15" ||  col.field==="u14" ||  col.field==="others2" || col.field==="others3" || col.field==="others4"  || col.field==="others5" || col.field==="others6"||col.field==="Fdt"
                 ) {
                     col.visible = false;
                 }
@@ -472,23 +488,24 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
 const  udf= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>1-Print:</b> {highlightText(p.printing_R)}<br />
-      <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
-      <b>7:</b> {highlightText(p.u7)}<br />
-      <b>8-Fab:</b> {highlightText(p.u8)}<br />
-      <b>14-Fabdy:</b> {highlightText(p.u14)}<br />
-      <b>25-week:</b> {highlightText(p.u25)}<br />
+      <b className='no-highlight'>1-Print:</b> {highlightText(p.printing_R)}<br />
+      <b className='no-highlight'>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
+      <b className='no-highlight'>7:</b> {highlightText(p.u7)}<br />
+      <b className='no-highlight'>8-Fab:</b> {highlightText(p.Fab_R)}<br />
+      <b className='no-highlight'>14-dy:</b> {highlightText(p.Dy_R)}<br />
+      {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
       {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
       <b>Qty:</b> {highlightText(p.quantity)} */}
     </div>
   );
+
   const  udf2= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>31:</b> {highlightText(p.u31)}<br />
+      <b>31:</b> {highlightText(p.ITS_R)}<br />
       <b>36-ITS:</b> {highlightText(p.u36)}<br />
-      <b>u45:</b> {highlightText(p.u45)}<br />
+      <b>u45:</b> {highlightText(p.Order_R)}<br />
       <b>u46:</b> {highlightText(p.u46)}<br />
-      <b>u141:</b> {highlightText(p.u141)}<br />
+      <b>u141:</b> {highlightText(p.Sample_R)}<br />
       {/* <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
       <b>8-Fab:</b> {highlightText(p.u8)}<br />
       <b>14-Fabdy:</b> {highlightText(p.u14)}<br /> */}
@@ -506,7 +523,7 @@ const   qualy= (p: OrderData) => (
       <b>styleno:</b> {highlightText(p.styleno)}<br />
       <b>styledesc:</b> {highlightText(p.styledesc)}<br />
       <b>qcontr:</b> {highlightText(p.quality_controller)}<br />
-      <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br />
+
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
   </div>
   );
@@ -516,6 +533,8 @@ const   prdty= (p: OrderData) => (
       <b>ptype:</b> {highlightText(p.production_type_inside_outside)}<br />
       <b>dir_sam_ord:</b> {highlightText(p.director_sample_order)}<br />
       <b>comp:</b> {highlightText(p.company_name)}<br />
+      {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
+      <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br />
       {/* <b>ref:</b> {highlightText(p.reference)}<br /> */}
       {/* <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br /> */}
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
@@ -545,8 +564,19 @@ const   Alldate= (p: OrderData) => (
     </div>
   );
 
+  const udf4 = (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
+      <b>Week_R:</b> {highlightText(p.Week_R)}<br />
+      <b>ST:</b> {highlightText(p.styleno)}<br />
+      <b>Uom:</b> {highlightText(p.uom)}<br />
+      <b>Type:</b> {highlightText(p.production_type_inside_outside)}
+    </div>
+  );
+
+  
   const toolbarOptions: any[] = [
-    "Search",
+    { text: 'Search', prefixIcon: 'e-icons e-search', id: 'default-aggregate-grid_search', align: 'Left' as any },
     { text: '', prefixIcon: 'e-add', id: 'add_icon', tooltipText: 'Add Records' },
     'Edit',
     'Delete',
@@ -618,6 +648,10 @@ const   Alldate= (p: OrderData) => (
     const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
 
     while ((node = walker.nextNode())) {
+      const parentElem:any = node.parentNode;
+      if (parentElem?.classList?.contains('no-highlight')) {
+        continue;
+      }
 
       const text = node.textContent || '';
 
@@ -793,23 +827,6 @@ const showVal = (val: any): string => {
       multiSelect.appendTo(args.element);
     }
   };
-
-<TooltipComponent 
-  target=".image-tooltip-target" 
-  cssClass="custom-tooltip-size" // இந்த கிளாஸ் முக்கியம்
-  width="450px" 
-  height="450px"
-  content={(args: any) => (
-    <div style={{ width: '100%', height: '100%' }}>
-      <img 
-        src={args.target.src} 
-        style={{ width: '200%', height: '200%', objectFit: 'contain' }}
-      />
-    </div>
-  )}
->
-  {/* Unga Grid code inga varum */}
-</TooltipComponent>
 
   const groupByPrint = (printing: OrderData[]) => {
     const map = new Map<string, any>();
@@ -1004,77 +1021,163 @@ const showVal = (val: any): string => {
     );
   };
 
-  const tooltipOpen = (args: any) => {
+  <TooltipComponent 
+    target=".image-tooltip-target" 
+    cssClass="custom-tooltip-size" 
+    width="450px" 
+    height="450px"
+    content={(args: any) => (
+      <div style={{ width: '100%', height: '100%' }}>
+        <img 
+          src={args.target.src} 
+          style={{ width: '200%', height: '200%', objectFit: 'contain' }} 
+        />
+      </div>
+    )}
+  >
+  </TooltipComponent>
 
-    const isHeaderCell = args.target.closest('.e-headercell');
-    const isRowCell = args.target.closest('.e-rowcell');
-
-    if (isRowCell || isHeaderCell) {
-      let img = args.target.querySelector('img')
-      if (img) {
-        let imgElem:any= args.target.innerHTML;
-        // Create a wrapper div with increased image height
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = imgElem;
-        const tooltipImg = wrapper.querySelector('img');
-        if (tooltipImg) {
-          tooltipImg.style.width = '500px';
-          tooltipImg.style.height = '500px';
-          tooltipImg.style.objectFit = 'contain';
+    const tooltipBeforeRender = (args: any) => {
+  
+      const isHeaderCell = args.target.closest('.e-headercell');
+      const isRowCell = args.target.closest('.e-rowcell');
+  
+      if (isRowCell || isHeaderCell) {
+        let img = args.target.querySelector('img')
+        if (img && !isHeaderCell) {
+          // Get row information
+          const rowInfo = gridRef.current?.getRowInfo(args.target.closest('td'));
+          const rowData: OrderData = rowInfo?.rowData as OrderData;
+          
+          if (rowData) {
+            // Get image source
+            const imgSrc = img.src;
+            
+            // Build order information HTML
+            const orderInfo = `
+              <div style="padding: 12px; line-height: 1.6; font-size: 13px;">
+                <div style="margin-bottom: 8px;"><strong>Job No:</strong> ${rowData.jobno_oms || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Company:</strong> ${rowData.company_name || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Buyer:</strong> ${rowData.buyer1 || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Style:</strong> ${rowData.stylename || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Style No:</strong> ${rowData.styleno || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Quantity:</strong> ${rowData.quantity || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Unit:</strong> ${rowData.punit_sh || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Merch:</strong> ${rowData.merch || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Delivery Date:</strong> ${rowData.Fdt || rowData.final_delivery_date || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Type:</strong> ${rowData.director_sample_order || 'N/A'}</div>
+              </div>
+            `;
+            
+            // Create tooltip content with order info on left and image on right
+            const tooltipContent = `
+              <div style="display: flex; max-width: 600px;">
+                <div style="flex: 1; min-width: 200px; max-width: 250px; border-right: 1px solid #e0e0e0;">
+                  ${orderInfo}
+                </div>
+                <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px;">
+                  <img 
+                    src="${imgSrc}" 
+                    style="max-width: 250px; max-height: 280px; width: auto; height: auto; object-fit: contain;" 
+                    alt="Order Image"
+                  />
+                </div>
+              </div>
+            `;
+            
+            (tooltipRef.current as TooltipComponent).content = tooltipContent;
+            (tooltipRef.current as TooltipComponent).width = '450px';
+            (tooltipRef.current as TooltipComponent).height = 'auto';
+          }
         }
-        (tooltipRef.current as TooltipComponent).content = wrapper.innerHTML;
-        
-        // Set different dimensions for header cells
-        if (isHeaderCell) {
+        else if (img && isHeaderCell) {
+          // For header cells, show simple image
+          let imgElem:any= args.target.innerHTML;
+          const wrapper = document.createElement('div');
+          wrapper.innerHTML = imgElem;
+          const tooltipImg = wrapper.querySelector('img');
+          if (tooltipImg) {
+            tooltipImg.style.width = '100px';
+            tooltipImg.style.height = '100px';
+            tooltipImg.style.objectFit = 'contain';
+          }
+          (tooltipRef.current as TooltipComponent).content = wrapper.innerHTML;
           (tooltipRef.current as TooltipComponent).width = '100px';
           (tooltipRef.current as TooltipComponent).height = '100px';
-        } else {
-          (tooltipRef.current as TooltipComponent).width = '500px';
-          (tooltipRef.current as TooltipComponent).height = '500px';
+        }
+        else {
+          // Create a wrapper div for text content with styling
+          const textWrapper = document.createElement('div');
+          textWrapper.style.padding = '8px';
+          textWrapper.style.maxHeight = '150px';
+          textWrapper.style.overflowY = 'auto';
+          textWrapper.style.fontSize = '14px';
+          textWrapper.style.lineHeight = '1.5';
+          textWrapper.innerText = args.target.innerText;
+          (tooltipRef.current as TooltipComponent).content = textWrapper.outerHTML;
+          
+          // Set different dimensions for header cells
+          if (isHeaderCell) {
+            (tooltipRef.current as TooltipComponent).width = '100px';
+            (tooltipRef.current as TooltipComponent).height = '100px';
+          } else {
+            (tooltipRef.current as TooltipComponent).width = '150px';
+            (tooltipRef.current as TooltipComponent).height = '150px';
+          }
         }
       }
-      else {
-        // Create a wrapper div for text content with styling
-        const textWrapper = document.createElement('div');
-        textWrapper.style.padding = '8px';
-        textWrapper.style.maxHeight = '150px';
-        textWrapper.style.overflowY = 'auto';
-        textWrapper.style.fontSize = '14px';
-        textWrapper.style.lineHeight = '1.5';
-        textWrapper.innerText = args.target.innerText;
-        (tooltipRef.current as TooltipComponent).content = textWrapper.outerHTML;
-        
-        // Set different dimensions for header cells
-        if (isHeaderCell) {
-          (tooltipRef.current as TooltipComponent).width = '100px';
-          (tooltipRef.current as TooltipComponent).height = '100px';
-        } else {
-          (tooltipRef.current as TooltipComponent).width = '200px';
-          (tooltipRef.current as TooltipComponent).height = '200px';
-        }
-      }
+  
     }
-
-  }
+      
+    // Background color implementation
+    const recordClick=(args:any)=>
+      {
+        // Remove background from previously clicked cell
+        if (previousCellRef.current) {
+          previousCellRef.current.style.backgroundColor = '';
+        }
+        
+        // Set yellow background on the newly clicked cell
+        if (args.cell) {
+          args.cell.style.backgroundColor = 'yellow';
+          // Store the current cell as the previous cell for next click
+          previousCellRef.current = args.cell;
+        }
+        
+        console.log('Cell clicked:', args);
+      }
+  
+    const beforeOpen = (args: any) => {
+      // Adjust tooltip dimensions based on content type
+      const hasOrderInfo = args.element.innerHTML.includes('Job No:');
+      
+      if (hasOrderInfo) {
+        args.element.style.maxWidth = '750px';
+        args.element.style.width = 'auto';
+      }
+    };
 
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
-    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" position={"RightCenter"} width="200px" height="200px" beforeOpen={tooltipOpen}>
+    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
       <GridComponent
         id="default-aggregate-grid"
         ref={gridRef}
         dataSource={dataSource}
         dataBound={dataBound}
         pageSettings={{pageSize:10}}
-        height="440px"
-        enableVirtualization={true}
+        height="500px"
+        // enableVirtualization={true}
+        allowPaging={true}
         allowSorting={true}
         allowFiltering={true}
         allowMultiSorting={true}
-        filterSettings={{type:'CheckBox'}}
+        // filterSettings={{type:'CheckBox'}}
+        filterSettings={{ type: 'Menu' }}
         statelessTemplates={['directiveTemplates']}
         allowGrouping={true}
-        showColumnMenu={true}
+        groupSettings={{showDropArea : !Browser.isDevice}}
+        // showColumnMenu={true}
         // showColumnChooser={true}
         enableAdaptiveUI={true}
         adaptiveUIMode={'Mobile'}
@@ -1082,9 +1185,9 @@ const showVal = (val: any): string => {
         allowReordering={true}
         allowResizing={true}
         allowPdfExport={true}
-
+        autoFit={true}
         gridLines="Both"
-        searchSettings={{  operator: 'contains', ignoreCase: true }}
+         searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
         toolbar={toolbarOptions}
         editSettings={{
           allowDeleting: true,
@@ -1098,35 +1201,41 @@ const showVal = (val: any): string => {
         created={created}
         frozenColumns={2}
         toolbarClick={toolbarClick} 
+        recordClick={recordClick}
       >
         <ColumnsDirective>
-          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} />
-          <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} />
-          <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} />
-          <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
-          <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
+          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }}/>                 
+          <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="180" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
-          <ColumnDirective field="printing_R" headerText="udf1" width="150" maxWidth="150" template={udf} />
-          <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} />
-          <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} />
-          <ColumnDirective field="prdty" headerText="prdty" width="150" maxWidth="250" template={prdty} />
-          <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
-          <ColumnDirective headerText='All ' width="90" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
+          <ColumnDirective field="printing_R" headerText="Printing_R" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="prdty" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="fsn" headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
+          <ColumnDirective field="All"headerText='All ' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
           <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
           <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
           {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
           <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
-          <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} />
+          {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
           <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
-          <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
-          
           <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
-          <ColumnDirective field="others1" headerText="others1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} />
-          <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
+          <ColumnDirective field="others3" headerText="imgs3" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
+          <ColumnDirective field="others4" headerText="imgs4" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others4')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="others5" headerText="imgs5" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others5')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="others6" headerText="imgs6" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others6')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="others7" headerText="imgs7" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
           <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
-          {/* <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} /> */}
-          {/* <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
+          <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
+          <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
           {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
           {/* <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} /> */}
           {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
@@ -1153,9 +1262,9 @@ const showVal = (val: any): string => {
           {/* <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} /> */}
           {/* <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} /> */}
           {/* <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} /> */}
-          <ColumnDirective field="quantity" headerText="QTY" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
+          <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
           {/* <ColumnDirective field="company_name" headerText="COMPANY" width="90" template={genericHighlighter('company_name')} /> */}
-
+                    
         </ColumnsDirective>
         <AggregatesDirective>
           <AggregateDirective>
@@ -1188,7 +1297,6 @@ const showVal = (val: any): string => {
           align-items: center;
           padding: 5px 10px;
           background-color: #0ff180;
-          border-bottom: 1px solid #dee2e6;
           flex-shrink: 0;
           margin-top:0px;
           flex-wrap: wrap; 
@@ -1208,10 +1316,9 @@ const showVal = (val: any): string => {
               gap: 15px;
               }
               
-              .search-input {
+          .search-input {
           padding: 8px 16px;
           border-radius: 4px;
-          border: 1px solid #ced4da;
           outline: none;
           width: 250px;
           transition: width 0.3s;
@@ -1230,10 +1337,9 @@ const showVal = (val: any): string => {
             font-weight: bold;
             font-size: 14px;
             white-space: nowrap;
-            border: 1px solid #dce1e6;
             }
 
-                      .count-display1 {
+            .count-display1 {
             background: #e9ecef;
             color: #007bff;
             padding: 8px 12px;
@@ -1241,8 +1347,13 @@ const showVal = (val: any): string => {
             font-weight: bold;
             font-size: 14px;
             white-space: nowrap;
-            border: 1px solid #dce1e6;
             display: none
+            }
+
+            @media (max-width: 1023px){
+            .dashboard-header {
+              margin-top: 60px
+            }
             }
             
             /* --- Mobile Layout --- */
@@ -1251,8 +1362,13 @@ const showVal = (val: any): string => {
                 flex-direction: column;
                 padding: 10px;
                 align-items: stretch;
+<<<<<<< HEAD
                 margin-top: 14px;
                 gap: 10px;
+=======
+                gap: 10px;             
+                margin-top: 60px
+>>>>>>> 0db44dfa091c4943b4c7833e35dcfa4758de4080
                 }
 
                 .breadcromp{
@@ -1261,7 +1377,7 @@ const showVal = (val: any): string => {
                 }
                  
         
-                          .count-display {
+             .count-display {
             background: #e9ecef;
             color: #007bff;
             padding: 8px 12px;
@@ -1269,10 +1385,10 @@ const showVal = (val: any): string => {
             font-weight: bold;
             font-size: 14px;
             white-space: nowrap;
-            border: 1px solid #dce1e6;
             display:none
             }
-                          .count-display1 {
+          
+            .count-display1 {
             background: #e9ecef;
             color: #007bff;
             padding: 2px 4px;
@@ -1280,13 +1396,12 @@ const showVal = (val: any): string => {
             font-weight: bold;
             font-size: 14px;
             white-space: nowrap;
-            border: 1px solid #dce1e6;
             display:block;
             width: 70px;
             float: right;
             }
             .count{
-              margin-top: -30px;
+              margin-top: -28px;
               margin-left: 30px
             }
                 .header-title {
@@ -1346,7 +1461,7 @@ const showVal = (val: any): string => {
             {showingCount} / {totalCount}
           </div>
         </div>
-        <div className="header-controls bg-white">
+        {/* <div className="header-controls bg-white">
           <input 
             type="text" 
             placeholder="Search all columns..."
@@ -1354,57 +1469,57 @@ const showVal = (val: any): string => {
             onChange={onSearchChange}
             className="search-input"
           />
+        </div> */}
+        <div style={{ padding: '0px 5px', borderBottom: '1px solid #eee', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+            <div style={{ display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
+              <TextBoxComponent
+                ref={settingNameRef}
+                placeholder="setting name"
+                style={{ width: '80px' }}
+              />
+            </div>
+
+            <ButtonComponent
+              onClick={saveSetting}
+              cssClass="e-primary"
+              style={{ padding: '3px 6px', fontSize: '13px' }}
+            >
+              💾
+            </ButtonComponent>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <DropDownListComponent
+              ref={dropdownRef}
+              id="settings-dropdown"
+              dataSource={savedSettings
+                .filter(
+                  s =>
+                    s.user?.toLowerCase() === username?.toLowerCase() // normalize for comparison
+                )
+                .map(s => ({ text: s.name, value: s.id }))}
+              fields={{ text: 'text', value: 'value' }}
+              placeholder="Select setting"
+              style={{ width: '80px' }}
+              change={() => setSelectedSetting(dropdownRef.current?.value as string)}
+            />
+          </div>
+
+            <ButtonComponent
+              onClick={applySetting}
+              cssClass="e-outline"
+              style={{ padding: '3px 6px', fontSize: '15px' }}
+            >
+            ✔
+            </ButtonComponent>
+
+            <ButtonComponent
+              onClick={deleteSetting}
+              cssClass="e-outline e-danger"
+              style={{ padding: '3px 6px', fontSize: '15px' }}
+            >
+              🗑
+            </ButtonComponent>
         </div>
-        <div style={{ padding: '8px 5px', borderBottom: '1px solid #eee', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight:'bold' }}>
-    <TextBoxComponent
-      ref={settingNameRef}
-      placeholder="setting name"
-      style={{ width: '80px' }}
-    />
-  </div>
-
-  <ButtonComponent
-    onClick={saveSetting}
-    cssClass="e-primary"
-    style={{ padding: '3px 6px', fontSize: '13px' }}
-  >
-    💾
-  </ButtonComponent>
-
-<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-  <DropDownListComponent
-    ref={dropdownRef}
-    id="settings-dropdown"
-    dataSource={savedSettings
-      .filter(
-        s =>
-          s.user?.toLowerCase() === username?.toLowerCase() // normalize for comparison
-      )
-      .map(s => ({ text: s.name, value: s.id }))}
-    fields={{ text: 'text', value: 'value' }}
-    placeholder="Select setting"
-    style={{ width: '80px' }}
-    change={() => setSelectedSetting(dropdownRef.current?.value as string)}
-  />
-</div>
-
-  <ButtonComponent
-    onClick={applySetting}
-    cssClass="e-outline"
-    style={{ padding: '3px 6px', fontSize: '15px' }}
-  >
-   ✔
-  </ButtonComponent>
-
-  <ButtonComponent
-    onClick={deleteSetting}
-    cssClass="e-outline e-danger"
-    style={{ padding: '3px 6px', fontSize: '15px' }}
-  >
-    🗑
-  </ButtonComponent>
-</div>
       </div>
 
       {/* Grid Container */}

@@ -167,4 +167,6 @@
   font-weight: 400;
 }
  
-
+.e-grid .editCss .e-headertext {
+  color: blue;
+}

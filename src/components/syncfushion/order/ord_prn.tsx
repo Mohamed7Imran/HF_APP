@@ -51,8 +51,7 @@ interface OrderData {
   actdaten?: string; actyeardate?: string; pono?: string; u46?: string; u37?: string; qltycontroller?: string;
   mainimagepath?: string; finaldelvdate?: string; 
   clrcomb?: string | null; print_ty?: string; print_des?: string; part?: string;clr?:string;in_out?:string;noclr?:string;mpic?:string;sup?:string;print_img?:string;prnmeaimg?:string;groundclr?:string;
-  jobno?: string; // Original field from API
-  tbimg?: string;
+  jobno?: string; tbimg?: string; ordimg?:string, production_unit?:string, Buyer?:string; printing_r?:string; number_03_emb?:string;
 }
 
 const PRN: React.FC = () => {
@@ -329,25 +328,25 @@ const PRN: React.FC = () => {
     }
   };
 
-  const orderSummaryTemplate = (p: OrderData) => (
-    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>OR:</b> {highlightText(p.jobno_oms)}<br />
-      <b>Buy:</b> {highlightText(p.buyer1)}<br />
-      <b>Mer:</b> {highlightText(p.merch)}<br />
-      <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
-      <b>Qty:</b> {highlightText(p.quantity)}
-    </div>
-  );
+  // const orderSummaryTemplate = (p: OrderData) => (
+  //   <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+  //     <b>OR:</b> {highlightText(p.jobno_oms)}<br />
+  //     <b>Buy:</b> {highlightText(p.buyer1)}<br />
+  //     <b>Mer:</b> {highlightText(p.merch)}<br />
+  //     <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
+  //     <b>Qty:</b> {highlightText(p.quantity)}
+  //   </div>
+  // );
 
-  const deliveryInfoTemplate = (p: OrderData) => (
-    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br />
-      <b>Dir:</b> {highlightText(p.director_sample_order)}<br />
-      <b>Sno:</b> {highlightText(p.styleno)}<br />
-      <b>Uom:</b> {highlightText(p.uom)}<br />
-      <b>Type:</b> {highlightText(p.production_type_inside_outside)}
-    </div>
-  );
+  // const deliveryInfoTemplate = (p: OrderData) => (
+  //   <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+  //     <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br />
+  //     <b>Dir:</b> {highlightText(p.director_sample_order)}<br />
+  //     <b>Sno:</b> {highlightText(p.styleno)}<br />
+  //     <b>Uom:</b> {highlightText(p.uom)}<br />
+  //     <b>Type:</b> {highlightText(p.production_type_inside_outside)}
+  //   </div>
+  // );
 
   const toolbarOptions: any[] = [
     "Search",
@@ -593,6 +592,12 @@ const PRN: React.FC = () => {
             width: 60px;
             float: right;
             }
+              @media (max-width: 1023px){
+            .dashboard-header {
+              margin-top: 60px
+            }
+            }
+            
             .count{
               margin-top: -30px;
               margin-left: 30px
@@ -779,7 +784,7 @@ const PRN: React.FC = () => {
               <ColumnDirective field="ordimg" headerText="ord_img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('ordimg')} />
                <ColumnDirective field="tbimg" headerText="top_bot" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('tbimg')} />
               <ColumnDirective field="print_img" headerText="PRN IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
-              <ColumnDirective field="prnmeaimg" headerText="PLT" width="80" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
+              <ColumnDirective field="prnmeaimg" headerText="Emb" width="80" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
 
               {/* <ColumnDirective field="prnmeaimg" headerText="PLT" width="80" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} /> */}
               <ColumnDirective field="mpic" headerText="MMC" width="80" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mpic')} />

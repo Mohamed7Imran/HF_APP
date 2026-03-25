@@ -984,7 +984,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         allowReordering={true}
         allowResizing={true}
         allowPdfExport={true}
-
+        // rowHeight={100}
         gridLines="Both"
         searchSettings={{  operator: 'contains', ignoreCase: true }}
         toolbar={toolbarOptions}
@@ -1146,6 +1146,12 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
             white-space: nowrap;
             border: 1px solid #dce1e6;
             display: none
+            }
+
+            @media (max-width: 1023px){
+              .dashboard-header {
+                margin-top:60px             
+              }
             }
             
             /* --- Mobile Layout --- */

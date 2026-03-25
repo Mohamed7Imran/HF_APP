@@ -255,6 +255,7 @@ function FiveColumnDataTable() {
             gap: 1,
             alignItems: 'center', 
           }}
+          display={{xs:''}}
         >
           <TextField
             size="small" label="Global Search" value={searchTerm}

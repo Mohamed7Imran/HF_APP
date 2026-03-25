@@ -1190,6 +1190,7 @@ const showVal = (val: any): string => {
           background-color: #0ff180;
           border-bottom: 1px solid #dee2e6;
           flex-shrink: 0;
+          margin-top:0px;
           flex-wrap: wrap; 
           }
           
@@ -1250,6 +1251,7 @@ const showVal = (val: any): string => {
                 flex-direction: column;
                 padding: 10px;
                 align-items: stretch;
+                margin-top: 14px;
                 gap: 10px;
                 }
 

@@ -1,11 +1,33 @@
-import { useContext, useState, useEffect } from "react";
-import { ChevronDown, Menu, X, LayoutDashboard, User } from "lucide-react";
+import { useContext, useState, useEffect, useMemo, useCallback } from "react";
+import { ChevronDown, Menu, X, LayoutDashboard, User, LogOut, Search, Circle } from "lucide-react";
 import { api } from "../auth/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logoutUser } from "../auth/auth";
-
 import { UserContext } from "../UserContext";
 
+// --- Custom Component to handle API Image Icons or Default Lucide Icons ---
+const MenuIcon = ({ iconData, isActive }) => {
+  if (!iconData) {
+    return <LayoutDashboard size={18} className={isActive ? "text-cyan-400" : "text-white/40"} />;
+  }
+
+  // If iconData is a URL (starts with http)
+  if (typeof iconData === "string" && iconData.startsWith("http")) {
+    return (
+      <img
+        src={iconData}
+        alt="icon"
+        className={`w-5 h-5 object-contain transition-all duration-300 ${
+          isActive ? "brightness-125 scale-110" : "brightness-100 opacity-60 group-hover:opacity-100"
+        }`}
+        onError={(e) => {
+          e.target.style.display = 'none'; 
+        }}
+      />
+    );
+  }
+  return <LayoutDashboard size={18} className={isActive ? "text-cyan-400" : "text-white/40"} />;
+};
 
 function Sidebar({ children }) {
   const [menus, setMenus] = useState([]);
@@ -14,296 +36,236 @@ function Sidebar({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userName, setUserName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const { setUsername } = useContext(UserContext); // update global context
-
+  
+  const { setUsername } = useContext(UserContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
- useEffect(() => {
-  const fetchSidebar = async () => {
-    try {
-      const res = await api.get("/sidebar/");
-      setMenus(res.data.menus || []);
-      setUserName(res.data.user?.username || "Admin");
-      setUsername(res.data.user?.username || "Admin"); // global context
-    } catch (err) {
-      console.error("Sidebar API error:", err);
-    }
-  };
-
-  fetchSidebar();
-
-
-    const handleResize = () => {
-      if (window.innerWidth < 1024) setSidebarOpen(false);
-      else setSidebarOpen(true);
+  // 1. Fetch Sidebar Data
+  useEffect(() => {
+    const fetchSidebar = async () => {
+      try {
+        const res = await api.get("/sidebar/");
+        setMenus(res.data.menus || []);
+        setUserName(res.data.user?.username || "Admin");
+        if (setUsername) setUsername(res.data.user?.username || "Admin");
+      } catch (err) {
+        console.error("Sidebar API error:", err);
+      }
     };
+    fetchSidebar();
+  }, [setUsername]);
 
-    window.addEventListener("resize", handleResize);
-    handleResize();
+  // 2. Logic: Check if active
+  const isChildActive = useCallback((item) => {
+    if (item.path && item.path === location.pathname) return true;
+    const children = item.submenus || item.children || [];
+    return children.some(child => isChildActive(child));
+  }, [location.pathname]);
 
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  // 3. Auto-expand path
+  useEffect(() => {
+    const newOpenState = {};
+    const findAndExpand = (items, level = 1) => {
+      items.forEach(item => {
+        if (isChildActive(item)) {
+          newOpenState[level] = item.id;
+          const children = item.submenus || item.children || [];
+          if (children.length > 0) findAndExpand(children, level + 1);
+        }
+      });
+    };
+    findAndExpand(menus);
+    setOpenMenus(prev => ({ ...prev, ...newOpenState }));
+  }, [location.pathname, menus, isChildActive]);
 
-  const toggleSubMenu = (id) => {
-    setOpenMenus((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
+  // 4. Search Filter
+  const filteredMenus = useMemo(() => {
+    if (!searchTerm.trim()) return menus;
+    const filterItems = (items) => {
+      return items.map((item) => {
+        const isMatch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const children = item.submenus || item.children || [];
+        const filteredChildren = filterItems(children);
+        if (isMatch || filteredChildren.length > 0) return { ...item, submenus: filteredChildren };
+        return null;
+      }).filter(Boolean);
+    };
+    return filterItems(menus);
+  }, [searchTerm, menus]);
+
+  const toggleSubMenu = (id, level) => {
+    setOpenMenus(prev => {
+      const newState = { ...prev };
+      if (prev[level] === id) delete newState[level];
+      else newState[level] = id;
+      Object.keys(newState).forEach(key => { if (parseInt(key) > level) delete newState[key]; });
+      return newState;
+    });
   };
 
-  /* ---------------- GLOBAL FILTER LOGIC ---------------- */
-
-  const filteredMenus = menus
-  .map((menu) => {
-    const menuMatch = menu.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-    const matchedSubmenus = menu.submenus?.filter((sub) =>
-      sub.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    // Main menu match -> show all submenus
-    if (menuMatch) {
-      return {
-        ...menu,
-        submenus: menu.submenus,
-      };
-    }
-
-    // Submenu match -> show only matched submenu
-    if (matchedSubmenus?.length > 0) {
-      return {
-        ...menu,
-        submenus: matchedSubmenus,
-      };
-    }
-
-    return null;
-  })
-  .filter(Boolean);
-
-  /* ---------------- MENU COMPONENT ---------------- */
-
-  const MenuContent = ({ isMobile = false }) => (
-    <div
-      className={`flex-1 overflow-y-auto no-scrollbar ${
-        isMobile ? "px-4 pt-4 pb-24" : "px-3 space-y-1"
-      }`}
-    >
-      {filteredMenus.map((menu) => {
-        const isOpen =
-          openMenus[menu.id] ||
-          (searchTerm && menu.submenus?.length > 0);
+  // 5. Submenu Renderer
+  const RenderSubMenu = ({ items, level = 2, isMobile = false }) => (
+    <div className="flex flex-col w-full mt-1">
+      {items.map((item) => {
+        const children = item.submenus || item.children || [];
+        const hasChildren = children.length > 0;
+        const isActive = location.pathname === item.path;
+        const isParentActive = isChildActive(item);
+        const isOpen = openMenus[level] === item.id || (searchTerm && hasChildren);
 
         return (
-          <div key={menu.id} className="mb-1">
-            {/* Main Menu */}
+          <div key={item.id} className="w-full">
             <div
-              onClick={() =>
-                menu.submenus?.length > 0
-                  ? toggleSubMenu(menu.id)
-                  : (navigate(menu.path || "#"),
-                    isMobile && setMobileMenuOpen(false))
-              }
-              className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-300
-              ${isOpen ? "bg-white/20 shadow-sm" : "hover:bg-white/10"}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (hasChildren) toggleSubMenu(item.id, level);
+                if (item.path) {
+                  navigate(item.path);
+                  if (isMobile) setMobileMenuOpen(false);
+                }
+              }}
+              className={`flex items-center justify-between cursor-pointer py-2 pr-4 transition-all duration-200 group
+                ${isActive 
+                  ? "bg-cyan-600 text-white font-bold rounded-lg mx-2 shadow-md" 
+                  : isParentActive 
+                  ? "text-cyan-400 font-semibold" 
+                  : "text-white/50 hover:text-white hover:bg-white/5"}`}
+              style={{ paddingLeft: `${level * 16}px` }}
             >
-              <div className="flex items-center gap-4">
-                <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
-                  {menu.icon ? (
-                    <img
-                      src={menu.icon}
-                      alt={menu.name}
-                      className="w-full h-full object-contain invert"
-                    />
-                  ) : (
-                    <LayoutDashboard size={20} className="text-white" />
-                  )}
-                </div>
-
-                {(sidebarOpen || isMobile) && (
-                  <span className="font-bold text-[13px] tracking-wide whitespace-nowrap">
-                    {menu.name}
-                  </span>
-                )}
+              <div className="flex items-center gap-2">
+                {!hasChildren && <Circle size={4} className={isActive ? "fill-white" : "fill-current opacity-40"} />}
+                <span className="text-[12px] truncate uppercase tracking-tight">{item.name}</span>
               </div>
-
-              {menu.submenus?.length > 0 && (sidebarOpen || isMobile) && (
-                <ChevronDown
-                  size={14}
-                  className={`transition-transform duration-300 ${
-                    isOpen ? "rotate-180" : ""
-                  }`}
-                />
-              )}
+              {hasChildren && <ChevronDown size={12} className={`transition-transform ${isOpen ? "rotate-180" : "opacity-40"}`} />}
             </div>
-
-            {/* Submenus */}
-            <div
-              className={`overflow-hidden transition-all duration-300 bg-black/10 rounded-xl mt-1
-              ${
-                isOpen && (sidebarOpen || isMobile)
-                  ? "max-h-[500px] py-1"
-                  : "max-h-0"
-              }`}
-            >
-              {menu.submenus?.map((sub) => (
-                <div
-                  key={sub.id}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(sub.path);
-                    if (isMobile) setMobileMenuOpen(false);
-                  }}
-                  className="flex items-center gap-3 pl-12 py-2.5 text-[12px] font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
-                >
-                  {sub.name}
-                </div>
-              ))}
-            </div>
+            {hasChildren && isOpen && (
+              <RenderSubMenu items={children} level={level + 1} isMobile={isMobile} />
+            )}
           </div>
         );
       })}
-
-      {filteredMenus.length === 0 && (
-        <div className="text-center text-white/70 text-sm mt-10">
-          No menu found
-        </div>
-      )}
     </div>
   );
 
   return (
     <div className="flex h-screen bg-slate-100 overflow-hidden font-sans">
-      <style>
-        {`.no-scrollbar::-webkit-scrollbar { display:none }`}
-      </style>
+      <style>{`.no-scrollbar::-webkit-scrollbar { display:none }`}</style>
 
-      {/* --- MOBILE TOP BAR (Fixed Header) --- */}
-     
-        <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-cyan-700 text-white flex items-center justify-between px-5 z-[100] shadow-md flex-row-reverse">
-        <div className="flex items-center gap-6">
-         
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-40 px-2 py-1 text-sm text-black rounded-md border border-white focus:outline-none"
-          />
-
-          <span className="font-black tracking-tight uppercase text-sm">
-            Hero Fashion
-          </span>
-        </div>
-
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-2 bg-white/10 rounded-lg"
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      {/* MOBILE HEADER */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-cyan-950 text-white flex items-center justify-between px-4 z-[90] shadow-xl">
+        <button onClick={() => setMobileMenuOpen(true)} className="p-2 hover:bg-white/10 rounded-xl">
+          <Menu size={24} />
         </button>
+        <span className="font-black text-lg tracking-widest text-cyan-400 uppercase">Hero Fashion</span>
+        <div className="w-9 h-9 bg-cyan-800 rounded-full flex items-center justify-center font-bold border border-white/20">{userName[0]}</div>
       </header>
 
-      {/* ---------------- MOBILE SIDEBAR ---------------- */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]" onClick={() => setMobileMenuOpen(false)} />
+      )}
 
-      <div
-        className={`lg:hidden fixed inset-0 z-[95] transition-all duration-300 ${
-          mobileMenuOpen ? "visible" : "invisible"
-        }`}
-      >
-        <div
-          className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity ${
-            mobileMenuOpen ? "opacity-100" : "opacity-0"
-          }`}
-          onClick={() => setMobileMenuOpen(false)}
-        />
-
-        <div
-          className={`absolute top-0 left-0 bottom-0 w-[280px] bg-cyan-700 text-white shadow-2xl transition-transform duration-300 flex flex-col ${
-            mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <div className="h-16 flex items-center px-6 border-b border-white/10 bg-black/10">
-            <span className="font-black text-sm tracking-widest">
-              NAVIGATE
-            </span>
-          </div>
-
-          <MenuContent isMobile={true} />
-        </div>
-      </div>
-
-      {/* ---------------- DESKTOP SIDEBAR ---------------- */}
-
+      {/* SIDEBAR */}
       <aside
-        className={`hidden lg:flex flex-col h-full bg-cyan-700 text-white transition-all duration-300 relative z-50 shadow-2xl ${
-          sidebarOpen ? "w-64" : "w-20"
-        }`}
+        className={`fixed lg:static inset-y-0 left-0 z-[110] bg-cyan-950 text-white transition-all duration-300 flex flex-col shadow-2xl
+        ${mobileMenuOpen ? "translate-x-0 w-[280px]" : "-translate-x-full lg:translate-x-0"}
+        ${sidebarOpen ? "lg:w-64" : "lg:w-20"}`}
       >
-        <div className="h-20 flex items-center px-6 mb-2 gap-3">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition"
-          >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-
-          {sidebarOpen && (
-            <span className="text-sm font-black tracking-widest uppercase">
-              Hero Fashion
-            </span>
+        <div className="h-20 flex items-center justify-between px-6 shrink-0 bg-black/20 border-b border-white/5">
+          {(sidebarOpen || mobileMenuOpen) && (
+            <div className="flex items-center gap-2">
+               <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center font-black shadow-lg text-white">H</div>
+               <span className="font-black text-xl tracking-tighter uppercase italic">Hero<span className="text-cyan-400">.</span></span>
+            </div>
           )}
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:block p-2 hover:bg-white/10 rounded-lg transition-all active:scale-95">
+             {sidebarOpen ? <X size={18} /> : <Menu size={20} />}
+          </button>
+          <button onClick={() => setMobileMenuOpen(false)} className="lg:hidden p-2 hover:bg-white/10 rounded-lg">
+             <X size={20} />
+          </button>
         </div>
 
-        {/* SEARCH BAR */}
-        {sidebarOpen && (
-          <div className="px-4 mb-3">
-            <input
-              type="text"
-              placeholder="Search menu..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-1.5 text-xs rounded-md text-white border-2 border-white focus:outline-none focus:border-white"
-            />
+        {(sidebarOpen || mobileMenuOpen) && (
+          <div className="px-4 py-5 shrink-0">
+            <div className="relative group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 group-focus-within:text-cyan-400" size={14} />
+              <input
+                type="text"
+                placeholder="Search menus..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-10 text-xs focus:ring-2 focus:ring-cyan-500/50 outline-none transition-all placeholder:text-white/20"
+              />
+            </div>
           </div>
         )}
 
-        <MenuContent />
+        <div className="flex-1 overflow-y-auto no-scrollbar py-2 space-y-1">
+          {filteredMenus.map((menu) => {
+            const hasChildren = (menu.submenus || menu.children || []).length > 0;
+            const isActive = isChildActive(menu);
+            const isOpen = openMenus[1] === menu.id || (searchTerm && hasChildren);
 
-        {/* USER PROFILE */}
-
-        <div className="p-4 border-t border-white/10 bg-black/5 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-            <User size={16} />
-          </div>
-
-          {sidebarOpen && (
-            <div className="flex items-center justify-between w-full">
-              <div>
-                <span className="text-[12px] font-bold">{userName}</span>
-                <div className="text-[9px] text-emerald-200 uppercase">
-                  Online
+            return (
+              <div key={menu.id} className="px-3">
+                <div
+                  onClick={() => {
+                    if (hasChildren) toggleSubMenu(menu.id, 1);
+                    if (menu.path) { navigate(menu.path); if (mobileMenuOpen) setMobileMenuOpen(false); }
+                  }}
+                  className={`flex items-center justify-between p-3.5 rounded-xl cursor-pointer transition-all duration-300 group
+                    ${isActive ? "bg-white/10 text-white shadow-lg ring-1 ring-white/10" : "text-white/50 hover:bg-white/5 hover:text-white"}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                       <MenuIcon iconData={menu.icon} isActive={isActive} />
+                    </div>
+                    {(sidebarOpen || mobileMenuOpen) && (
+                      <span className={`text-[13px] tracking-wide ${isActive ? "font-bold" : "font-medium opacity-80 group-hover:opacity-100"}`}>
+                        {menu.name}
+                      </span>
+                    )}
+                  </div>
+                  {hasChildren && (sidebarOpen || mobileMenuOpen) && (
+                    <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? "rotate-180" : "opacity-30"}`} />
+                  )}
                 </div>
+                {hasChildren && isOpen && (
+                  <div className="mt-1 ml-4 border-l border-white/5 bg-black/5 rounded-bl-xl overflow-hidden">
+                    <RenderSubMenu items={menu.submenus || menu.children} level={2} isMobile={mobileMenuOpen} />
+                  </div>
+                )}
               </div>
+            );
+          })}
+        </div>
 
-              <button
-                onClick={logoutUser}
-                className="text-xs bg-cyan-700 hover:bg-blue-600 px-2 py-1 rounded"
-              >
-                Logout
-              </button>
+        <div className="p-4 bg-black/30 mt-auto border-t border-white/5">
+          <div className="flex items-center gap-3">
+            <div className="relative shrink-0">
+               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg text-white">
+                  <User size={20} />
+               </div>
+               <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-cyan-950 rounded-full"></div>
             </div>
-          )}
+            {(sidebarOpen || mobileMenuOpen) && (
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-black truncate uppercase tracking-widest text-white">{userName}</p>
+                <button onClick={logoutUser} className="text-[10px] text-red-400 hover:text-red-300 font-bold flex items-center gap-1 mt-0.5 uppercase tracking-tighter">
+                   <LogOut size={12} /> Sign Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 
-      {/* CONTENT */}
-
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden pt-16 lg:pt-0">
-        <main className="flex-1 overflow-y-auto pt-20 lg:pt-8 no-scrollbar">
-          {/* Your Content */}
+        <main className="flex-1 overflow-y-auto bg-slate-50/30">
+          <div className="min-h-full max-w-[1600px] mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>

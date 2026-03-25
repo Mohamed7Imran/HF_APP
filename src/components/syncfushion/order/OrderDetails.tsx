@@ -36,7 +36,7 @@ import {
   recordClick
 }from '@syncfusion/ej2-react-grids';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { Ajax, registerLicense } from '@syncfusion/ej2-base';
+import { Ajax, registerLicense, Browser} from '@syncfusion/ej2-base';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
@@ -509,7 +509,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
 
   const toolbarOptions: any[] = [
-    "Search",
+    { text: 'Search', prefixIcon: 'e-icons e-search', id: 'default-aggregate-grid_search', align: 'Left' as any },
     { text: '', prefixIcon: 'e-add', id: 'add_icon', tooltipText: 'Add Records' },
     'Edit',
     'Delete',
@@ -976,6 +976,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         filterSettings={{type:'CheckBox'}}
         statelessTemplates={['directiveTemplates']}
         allowGrouping={true}
+        groupSettings={{showDropArea : !Browser.isDevice}}
         showColumnMenu={true}
         // showColumnChooser={true}
         enableAdaptiveUI={true}

@@ -1167,8 +1167,8 @@ const showVal = (val: any): string => {
         dataBound={dataBound}
         pageSettings={{pageSize:10}}
         height="500px"
-        // enableVirtualization={true}
-        allowPaging={true}
+        enableVirtualization={true}
+        // allowPaging={true}
         allowSorting={true}
         allowFiltering={true}
         allowMultiSorting={true}
@@ -1187,7 +1187,7 @@ const showVal = (val: any): string => {
         allowPdfExport={true}
         autoFit={true}
         gridLines="Both"
-         searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
+        searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
         toolbar={toolbarOptions}
         editSettings={{
           allowDeleting: true,
@@ -1362,13 +1362,8 @@ const showVal = (val: any): string => {
                 flex-direction: column;
                 padding: 10px;
                 align-items: stretch;
-<<<<<<< HEAD
-                margin-top: 14px;
-                gap: 10px;
-=======
                 gap: 10px;             
                 margin-top: 60px
->>>>>>> 0db44dfa091c4943b4c7833e35dcfa4758de4080
                 }
 
                 .breadcromp{

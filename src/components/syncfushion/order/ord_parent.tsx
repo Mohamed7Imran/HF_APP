@@ -32,11 +32,12 @@ import {
   AggregateDirective,
   AggregatesDirective,
   PdfExport,
+
   DetailRow,
   ExcelExport
 } from '@syncfusion/ej2-react-grids';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import { Ajax, registerLicense } from '@syncfusion/ej2-base';
+import { registerLicense, Browser} from '@syncfusion/ej2-base';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent, ChipListComponent } from '@syncfusion/ej2-react-buttons';
@@ -541,8 +542,8 @@ const HeroFashionGrid13: React.FC = () => {
                 </div>
 
                 {/* TAB 3: NEWDATA (Product Card Style) */}
-                <div style={{ padding: '15px', background: '#f5f5f5' }}>
-                    <h4 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>PRINTING MENU</h4>
+                  <div style={{ padding: '8px', background: '#f5f5f5', maxHeight: '150px', overflowY: 'auto'}}>
+                    {/* <h4 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>PRINTING MENU</h4> */}
                     
                     {printGroups.length === 0 && <div style={{color: '#999', textAlign: 'center', padding: '40px', background: '#fff', borderRadius: '8px'}}>No Print Details Available</div>}
                     
@@ -716,14 +717,14 @@ const HeroFashionGrid13: React.FC = () => {
 
         /* --- Pizza Menu Layout Styles (Ref Code) --- */
         .e-pizza-cell { 
-            padding: 10px; 
+            padding: 5px; 
             border-bottom: 1px solid #e0e0e0; 
             background: #fff;
         }
         .e-pizza-info-container {
             display: flex;
             align-items: center;
-            min-height: 120px;
+            min-height: 50px;
         }
         .e-pizza-image-layout {
             width: 120px;
@@ -961,7 +962,7 @@ const HeroFashionGrid13: React.FC = () => {
             {showingCount} / {totalCount}
           </div>
         </div>
-        <div className="header-controls bg-white">
+        {/* <div className="header-controls bg-white">
           <input 
             type="text" 
             placeholder="Search all columns..."
@@ -969,7 +970,7 @@ const HeroFashionGrid13: React.FC = () => {
             onChange={onSearchChange}
             className="search-input"
           />
-        </div>
+        </div> */}
         <div style={{ padding: '8px 5px', borderBottom: '1px solid #eee', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight:'bold' }}>
     <TextBoxComponent
@@ -1036,7 +1037,7 @@ const HeroFashionGrid13: React.FC = () => {
             ref={gridRef}
             dataSource={dataSource}
             dataBound={dataBound}
-            pageSettings={{ pageSize: 10 }}
+            // pageSettings={{ pageSize: 10 }}
             // allowPaging={true}
             enableInfiniteScrolling={true}
             statelessTemplates={['directiveTemplates']}
@@ -1046,6 +1047,8 @@ const HeroFashionGrid13: React.FC = () => {
             allowFiltering={true}
             filterSettings={{ type: 'Menu' }}
             allowResizing={true}
+            allowGrouping={true}
+            groupSettings={{showDropArea : !Browser.isDevice}}
             enableAdaptiveUI={true}
             adaptiveUIMode={'Mobile'}
             allowReordering={true}

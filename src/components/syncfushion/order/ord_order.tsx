@@ -376,21 +376,20 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     );
   };
 
-
   const created = () => {
     document.getElementById(gridRef.current?.element.id + "_searchbar")?.addEventListener('keyup', (event: any) => {
       gridRef.current?.search(event.target?.value);
     });
   };
 
-  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchKey(value);
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    searchTimeout.current = setTimeout(() => {
-      if (gridRef.current) gridRef.current.search(value);
-    }, 400);
-  };
+  // const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setSearchKey(value);
+  //   if (searchTimeout.current) clearTimeout(searchTimeout.current);
+  //   searchTimeout.current = setTimeout(() => {
+  //     if (gridRef.current) gridRef.current.search(value);
+  //   }, 400);
+  // };
 
   const genericHighlighter = (field: keyof OrderData) => (props: OrderData) => (
     <>{highlightText(props[field])}</>
@@ -577,7 +576,7 @@ const   Alldate= (p: OrderData) => (
 
   
   const toolbarOptions: any[] = [
-    "Search",
+    { text: 'Search', prefixIcon: 'e-icons e-search', id: 'Grid_search', align: 'Left' as any },
     { text: '', prefixIcon: 'e-add', id: 'add_icon', tooltipText: 'Add Records' },
     'Edit',
     'Delete',
@@ -1163,7 +1162,7 @@ const showVal = (val: any): string => {
         dataSource={dataSource}
         dataBound={dataBound}
         pageSettings={{pageSize:10}}
-        height="440px"
+        height="500px"
         enableVirtualization={true}
         allowSorting={true}
         allowFiltering={true}
@@ -1171,7 +1170,7 @@ const showVal = (val: any): string => {
         // filterSettings={{type:'CheckBox'}}
         filterSettings={{ type: 'Menu' }}
         statelessTemplates={['directiveTemplates']}
-        allowGrouping={true}
+        // allowGrouping={true}
         // showColumnMenu={true}
         // showColumnChooser={true}
         enableAdaptiveUI={true}
@@ -1396,7 +1395,7 @@ const showVal = (val: any): string => {
             float: right;
             }
             .count{
-              margin-top: -30px;
+              margin-top: -28px;
               margin-left: 30px
             }
                 .header-title {
@@ -1456,7 +1455,7 @@ const showVal = (val: any): string => {
             {showingCount} / {totalCount}
           </div>
         </div>
-        <div className="header-controls bg-white">
+        {/* <div className="header-controls bg-white">
           <input 
             type="text" 
             placeholder="Search all columns..."
@@ -1464,57 +1463,57 @@ const showVal = (val: any): string => {
             onChange={onSearchChange}
             className="search-input"
           />
+        </div> */}
+        <div style={{ padding: '0px 5px', borderBottom: '1px solid #eee', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+            <div style={{ display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
+              <TextBoxComponent
+                ref={settingNameRef}
+                placeholder="setting name"
+                style={{ width: '80px' }}
+              />
+            </div>
+
+            <ButtonComponent
+              onClick={saveSetting}
+              cssClass="e-primary"
+              style={{ padding: '3px 6px', fontSize: '13px' }}
+            >
+              💾
+            </ButtonComponent>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <DropDownListComponent
+              ref={dropdownRef}
+              id="settings-dropdown"
+              dataSource={savedSettings
+                .filter(
+                  s =>
+                    s.user?.toLowerCase() === username?.toLowerCase() // normalize for comparison
+                )
+                .map(s => ({ text: s.name, value: s.id }))}
+              fields={{ text: 'text', value: 'value' }}
+              placeholder="Select setting"
+              style={{ width: '80px' }}
+              change={() => setSelectedSetting(dropdownRef.current?.value as string)}
+            />
+          </div>
+
+            <ButtonComponent
+              onClick={applySetting}
+              cssClass="e-outline"
+              style={{ padding: '3px 6px', fontSize: '15px' }}
+            >
+            ✔
+            </ButtonComponent>
+
+            <ButtonComponent
+              onClick={deleteSetting}
+              cssClass="e-outline e-danger"
+              style={{ padding: '3px 6px', fontSize: '15px' }}
+            >
+              🗑
+            </ButtonComponent>
         </div>
-        <div style={{ padding: '8px 5px', borderBottom: '1px solid #eee', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-  <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight:'bold' }}>
-    <TextBoxComponent
-      ref={settingNameRef}
-      placeholder="setting name"
-      style={{ width: '80px' }}
-    />
-  </div>
-
-  <ButtonComponent
-    onClick={saveSetting}
-    cssClass="e-primary"
-    style={{ padding: '3px 6px', fontSize: '13px' }}
-  >
-    💾
-  </ButtonComponent>
-
-<div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-  <DropDownListComponent
-    ref={dropdownRef}
-    id="settings-dropdown"
-    dataSource={savedSettings
-      .filter(
-        s =>
-          s.user?.toLowerCase() === username?.toLowerCase() // normalize for comparison
-      )
-      .map(s => ({ text: s.name, value: s.id }))}
-    fields={{ text: 'text', value: 'value' }}
-    placeholder="Select setting"
-    style={{ width: '80px' }}
-    change={() => setSelectedSetting(dropdownRef.current?.value as string)}
-  />
-</div>
-
-  <ButtonComponent
-    onClick={applySetting}
-    cssClass="e-outline"
-    style={{ padding: '3px 6px', fontSize: '15px' }}
-  >
-   ✔
-  </ButtonComponent>
-
-  <ButtonComponent
-    onClick={deleteSetting}
-    cssClass="e-outline e-danger"
-    style={{ padding: '3px 6px', fontSize: '15px' }}
-  >
-    🗑
-  </ButtonComponent>
-</div>
       </div>
 
       {/* Grid Container */}

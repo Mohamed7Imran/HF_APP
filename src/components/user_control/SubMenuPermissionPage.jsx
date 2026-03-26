@@ -6,8 +6,7 @@ import {
   Save, 
   Users, 
   Lock,
-  Layout,
-  Layers
+  Layout
 } from "lucide-react";
 
 const SubMenuPermissionTable = () => {
@@ -46,10 +45,22 @@ const SubMenuPermissionTable = () => {
     try {
       const res = await api.get("role-submenu-permissions/");
       const rolePerms = res.data.filter((p) => p.role.id === Number(roleId));
+
+      // Map permissions
       const permsMap = {};
       rolePerms.forEach((p) => {
         permsMap[p.submenu.id] = p.can_view;
       });
+
+      // Include all submenu IDs to default hidden if not present
+      const addAllSubmenus = (subs) => {
+        subs.forEach(sub => {
+          if (!(sub.id in permsMap)) permsMap[sub.id] = false;
+          if (sub.children?.length) addAllSubmenus(sub.children);
+        });
+      };
+      allMenus.forEach(menu => menu.submenus && addAllSubmenus(menu.submenus));
+
       setPermissions(permsMap);
     } catch (err) {
       console.error("Error fetching permissions:", err);
@@ -78,26 +89,28 @@ const SubMenuPermissionTable = () => {
       const res = await api.get("role-submenu-permissions/");
       const existingPerms = res.data.filter(p => p.role.id === Number(selectedRole));
 
-      for (const menu of allMenus) {
-        if (menu.submenus) {
-          for (const submenu of menu.submenus) {
-            const hasPermissionInUI = !!permissions[submenu.id];
-            const existingInDB = existingPerms.find(p => p.submenu.id === submenu.id);
-
-            const payload = {
-              role_id: Number(selectedRole),
-              submenu_id: submenu.id,
-              can_view: hasPermissionInUI,
-            };
-
-            if (existingInDB) {
-              await api.put(`role-submenu-permissions/${existingInDB.id}/`, payload);
-            } else if (hasPermissionInUI) {
-              await api.post("role-submenu-permissions/", payload);
-            }
+      const saveSubmenus = async (subs) => {
+        for (const sub of subs) {
+          const hasPermissionInUI = !!permissions[sub.id];
+          const existingInDB = existingPerms.find(p => p.submenu.id === sub.id);
+          const payload = {
+            role_id: Number(selectedRole),
+            submenu_id: sub.id,
+            can_view: hasPermissionInUI,
+          };
+          if (existingInDB) {
+            await api.put(`role-submenu-permissions/${existingInDB.id}/`, payload);
+          } else if (hasPermissionInUI) {
+            await api.post("role-submenu-permissions/", payload);
           }
+          if (sub.children?.length) await saveSubmenus(sub.children);
         }
+      };
+
+      for (const menu of allMenus) {
+        if (menu.submenus?.length) await saveSubmenus(menu.submenus);
       }
+
       alert("Permissions updated!");
     } catch (err) {
       alert("Failed to save.");
@@ -106,10 +119,55 @@ const SubMenuPermissionTable = () => {
     }
   };
 
+  // Recursive rendering for desktop
+  const renderSubmenusTable = (submenus, level = 0) => {
+    return submenus.map(sub => (
+      <React.Fragment key={sub.id}>
+        <tr className="bg-slate-50/30 border-l-4 border-indigo-500">
+          <td className="px-14 py-3" style={{ paddingLeft: `${level * 24 + 16}px` }}>
+            <span className={`text-[12px] font-semibold ${permissions[sub.id] ? "text-slate-800" : "text-slate-400 italic"}`}>
+              {sub.name}
+            </span>
+          </td>
+          <td className="px-6 py-3 text-center">
+            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase border ${permissions[sub.id] ? "text-emerald-600 bg-emerald-50 border-emerald-100" : "text-slate-300 bg-white border-slate-100"}`}>
+              {permissions[sub.id] ? "Visible" : "Hidden"}
+            </span>
+          </td>
+          <td className="px-6 py-3 text-right">
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" checked={!!permissions[sub.id]} onChange={() => togglePermission(sub.id)} />
+              <div className="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4"></div>
+            </label>
+          </td>
+        </tr>
+        {sub.children?.length > 0 && renderSubmenusTable(sub.children, level + 1)}
+      </React.Fragment>
+    ));
+  };
+
+  // Recursive rendering for mobile accordion
+  const renderSubmenusMobile = (submenus, level = 0) => {
+    return submenus.map(sub => (
+      <div key={sub.id} className="p-4 flex items-center justify-between bg-white" style={{ paddingLeft: `${level * 16}px` }}>
+        <div>
+          <p className="text-[13px] font-bold text-slate-700">{sub.name}</p>
+          <p className={`text-[10px] font-bold uppercase ${permissions[sub.id] ? "text-emerald-500" : "text-slate-300"}`}>
+            {permissions[sub.id] ? "Visible" : "Hidden"}
+          </p>
+        </div>
+        <label className="relative inline-flex items-center cursor-pointer scale-110">
+          <input type="checkbox" className="sr-only peer" checked={!!permissions[sub.id]} onChange={() => togglePermission(sub.id)} />
+          <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 shadow-inner"></div>
+        </label>
+        {sub.children?.length > 0 && renderSubmenusMobile(sub.children, level + 1)}
+      </div>
+    ));
+  };
+
   return (
     <div className="min-h-screen bg-[#f8fafc] p-3 md:p-8 font-sans text-slate-700 antialiased">
-      {/* Navbar Overlap Prevention */}
-      <div className="h-16 lg:hidden" /> 
+      <div className="h-16 lg:hidden" />
 
       {/* Header & Role Selection */}
       <div className="max-w-5xl mx-auto bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
@@ -139,50 +197,29 @@ const SubMenuPermissionTable = () => {
       <div className="max-w-5xl mx-auto">
         {!selectedRole ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-slate-200 shadow-sm">
-             <Lock className="mx-auto text-slate-100 mb-4" size={48} />
-             <p className="text-slate-400 font-bold text-sm">Select a role to begin configuration</p>
+            <Lock className="mx-auto text-slate-100 mb-4" size={48} />
+            <p className="text-slate-400 font-bold text-sm">Select a role to begin configuration</p>
           </div>
         ) : (
           <div className="space-y-4">
-            
-            {/* --- MOBILE VIEW (Card-style Accordion) --- */}
+
+            {/* MOBILE VIEW */}
             <div className="md:hidden space-y-3">
-              {allMenus.map((menu) => (
+              {allMenus.map(menu => (
                 <div key={menu.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-                  <div 
-                    onClick={() => toggleMenuExpand(menu.id)}
-                    className="p-4 flex items-center justify-between bg-slate-50/50"
-                  >
+                  <div onClick={() => toggleMenuExpand(menu.id)} className="p-4 flex items-center justify-between bg-slate-50/50 cursor-pointer">
                     <div className="flex items-center gap-3">
-                       <Layout size={18} className="text-indigo-600" />
-                       <span className="font-black text-xs uppercase tracking-tight">{menu.name}</span>
+                      <Layout size={18} className="text-indigo-600" />
+                      <span className="font-black text-xs uppercase tracking-tight">{menu.name}</span>
                     </div>
                     <ChevronDown size={18} className={`transition-transform text-slate-400 ${expandedMenus[menu.id] ? "rotate-180" : ""}`} />
                   </div>
-                  
-                  {expandedMenus[menu.id] && (
-                    <div className="divide-y divide-slate-100 animate-in slide-in-from-top-2 duration-200">
-                      {menu.submenus?.map((sub) => (
-                        <div key={sub.id} className="p-4 flex items-center justify-between bg-white">
-                          <div>
-                            <p className="text-[13px] font-bold text-slate-700">{sub.name}</p>
-                            <p className={`text-[10px] font-bold uppercase ${permissions[sub.id] ? "text-emerald-500" : "text-slate-300"}`}>
-                              {permissions[sub.id] ? "Visible" : "Hidden"}
-                            </p>
-                          </div>
-                          <label className="relative inline-flex items-center cursor-pointer scale-110">
-                            <input type="checkbox" className="sr-only peer" checked={!!permissions[sub.id]} onChange={() => togglePermission(sub.id)} />
-                            <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 shadow-inner"></div>
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {expandedMenus[menu.id] && menu.submenus && renderSubmenusMobile(menu.submenus)}
                 </div>
               ))}
             </div>
 
-            {/* --- DESKTOP VIEW (Table Style) --- */}
+            {/* DESKTOP VIEW */}
             <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
               <table className="w-full border-collapse">
                 <thead>
@@ -193,7 +230,7 @@ const SubMenuPermissionTable = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {allMenus.map((menu) => (
+                  {allMenus.map(menu => (
                     <React.Fragment key={menu.id}>
                       <tr onClick={() => toggleMenuExpand(menu.id)} className="group cursor-pointer hover:bg-slate-50/80">
                         <td className="px-6 py-4 flex items-center gap-4">
@@ -209,31 +246,14 @@ const SubMenuPermissionTable = () => {
                           {menu.submenus?.length} Submenus
                         </td>
                       </tr>
-                      {expandedMenus[menu.id] && menu.submenus?.map((sub) => (
-                        <tr key={sub.id} className="bg-slate-50/30 border-l-4 border-indigo-500">
-                          <td className="px-14 py-3">
-                            <span className={`text-[12px] font-semibold ${permissions[sub.id] ? "text-slate-800" : "text-slate-400 italic"}`}>{sub.name}</span>
-                          </td>
-                          <td className="px-6 py-3 text-center">
-                            <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase border ${permissions[sub.id] ? "text-emerald-600 bg-emerald-50 border-emerald-100" : "text-slate-300 bg-white border-slate-100"}`}>
-                              {permissions[sub.id] ? "Visible" : "Hidden"}
-                            </span>
-                          </td>
-                          <td className="px-6 py-3 text-right">
-                            <label className="relative inline-flex items-center cursor-pointer">
-                              <input type="checkbox" className="sr-only peer" checked={!!permissions[sub.id]} onChange={() => togglePermission(sub.id)} />
-                              <div className="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4"></div>
-                            </label>
-                          </td>
-                        </tr>
-                      ))}
+                      {expandedMenus[menu.id] && menu.submenus && renderSubmenusTable(menu.submenus)}
                     </React.Fragment>
                   ))}
                 </tbody>
               </table>
             </div>
 
-            {/* FLOATING ACTION BUTTON FOR MOBILE / FOOTER FOR DESKTOP */}
+            {/* FLOATING SAVE BUTTON */}
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 backdrop-blur-md border-t border-slate-200 md:relative md:bg-slate-50 md:border-t-0 md:rounded-2xl md:p-5 flex flex-col md:flex-row justify-between items-center gap-4 z-50">
               <p className="hidden md:block text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">Requires refresh to apply changes.</p>
               <button
@@ -245,8 +265,6 @@ const SubMenuPermissionTable = () => {
                 {!isSaving && <Save size={16} />}
               </button>
             </div>
-            
-            {/* Mobile bottom spacing for floating button */}
             <div className="h-24 md:hidden" />
           </div>
         )}

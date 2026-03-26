@@ -1167,8 +1167,8 @@ const showVal = (val: any): string => {
         dataBound={dataBound}
         pageSettings={{pageSize:10}}
         height="500px"
-        // enableVirtualization={true}
-        allowPaging={true}
+        enableVirtualization={true}
+        // allowPaging={true}
         allowSorting={true}
         allowFiltering={true}
         allowMultiSorting={true}
@@ -1187,7 +1187,7 @@ const showVal = (val: any): string => {
         allowPdfExport={true}
         autoFit={true}
         gridLines="Both"
-         searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
+        searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
         toolbar={toolbarOptions}
         editSettings={{
           allowDeleting: true,
@@ -1298,6 +1298,7 @@ const showVal = (val: any): string => {
           padding: 5px 10px;
           background-color: #0ff180;
           flex-shrink: 0;
+          margin-top:0px;
           flex-wrap: wrap; 
           }
           

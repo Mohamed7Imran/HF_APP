@@ -44,6 +44,8 @@ function Home() {
          <Route path="/Schedule" element={<Schedule />} /> 
          <Route path="/PRN" element={<PRN />} /> 
          <Route path="/Excel" element={<Excel />} /> 
+         <Route path="/PivotTableExporting" element={<PivotTableExporting />} /> 
+         
          <Route path="/TemplateGallery" element={<TemplateGallery />} /> 
          {/* <Route path="/Overview" element={<Overview />} />  */}
          <Route path="/fabric" element={<FabricForm />} /> 

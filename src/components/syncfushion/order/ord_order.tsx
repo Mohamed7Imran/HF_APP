@@ -596,7 +596,8 @@ const   Alldate= (p: OrderData) => (
     { text: '', prefixIcon: 'e-csvexport', id: 'export_csv', tooltipText: 'Export CSV' },
     { text: '', prefixIcon: 'e-excelexport', id: 'export_excel', tooltipText: 'Export Excel' },
     { text: '', prefixIcon: 'e-pdfexport', id: 'export_pdf', tooltipText: 'Export PDF' },
-    // 'ColumnChooser'
+    // 'ColumnChooser',
+    { text: '', prefixIcon: 'e-zoom-to-fit', id:"pagination_grid" }
   ];
 
   const searchHighlightText = (key: string | undefined, gridElement: Node) => {
@@ -616,7 +617,7 @@ const   Alldate= (p: OrderData) => (
     const walker = document.createTreeWalker(
 
       gridElement,
-
+     
       NodeFilter.SHOW_TEXT,
 
       {
@@ -726,6 +727,24 @@ const showVal = (val: any): string => {
         console.log('Add Records clicked');
         gridRef.current.addRecord();
         break;
+
+       case 'pagination_grid': {
+
+        const isPaging = gridRef.current.allowPaging;
+
+        gridRef.current.setProperties({
+
+          allowPaging: !isPaging,
+
+          enableVirtualization: isPaging,
+
+        }, true);
+
+        gridRef.current.freezeRefresh();
+
+        break;
+
+      }
 
  
 
@@ -1105,7 +1124,7 @@ const showVal = (val: any): string => {
           (tooltipRef.current as TooltipComponent).width = '100px';
           (tooltipRef.current as TooltipComponent).height = '100px';
         }
-        else {
+        else {args.cancel=!isHeaderCell
           // Create a wrapper div for text content with styling
           const textWrapper = document.createElement('div');
           textWrapper.style.padding = '8px';

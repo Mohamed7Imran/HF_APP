@@ -551,11 +551,7 @@ const HeroFashionGrid13: React.FC = () => {
                 </div>
 
                 {/* TAB 3: NEWDATA (Product Card Style) */}
-<<<<<<< HEAD
-                <div style={{ padding: '15px', background: '#f5f5f5' }}>
-=======
                   <div style={{ padding: '8px', background: '#f5f5f5', maxHeight: '150px', overflowY: 'auto'}}>
->>>>>>> 23784685cbe86ed6ad5200bb071f9e7c64c28c2b
                     {/* <h4 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>PRINTING MENU</h4> */}
                     
                     {printGroups.length === 0 && <div style={{color: '#999',width:'50px', textAlign: 'center', background: '#fff', borderRadius: '8px'}}>No Print Details Available</div>}

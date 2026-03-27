@@ -16,8 +16,8 @@ import TemplateGallery from '../order/eblockeditor.tsx';
 import Excel from '../order/excel.tsx';
 import FabricForm from '../fabric/Fabric.jsx';
 import Signin1 from '../layout/Signup.tsx';
-import OrderOms from "../order/Order_oms.tsx"
-import HeroFashionGrid131 from "../order/ord_parent.tsx"
+import OrderOms from "../order/Order_oms.tsx";
+import HeroFashionGrid131 from "../order/ord_parent.tsx";
 import Schedule from "../order/Schedule.tsx"
 import GanttChart from '../order/Gantt Chart/GanttChart.tsx';
 import OrderDetails from '../order/OrderDetails.tsx';

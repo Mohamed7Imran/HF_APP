@@ -1,15 +1,12 @@
-<<<<<<< HEAD
 
 /* e-pivot-toolbar e-control e-toolbar e-lib */
-.e-control{
+/* .e-control{
    margin-top: 70px;
    margin-bottom: 0px;
-}
+} */
 .e-pivot-toolbar {
     margin-bottom:40px;
 }
-=======
->>>>>>> 787ea59ee4c408c2f4d572f5ed3a773ca63ed6ff
 .e-pivotview {
     width: 100%;
     height: 100%;

@@ -17,6 +17,7 @@
     "@syncfusion/ej2-react-blockeditor": "^33.1.44",
     "@syncfusion/ej2-react-buttons": "*",
     "@syncfusion/ej2-react-calendars": "*",
+    "@syncfusion/ej2-react-charts": "^33.1.44",
     "@syncfusion/ej2-react-dropdowns": "*",
     "@syncfusion/ej2-react-gantt": "^33.1.44",
     "@syncfusion/ej2-react-grids": "*",

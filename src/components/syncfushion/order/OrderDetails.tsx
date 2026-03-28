@@ -1151,7 +1151,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
             @media (max-width: 1023px){
               .dashboard-header {
-                margin-top:60px             
+                margin-top:40px !important             
               }
             }
             

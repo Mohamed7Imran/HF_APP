@@ -12,27 +12,26 @@ import {
   Filter,
   Group,
   Reorder,
-  Search,
-  VirtualScroll,
-  ContextMenu,
-  ColumnMenu,
+  // Search,
+  // VirtualScroll,
+  // ContextMenu,
+  // ColumnMenu,
   Page,
   Toolbar,
-  ColumnChooser,
-  Freeze,
+  // ColumnChooser,
+  // Freeze,
   Edit,
-  AddEventArgs,
-  SaveEventArgs,
-  EditEventArgs,
-  DeleteEventArgs,
-  ActionEventArgs,
-  Aggregate,
-  AggregateColumnsDirective,
-  AggregateColumnDirective,
-  AggregateDirective,
-  AggregatesDirective,
-  PdfExport,
-
+  // AddEventArgs,
+  // SaveEventArgs,
+  // EditEventArgs,
+  // DeleteEventArgs,
+  // ActionEventArgs,
+  // Aggregate,
+  // AggregateColumnsDirective,
+  // AggregateColumnDirective,
+  // AggregateDirective,
+  // AggregatesDirective,
+  // PdfExport,
   DetailRow,
   ExcelExport
 } from '@syncfusion/ej2-react-grids';
@@ -388,6 +387,15 @@ const HeroFashionGrid13: React.FC = () => {
       <b>25-week:</b> {highlightText(p.u25)}<br />
     </div>
   );
+  const udf4 = (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
+      <b>Week_R:</b> {highlightText(p.Week_R)}<br />
+      <b>ST:</b> {highlightText(p.styleno)}<br />
+      <b>Uom:</b> {highlightText(p.uom)}<br />
+      <b>Type:</b> {highlightText(p.production_type_inside_outside)}
+    </div>
+  );
 
   const udf2= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -438,7 +446,7 @@ const HeroFashionGrid13: React.FC = () => {
     };
 
     return (
-      <div style={{ padding: "10px"}}>
+      <div>
         <TabComponent heightAdjustMode="Auto">
             <div className="e-tab-header">
                 <div> Order Details </div>
@@ -449,8 +457,8 @@ const HeroFashionGrid13: React.FC = () => {
             <div className="e-content">
 
                 {/* TAB 1: ORDER DETAILS */}
-                <div style={{ padding: '5px' ,height:'10px' }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "0.2fr 0.2fr 0.2fr", columnGap: "2px", rowGap: "1px", fontSize: "14px",height:"50px" }}>
+                <div className='content-tab' style={{ padding: '5px' ,height:'80px' }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "0.2fr 0.2fr 0.2fr", columnGap: "2px", rowGap: "1px", fontSize: "14px",height:"80px" }}>
                       
                         <div><b>Job No:</b> {showVal(props.jobno_oms)}</div>
                         <div><b>Buyer:</b> {showVal(props.buyer1)}</div>
@@ -473,7 +481,7 @@ const HeroFashionGrid13: React.FC = () => {
 
                 {/* TAB 2: PRINT DETAILS */}
                 <div>
-                    {printGroups.length === 0 && <div style={{color: '#999', textAlign: 'center', padding: '20px'}}>No Print Details Available</div>}
+                    {printGroups.length === 0 && <div style={{color: '#999', textAlign: 'center',height:'30px', padding: '20px'}}>No Print Details Available</div>}
                     
                     {printGroups.map((grp: any, idx: number) => {
                         const colours = getUniqueColours(grp.rows);
@@ -489,7 +497,7 @@ const HeroFashionGrid13: React.FC = () => {
                                             <img src={images[0]} alt="print" style={{ width: "100px", height: "100px", objectFit: "contain" }}
                                                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
                                         ) : (
-                                            <div style={{width: '100%', height: '150px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc'}}>
+                                            <div style={{width: '50%', height: '80px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc'}}>
                                                 No Image
                                             </div>
                                         )}
@@ -545,9 +553,9 @@ const HeroFashionGrid13: React.FC = () => {
                   <div style={{ padding: '8px', background: '#f5f5f5', maxHeight: '150px', overflowY: 'auto'}}>
                     {/* <h4 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>PRINTING MENU</h4> */}
                     
-                    {printGroups.length === 0 && <div style={{color: '#999', textAlign: 'center', padding: '40px', background: '#fff', borderRadius: '8px'}}>No Print Details Available</div>}
+                    {printGroups.length === 0 && <div style={{color: '#999',width:'50px', textAlign: 'center', background: '#fff', borderRadius: '8px'}}>No Print Details Available</div>}
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '15px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '15px' }}>
                         {printGroups.map((grp: any, idx: number) => {
                             const tags = [grp.print_screen_1, grp.print_screen_2, grp.individual_part_print_emb].filter(t => t && t !== "–");
 
@@ -633,6 +641,9 @@ const HeroFashionGrid13: React.FC = () => {
                     {/* Using the exact structure from reference */}
                     <div className="details e-pizza-cell">
                         <div className="e-pizza-info-container">
+                          <div>
+                            <h1>Hai</h1>
+                          </div>
                             {/* Image Layout */}
                             <div className="e-pizza-image-layout">
                                 {props.mainimagepath ? (
@@ -656,9 +667,11 @@ const HeroFashionGrid13: React.FC = () => {
                                 </div>
                                 {/* <div> <span className="e-pizza-size">({showVal(props.reference)})</span></div> */}
                                
-                                <div className="e-info-text-separator">
+                                {/* <div className="e-info-text-separator">
                                     {chipTags([showVal(props.punit_sh), showVal(props.production_type_inside_outside), showVal(props.director_sample_order)])}
-                                </div>
+                                </div> */}
+
+
                                   {/* <div className="e-pizza-price-min-layout e-info-text-separator">
                                     <span className="e-pizza-price-text">({showVal(props.reference)})</span>
                                   </div>
@@ -715,10 +728,13 @@ const HeroFashionGrid13: React.FC = () => {
           border-top:2px solid gray !important;
         }
 
+       .e-touch{
+        height: 80px !important;
+        }
+
         /* --- Pizza Menu Layout Styles (Ref Code) --- */
         .e-pizza-cell { 
-            padding: 5px; 
-            border-bottom: 1px solid #e0e0e0; 
+            padding: 2px; 
             background: #fff;
         }
         .e-pizza-info-container {
@@ -799,7 +815,6 @@ const HeroFashionGrid13: React.FC = () => {
           align-items: center;
           padding: 5px 10px;
           background-color: #0ff180;
-          border-bottom: 1px solid #dee2e6;
           flex-shrink: 0;
           flex-wrap: wrap; 
           }
@@ -857,7 +872,7 @@ const HeroFashionGrid13: React.FC = () => {
 
             @media (max-width: 1023px){
             .dashboard-header {
-              margin-top: 60px
+              margin-top: 40px !important
             }
             }
             
@@ -865,46 +880,38 @@ const HeroFashionGrid13: React.FC = () => {
             @media (max-width: 768px) {
               .dashboard-header {
                 flex-direction: column;
-                padding: 10px;
+                padding: 0px;
                 align-items: stretch;
-                gap: 10px;             
-                margin-top: 60px
+                gap: 1px;             
                 }
 
                 .breadcromp{
                 width:80%;
                 font-size:50px;
+                display: none
                 }
                  
         
-                          .count-display {
-            background: #e9ecef;
-            color: #007bff;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 14px;
-            white-space: nowrap;
-            border: 1px solid #dce1e6;
+            .count-display {
             display:none
             }
           
                           .count-display1 {
             background: #e9ecef;
             color: #007bff;
-            padding: 2px 4px;
+            padding: 0px 4px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
             white-space: nowrap;
             border: 1px solid #dce1e6;
             display:block;
-            width: 70px;
+            width: 60px;
             float: right;
             }
             .count{
-              margin-top: -30px;
-              margin-left: 30px
+              margin-top: -45px;
+              margin-left: 295px
             }
                 .header-title {
                   text-align: center;
@@ -940,28 +947,23 @@ const HeroFashionGrid13: React.FC = () => {
         <ol className="flex items-center whitespace-nowrap breadcromp">
           <li className="inline-flex items-center">
             <a className="flex items-center text-xs md:text-sm text-lg text-muted-foreground-1 hover:text-primary-focus focus:outline-hidden focus:text-primary-focus" href="/#/dashboard">
-              <svg className="shrink-0 me-3 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+              <svg className="shrink-0 me-3 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
               Dashboard
             </a>
-            <svg className="shrink-0 mx-2 size-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+            <svg className="shrink-0 mx-2 size-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
           </li>
           <li className="inline-flex items-center">
             <a className="flex items-center text-xs md:text-sm text-muted-foreground-1 hover:text-primary-focus focus:outline-hidden focus:text-primary-focus" href="/#/sy-order">
-              <svg className="shrink-0 me-3 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="14" y="3" rx="1" /><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3" /></svg>
+              <svg className="shrink-0 me-3 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="14" y="3" rx="1" /><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3" /></svg>
               Order
-              <svg className="shrink-0 mx-2 size-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+              <svg className="shrink-0 mx-2 size-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
             </a>
           </li>
           <li className="inline-flex items-center text-xs md:text-sm font-semibold text-foreground truncate" aria-current="page">
             Order Table
           </li>
         </ol>
-        <div className='count'>
 
-          <div className="count-display1">
-            {showingCount} / {totalCount}
-          </div>
-        </div>
         {/* <div className="header-controls bg-white">
           <input 
             type="text" 
@@ -971,7 +973,7 @@ const HeroFashionGrid13: React.FC = () => {
             className="search-input"
           />
         </div> */}
-        <div style={{ padding: '8px 5px', borderBottom: '1px solid #eee', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+        <div style={{ padding: '0px 5px', marginLeft: '5px', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight:'bold' }}>
     <TextBoxComponent
       ref={settingNameRef}
@@ -1020,6 +1022,12 @@ const HeroFashionGrid13: React.FC = () => {
   >
     🗑
   </ButtonComponent>
+        <div className='count'>
+
+          <div className="count-display1">
+            {showingCount} / {totalCount}
+          </div>
+        </div>
 </div>
       </div>
 
@@ -1052,6 +1060,7 @@ const HeroFashionGrid13: React.FC = () => {
             enableAdaptiveUI={true}
             adaptiveUIMode={'Mobile'}
             allowReordering={true}
+            gridLines='Both'
             searchSettings={{  operator: 'contains', ignoreCase: true }}
             toolbar={toolbarOptions}
             editSettings={{ allowEditing: true, allowDeleting: true, mode: 'Dialog' }}
@@ -1062,25 +1071,35 @@ const HeroFashionGrid13: React.FC = () => {
             detailTemplate={detailTemplate}
           >
             <ColumnsDirective>
-              <ColumnDirective field="jobno_oms" headerText="Order Info" width="100" template={orderSummaryTemplate} isPrimaryKey={true} />
+              <ColumnDirective field="jobno_oms" headerText="Order Info" width="100" template={orderSummaryTemplate} isPrimaryKey={true} customAttributes={{ class: 'editCss' }} />
               <ColumnDirective headerText="Photo" width="150" template={photoTemplate} textAlign="Center" allowFiltering={false} />
-              <ColumnDirective headerText='fsn' width="90" textAlign="Center" allowFiltering={true} template={rollnoTemplate} allowEditing={false} />
-              <ColumnDirective field="Fdt" headerText="Delivery Info" width="100" template={deliveryInfoTemplate} />
+              <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="180" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
+              <ColumnDirective headerText='fsn' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
+              <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+              <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+              <ColumnDirective field="others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+              <ColumnDirective field="others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
+              <ColumnDirective field="printing_R" headerText="udf" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
+              <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+              <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
+              <ColumnDirective field="prdty" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
+              <ColumnDirective field="qualy" headerText="qualy" width="120" template={qualy} customAttributes={{ class: 'editCss' }}/>
+              <ColumnDirective field="Fdt" headerText="Delivery Info" width="100" template={deliveryInfoTemplate}  />
               <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
               <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
               <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} />
               <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} />
               <ColumnDirective field="others1" headerText="others1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('others1')} allowEditing={false} />
-              <ColumnDirective field="printing_R" headerText="udf1" width="100" template={udf} />
+              {/* <ColumnDirective field="printing_R" headerText="udf1" width="100" template={udf} />
               <ColumnDirective field="udf2" headerText="udf2" width="100" template={udf2} />
               <ColumnDirective field="qualy" headerText="qualy" width="120" template={qualy} />
-              <ColumnDirective field="prdty" headerText="prdty" width="120" template={prdty} />
-              <ColumnDirective field="udf" headerText="udf" width="120" template={udf11} />
+              <ColumnDirective field="prdty" headerText="prdty" width="120" template={prdty} /> */}
+              <ColumnDirective field="udf" headerText="udf" width="120" template={udf11} customAttributes={{ class: 'editCss' }} /> 
               {/* <ColumnDirective field="quantity" headerText="Qty" width="90" textAlign="Right" template={genericHighlighter('quantity')} />
               <ColumnDirective field="final_delivery_date" headerText="Fdt" width="120" template={genericHighlighter('final_delivery_date')} />
               <ColumnDirective field="production_type_inside_outside" headerText="Type" width="120" template={genericHighlighter('production_type_inside_outside')} /> */}
             </ColumnsDirective>
-            <Inject services={[Sort, Filter, Resize, Page, Toolbar, Edit, DetailRow, ExcelExport, Reorder, InfiniteScroll]} />
+            <Inject services={[Sort, Filter, Resize, Page, Toolbar, Edit, DetailRow, ExcelExport, Reorder, InfiniteScroll, Group]} />
           </GridComponent>
         )}
       </div>

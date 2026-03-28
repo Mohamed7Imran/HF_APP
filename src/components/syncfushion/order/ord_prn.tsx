@@ -594,7 +594,7 @@ const PRN: React.FC = () => {
             }
               @media (max-width: 1023px){
             .dashboard-header {
-              margin-top: 60px
+              margin-top: 40px !important
             }
             }
             

@@ -16,13 +16,14 @@ import TemplateGallery from '../order/eblockeditor.tsx';
 import Excel from '../order/excel.tsx';
 import FabricForm from '../fabric/Fabric.jsx';
 import Signin1 from '../layout/Signup.tsx';
-import OrderOms from "../order/Order_oms.tsx"
-import HeroFashionGrid131 from "../order/ord_parent.tsx"
+import OrderOms from "../order/Order_oms.tsx";
+import HeroFashionGrid131 from "../order/ord_parent.tsx";
 import Schedule from "../order/Schedule.tsx"
 import GanttChart from '../order/Gantt Chart/GanttChart.tsx';
 import OrderDetails from '../order/OrderDetails.tsx';
 import PivotTableExporting from '../order/pivot.tsx';
 import ForeignKeyColumn from '../order/SyncForignkey.tsx';
+import Pivot from '../order/pivot/Pivotview.tsx';
 // import Overview from "../order/chart.tsx"
 
 function Home() {
@@ -43,6 +44,8 @@ function Home() {
          <Route path="/Schedule" element={<Schedule />} /> 
          <Route path="/PRN" element={<PRN />} /> 
          <Route path="/Excel" element={<Excel />} /> 
+         <Route path="/PivotTableExporting" element={<PivotTableExporting />} /> 
+         
          <Route path="/TemplateGallery" element={<TemplateGallery />} /> 
          {/* <Route path="/Overview" element={<Overview />} />  */}
          <Route path="/fabric" element={<FabricForm />} /> 
@@ -53,6 +56,7 @@ function Home() {
         <Route path='/order_detail' element={<OrderDetails />} />
         <Route path='/PivotTableExporting' element={<PivotTableExporting />} />
         <Route path='/forign' element={<ForeignKeyColumn />} />
+        <Route path='/pivot' element={<Pivot />} />
     </Routes>
   );
 }

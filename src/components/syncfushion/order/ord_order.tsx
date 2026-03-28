@@ -139,7 +139,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     today.setHours(0, 0, 0, 0); targetDate.setHours(0, 0, 0, 0);
     const diffTime = targetDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    if (diffDays < 0) return { backgroundColor: '#ffebee', color: '#c62828', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
+    if (diffDays < 0) return { backgroundColor: '#ffebee', color: '#c62828', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
     if (diffDays === 0) return { backgroundColor: '#fff3e0', color: '#ef6c00', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
     if (diffDays > 0 && diffDays <= 3) return { backgroundColor: '#e3f2fd', color: '#1565c0', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
     return { color: '#2e7d32', fontWeight: '500' };
@@ -479,7 +479,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>OR:</b> {highlightText(p.jobno_oms)}<br />
       <b>Buy:</b> {highlightText(p.buyer1)}<br />
-      <b>Mer:</b> {highlightText(p.merch)}<br />
+      <b>Mer:</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ?  p.merch.split("Murthy-h ")[1] : p.merch): ""}<br />
       <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
       <b>Qty:</b> {highlightText(p.quantity)}
     </div>
@@ -1257,11 +1257,10 @@ const showVal = (val: any): string => {
           <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
           <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
-          <ColumnDirective field="Others3" headerText="imgs3" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
-          <ColumnDirective field="Others4" headerText="imgs4" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others5" headerText="imgs5" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others5')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others6" headerText="imgs6" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others6')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others7" headerText="imgs7" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Others3" headerText="other10" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
+          <ColumnDirective field="Others4" headerText="other11" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Others5" headerText="other12" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others5')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Others6" headerText="other13" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others6')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
           <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
           <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />

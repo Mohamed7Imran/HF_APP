@@ -236,7 +236,7 @@ function Modal({ title, onClose, onSubmit, item }) {
             <option value="Minor Defects">Minor Defects</option>
             <option value="Major Defects">Major Defects</option>
             <option value="Critical Defects">Critical Defects</option>
-            <option value="Line Qc Defects">Line Qc Defects</option>
+            <option value="rowing_qc">Rowing Qc</option>
           </select>
 
           <div className="flex justify-end gap-2 mt-3">

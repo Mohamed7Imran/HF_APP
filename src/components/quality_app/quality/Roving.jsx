@@ -22,6 +22,40 @@ export default function Roving() {
   const canContinue = jobNo && product && pieces;
 
 
+// const fillBundleData = async (bundle) => {
+//   if (!bundle) return;
+
+//   try {
+//     const response = await fetch(
+//       `https://hfapi.herofashion.com/qcapp/get_bundle_data/?bundle_id=${bundle}`
+//     );
+
+//     const data = await response.json();
+
+//     if (!data || data.length === 0) {
+//       alert("Bundle Not Found");
+//       return;
+//     }
+
+//     const item = data[0]; 
+
+
+
+//     setJobNo(item.jobno || "");
+//     setProduct(item.TopBottom_des || "");
+//     setColour(item.Comboclr || "");
+//     setSize(item.SizeName || "");
+//     setPieces(item.pc || "");
+//     setBundleNo(item.Bdl || "");
+//     setBundleid(item.BundID || "");
+
+//   } catch (error) {
+//     console.error("API Error:", error);
+//     alert("Server error");
+//   }
+// };
+
+
 const fillBundleData = async (bundle) => {
   if (!bundle) return;
 
@@ -37,17 +71,16 @@ const fillBundleData = async (bundle) => {
       return;
     }
 
-    const item = data[0]; 
+    const item = data[0];
 
-
-
-    setJobNo(item.jobno || "");
+    // Correct case-sensitive mapping
+    setJobNo(item.JobNo || "");
     setProduct(item.TopBottom_des || "");
-    setColour(item.Comboclr || "");
-    setSize(item.SizeName || "");
+    setColour(item.comboclr || "");
+    setSize(item.sizename || "");
     setPieces(item.pc || "");
     setBundleNo(item.Bdl || "");
-    setBundleid(item.BundID || "");
+    setBundleid(item.bundid || "");
 
   } catch (error) {
     console.error("API Error:", error);

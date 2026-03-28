@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { api } from "../../../auth/auth";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 
-export default function DefectTabs() {
+export default function Rowing_defects() {
   const { unit, line } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const qc_type = "first_piece";
+  const qc_type = "rowing_qc";
 
   const {
     bundleNo,
@@ -18,7 +18,7 @@ export default function DefectTabs() {
     bundle_id
   } = location.state || {};
 
-  const [activeTab, setActiveTab] = useState("minor");
+//   const [activeTab, setActiveTab] = useState("minor");
   const [qcdatas, setQcdatas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [counts, setCounts] = useState({});
@@ -61,14 +61,16 @@ export default function DefectTabs() {
     if (bundle_id) fetchLastBundle();
   }, [bundle_id]);
 
-  const getFilteredData = () => {
-    return qcdatas.filter((item) => {
-      if (activeTab === "minor") return item.category === "Minor Defects";
-      if (activeTab === "major") return item.category === "Major Defects";
-      if (activeTab === "critical") return item.category === "Critical Defects";
-      return false;
-    });
-  };
+//   const getFilteredData = () => {
+//     return qcdatas.filter((item) => {
+//       if (activeTab === "rowing_qc") return item.category === "rowing_qc";
+//       return false;
+//     });
+//   };
+
+const getFilteredData = () => {
+  return qcdatas.filter((item) => item.category === "rowing_qc");
+};
 
   const getCategoryCount = (categoryName) => {
   return qcdatas
@@ -133,7 +135,7 @@ const handleSavePiece = async () => {
     size,
     unit,
     line,
-    qc_type:"first_piece",
+    qc_type:"rowing_qc",
     total_pieces: totalPieces,
     piece_no: inspectedCount + 1,
     total_mistake: totalMistakes,
@@ -164,7 +166,7 @@ const handleSavePiece = async () => {
     size,
     unit,
     line,
-    qc_type:"first_piece",
+    qc_type:"rowing_qc",
     total_pieces: totalPieces,
     checked_piece: inspectedCount,
     force_save: forceSave,
@@ -179,9 +181,8 @@ const handleSavePiece = async () => {
 };
 
   const tabs = [
-    { id: "minor", label: "Minor" },
-    { id: "major", label: "Major" },
-    { id: "critical", label: "Critical" },
+    { id: "rowing_qc", label: "rowing_qc" },
+    
   ];
 
   return (
@@ -192,7 +193,7 @@ const handleSavePiece = async () => {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold text-slate-800">
-              Defect Tracking
+              Rowing Qc
             </h1>
             <p className="text-gray-400">Record quality issues</p>
           </div>
@@ -253,40 +254,19 @@ const handleSavePiece = async () => {
         </button>
 
         {/* Tabs */}
-        <div className="flex bg-gray-100 p-2 rounded-xl mb-6 gap-2">
+        {/* <div className="flex bg-gray-100 p-2 rounded-xl mb-6 gap-2">
           <button
-            onClick={() => setActiveTab("minor")}
+            onClick={() => setActiveTab("rowing_qc")}
             className={`flex-1 py-2 rounded-lg font-semibold ${
-              activeTab === "minor"
+              activeTab === "rowing_qc"
                 ? "bg-green-500 text-white"
                 : "text-gray-500"
             }`}
           >
-            Minor ({getCategoryCount("Minor Defects")})
+            rowing_qc ({getCategoryCount("rowing_qc")})
           </button>
 
-          <button
-            onClick={() => setActiveTab("major")}
-            className={`flex-1 py-2 rounded-lg font-semibold ${
-              activeTab === "major"
-                ? "bg-yellow-500 text-white"
-                : "text-gray-500"
-            }`}
-          >
-            Major ({getCategoryCount("Major Defects")})
-          </button>
-
-          <button
-            onClick={() => setActiveTab("critical")}
-            className={`flex-1 py-2 rounded-lg font-semibold ${
-              activeTab === "critical"
-                ? "bg-red-500 text-white"
-                : "text-gray-500"
-            }`}
-          >
-            Critical ({getCategoryCount("Critical Defects")})
-          </button>
-        </div>
+        </div> */}
 
         {/* Defect List */}
         <div className="grid gap-4 md:grid-cols-2 max-h-[400px] overflow-y-auto pr-2">
@@ -329,8 +309,13 @@ const handleSavePiece = async () => {
               </div>
             ))
           )}
+
+          <div>
+            <h1>Empty box</h1>
+          </div>
         </div>
 
+        
         {/* Final Submit */}
         <button
           onClick={handleFinalSubmit}

@@ -20,36 +20,46 @@ function OperatorProcess() {
   const { bundleNo, jobNo, product, colour, size, pieces, bundle_id } = location.state || {};
   const dropdownRef = useRef(null);
 
-  // Fetch machine/employee details
-  const fetchMachineData = async (id) => {
-    try {
-      const res = await api.get(`qcapp/api/machine/${id}/`);
-      setEmployee(res.data);
-      setOperator(res.data.employee_name);
-    } catch (err) {
-      console.error("Fetch Machine Error:", err);
-    }
-  };
+  // Fetch Machine + Process in one API call
+  const fetchMachineWithProcesses = async (id) => {
+    if (!id || !jobNo || !product) return;
 
-  // Fetch process sequence
-  const fetchProcessSequence = async () => {
-    if (!jobNo || !product) return;
     try {
       const res = await api.get(
-        `qcapp/api/process-sequence/?jobno=${jobNo}&topbottom_des=${product}`
+        `qcapp/api/machine/${encodeURIComponent(id)}/?jobno=${jobNo}&topbottom_des=${product}`
       );
-      const processList = res.data.map(item => item.process_des).filter(Boolean);
-      setProcesses(processList);
-      if (processList.length) setProcess(processList[0]); // auto-select first process
+
+      const data = res.data;
+      setEmployee({
+        employee_name: data.employee_name,
+        emp_photo: data.emp_photo
+      });
+
+      setOperator(data.emp_code || "");
+      setProcesses(data.processes || []);
+
+      // Auto-select first process
+      if (data.processes?.length) setProcess(data.processes[0].process_des);
+
     } catch (err) {
-      console.error("Process fetch error:", err);
+      console.error("Machine + Process Fetch Error:", err);
+      setEmployee(null);
+      setOperator("");
+      setProcesses([]);
+      setProcess("");
     }
   };
 
-  // Fetch processes on mount
+  // Debounced machine ID input
   useEffect(() => {
-    fetchProcessSequence();
-  }, []);
+    if (!machineId) return;
+
+    const delayDebounce = setTimeout(() => {
+      fetchMachineWithProcesses(machineId);
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [machineId]);
 
   // Close dropdown when clicked outside
   useEffect(() => {
@@ -74,7 +84,7 @@ function OperatorProcess() {
           setMachineId(decodedText);
           setShowScanner(false);
           await html5QrCode.stop();
-          fetchMachineData(decodedText);
+          fetchMachineWithProcesses(decodedText);
         },
         (errorMessage) => {}
       ).catch(err => console.error("Scanner Start Error:", err));
@@ -89,13 +99,34 @@ function OperatorProcess() {
 
   // Filter processes based on search term
   const filteredProcesses = processes.filter(p =>
-    p.toLowerCase().includes(searchTerm.toLowerCase())
+    p.process_des.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const canContinue = operator && process;
+
+  const handleContinue = () => {
+    if (!canContinue) return;
+
+    navigate(`/qc-admin/rowing_defects/${unit}/${line}`, {
+      state: {
+        bundleNo,
+        jobNo,
+        product,
+        colour,
+        size,
+        pieces,
+        bundle_id,
+        machineId,
+        operator,
+        process
+      },
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center p-4 md:p-8">
       {/* Top Summary */}
-      <div className="w-full max-w-2xl bg-white border border-slate-100 shadow-sm rounded-2xl p-4 mb-6 flex overflow-x-auto no-scrollbar gap-6 items-center">
+      <div className="w-full max-w-2xl bg-white border border-slate-100 shadow-sm rounded-2xl mt-12 md:mt-2 lg:mt-0 p-4 mb-6 flex overflow-x-auto no-scrollbar gap-6 items-center">
         <div className="flex-shrink-0 border-r pr-4 border-slate-100">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Unit / Line</p>
           <p className="text-sm font-bold text-blue-600">{unit} / {line}</p>
@@ -129,11 +160,28 @@ function OperatorProcess() {
           </button>
         </div>
 
-        
-
         <div className="p-8 space-y-6">
           
-          {/* Searchable Process Selector */}
+
+          {/* Machine ID */}
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
+              <FaRobot /> Machine Identification
+            </label>
+            <input
+              value={machineId}
+              onChange={(e) => setMachineId(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  fetchMachineWithProcesses(machineId);
+                }
+              }}
+              className="w-full h-14 px-5 rounded-2xl border-2 border-slate-100 bg-slate-50 focus:bg-white focus:border-blue-500 transition-all outline-none font-semibold text-slate-700"
+              placeholder="Scan QR or Type Machine ID"
+            />
+          </div>
+
+
           <div className="space-y-2 relative" ref={dropdownRef}>
             <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">
               Select Operation
@@ -157,12 +205,12 @@ function OperatorProcess() {
                       key={i}
                       className="px-5 py-3 cursor-pointer hover:bg-blue-600 hover:text-white transition"
                       onClick={() => {
-                        setProcess(p);
+                        setProcess(p.process_des);
                         setSearchTerm("");
                         setDropdownOpen(false);
                       }}
                     >
-                      {p}
+                      {p.process_des}
                     </div>
                   ))
                 ) : (
@@ -170,20 +218,6 @@ function OperatorProcess() {
                 )}
               </div>
             )}
-          </div>
-
-
-          {/* Machine ID */}
-          <div className="space-y-2">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-2">
-              <FaRobot /> Machine Identification
-            </label>
-            <input
-              value={machineId}
-              onChange={(e) => setMachineId(e.target.value)}
-              className="w-full h-14 px-5 rounded-2xl border-2 border-slate-100 bg-slate-50 focus:bg-white focus:border-blue-500 transition-all outline-none font-semibold text-slate-700"
-              placeholder="Scan QR or Type Machine ID"
-            />
           </div>
 
           {/* Employee */}
@@ -194,18 +228,18 @@ function OperatorProcess() {
             <input
               value={operator}
               onChange={(e) => setOperator(e.target.value)}
+              disabled
               className="w-full h-14 px-5 rounded-2xl border-2 border-slate-100 bg-slate-50 focus:bg-white focus:border-blue-500 transition-all outline-none font-semibold text-slate-700"
               placeholder="Employee Name / ID"
             />
           </div>
 
-          
           {/* Employee Preview Card */}
           {employee && (
             <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 flex items-center gap-4 animate-in fade-in zoom-in duration-300">
               <div className="relative">
                 <img 
-                  src={employee.photo || "https://via.placeholder.com/150"} 
+                  src={employee.emp_photo || "https://via.placeholder.com/150"} 
                   alt="emp" 
                   className="w-16 h-16 rounded-xl object-cover border-2 border-white shadow-sm" 
                 />
@@ -220,9 +254,14 @@ function OperatorProcess() {
           )}
 
           {/* Continue Button */}
-          <button 
-            disabled={!operator || !process}
-            className={`w-full h-16 rounded-[20px] font-bold text-lg flex justify-center items-center gap-3 transition-all active:scale-95 shadow-lg ${operator && process ? 'bg-blue-600 text-white shadow-blue-200 hover:bg-blue-700' : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'}`}
+          <button
+            onClick={handleContinue}
+            disabled={!canContinue}
+            className={`w-full h-[70px] rounded-2xl font-bold text-xl flex items-center justify-center gap-3 transition-all ${
+              canContinue
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-[#E2E8F0] text-[#94A3B8] cursor-not-allowed opacity-60'
+            }`}
           >
             Continue to Defects <FaArrowRight className="text-sm" />
           </button>

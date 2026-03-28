@@ -131,10 +131,10 @@ function Machine_allocate() {
       {/* Header */}
       <header className="bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center shrink-0">
         <div>
-          <h1 className="text-lg font-bold text-slate-800 leading-tight">Machine Assets</h1>
-          <p className="text-[11px] text-slate-400 font-medium uppercase tracking-tighter">
+          <h1 className="text-lg font-bold text-slate-800 leading-tight">Employee Allocate</h1>
+          {/* <p className="text-[11px] text-slate-400 font-medium uppercase tracking-tighter">
             Inventory Management
-          </p>
+          </p> */}
         </div>
         <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full border border-green-100">
           <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></div>

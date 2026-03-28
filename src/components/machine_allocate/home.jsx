@@ -6,26 +6,27 @@ export default function Home() {
 
   const cards = [
     {
-      title: "Unit Allocation",
-      desc: "Define unit-wise distribution and targets",
+      title: "Machine Allocation ",
+      desc: "Unit&Line",
       icon: "fa-industry",
       color: "indigo",
       path: "unit_allocation",
     },
     {
-      title: "Machine Allocation",
-      desc: "Assign and track machines to production lines",
+      title: "Employee Allocation",
+      desc: "Unit&Line",
       icon: "fa-gears",
       color: "blue",
       path: "machine_allocation",
     },
-    {
-      title: "Employee Allocation",
-      desc: "Manage operator and helper assignments",
-      icon: "fa-users-gear",
-      color: "teal",
-      path: "/employee-allocation",
-    }
+    
+    // {
+    //   title: "Employee Allocation",
+    //   desc: "Manage operator and helper assignments",
+    //   icon: "fa-users-gear",
+    //   color: "teal",
+    //   path: "/employee-allocation",
+    // }
     
   ];
 

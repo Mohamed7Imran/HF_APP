@@ -6,6 +6,7 @@ import ProductionDetails from "../quality/ProductDetails"
 import DefectTabs from "../quality/Defects"
 import Reving from "../quality/Roving"
 import Roving_operator from "../quality/Roving_operator";
+import Rowing_defects from "../quality/Rowing_defects";
 
 function Quality_main() {
   return (
@@ -16,6 +17,7 @@ function Quality_main() {
       <Route path="qc-entry/:unit/:line/first-piece" element={<ProductionDetails />} />
       <Route path="qc-entry/:unit/:line/roving-qc" element={<Reving />} />
       <Route path="/defects/:unit/:line" element={<DefectTabs />} />
+      <Route path="/rowing_defects/:unit/:line" element={<Rowing_defects />} />
       <Route path="/roving/:unit/:line" element={<Roving_operator />} />
     </Routes>
   );

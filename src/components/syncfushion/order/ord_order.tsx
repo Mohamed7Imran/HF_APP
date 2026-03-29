@@ -1182,10 +1182,10 @@ const showVal = (val: any): string => {
         args.element.style.width = 'auto';
       }
     };
-
+// beforeRender={tooltipBeforeRender}  beforeOpen={beforeOpen}
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
-    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
+    // <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" width="130px" height="130px" >
       <GridComponent
         id="default-aggregate-grid"
         ref={gridRef}
@@ -1249,6 +1249,20 @@ const showVal = (val: any): string => {
           <ColumnDirective field="production_type_inside_outside" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="All"headerText='All ' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
+          <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="120" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
+          <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Emb" headerText="Emb img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
+          <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
+          <ColumnDirective field="printing_R" headerText="udf" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="prdty" headerText="prdty" width="180" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="styleno" headerText="qualy" width="240" template={qualy} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="All"headerText='All ' width="200" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
           <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
           <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
           {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
@@ -1304,7 +1318,8 @@ const showVal = (val: any): string => {
           </AggregateDirective>
         </AggregatesDirective>
         <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, DetailRow,Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
-      </GridComponent></TooltipComponent></div></>
+      </GridComponent>
+      // </TooltipComponent></div></>
   ), [dataSource]);
 
   return (

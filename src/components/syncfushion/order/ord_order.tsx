@@ -42,7 +42,7 @@ import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdo
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
 import "../../../App.css"
 import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
-
+import { DatePickerComponent } from '@syncfusion/ej2-react-calendars';
 registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
 interface OrderData {
   slno1?: number; // Added SL No field
@@ -56,7 +56,7 @@ interface OrderData {
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;number_03_emb:string;actdate:string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;Print:string;Others1:string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;Fab_R:string;
-  ITS_R:string;Order_R:string;Dy_R:string;Sample_R:string;Week_R:string;FMonth_yr:string;
+  ITS_R:string;Order_R:string;Dy_R:string;Sample_R:string;Week_R:string;FMonth_yr:string;Emb_R:string;Week_R1:string;year:string;wk:string;
   prnmeaimg?:string;mpic?:string;
   Others2:string;Others3:string;Others4:string;Others5:string;Others6:string;Others7:string,
 }
@@ -108,12 +108,12 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     'printing_R', 'Fdt', 'Emb', 'abc', 'order_follow_up',
     'quality_controller', 'reference', 'insdatenew', 'styledesc',
     'date', 'ourdelvdate', 'podate', 'vessel_dt', 'vessel_yr',
-    'shipment_complete', 'u7', 'u141', 'u45', 'u36', 'u31',
+    'shipment_complete', 'u7', 'u141', 'u45', 'u36', 'u31','Emb_R',
     'u15', 'u14', 'u8', 'u25', 'insdate', 'insdateyear', 'finaldelvdate1',
     'number_03_emb', 'actdate', 'actdaten', 'actyeardate', 'pono', 'u46', 'u37',
     'qltycontroller', 'Print', 'others1', 'mainimagepath', 'finaldelvdate',
-    'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img',
-    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R',
+    'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img','FMonth_yr','wk',
+    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R','year',
     'prnmeaimg', 'mpic', 'Others2', 'Others3', 'Others4', 'Others5', 'Others6', 'Others7'
   ];
 //  const groupOptions = {
@@ -147,8 +147,8 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
   const getPunitStyle = (punit_sh: string) => {
     const code = (punit_sh || '').trim().toUpperCase();
-    if (code === 'U1') return { backgroundColor: '#007bff', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
-    if (code === 'U2') return { backgroundColor: '#28a745', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
+    if (code === 'U1') return { backgroundColor: '#007bff', color: 'orange', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
+    if (code === 'U2') return { backgroundColor: '#28a745', color: 'orange', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
     return { color: '#555' };
   };
 
@@ -477,21 +477,21 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
   const orderSummaryTemplate = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>OR:</b> {highlightText(p.jobno_oms)}<br />
-      <b>Buy:</b> {highlightText(p.buyer1)}<br />
-      <b>Mer:</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ?  p.merch.split("Murthy-h ")[1] : p.merch): ""}<br />
-      <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
-      <b>Qty:</b> {highlightText(p.quantity)}
+      <b>OR-</b> {highlightText(p.jobno_oms)}<br />
+      <b>Buy-</b> {highlightText(p.buyer1)}<br />
+      <b>Mer-</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ?  p.merch.split("Murthy-h ")[1] : p.merch): ""}<br />
+      <b>Unit-</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
+      <b>Qty-</b> {highlightText(p.quantity)}
     </div>
   );
 
 const  udf= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b className='no-highlight'>1-Print:</b> {highlightText(p.printing_R)}<br />
-      <b className='no-highlight'>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
-      <b className='no-highlight'>7:</b> {highlightText(p.u7)}<br />
-      <b className='no-highlight'>8-Fab:</b> {highlightText(p.Fab_R)}<br />
-      <b className='no-highlight'>14-dy:</b> {highlightText(p.Dy_R)}<br />
+      <b className='no-highlight'>1-Print-</b> {highlightText(p.printing_R)}<br />
+      <b className='no-highlight'>3-Emb-</b> {highlightText(p.Emb_R)}<br />
+      <b className='no-highlight'>8-Fab-</b> {highlightText(p.Fab_R)}<br />
+      <b className='no-highlight'>14-dye-</b> {highlightText(p.Dy_R)}<br />
+      <b className='no-highlight'>7-cust</b> {highlightText(p.u7)}<br />
       {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
       {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
       <b>Qty:</b> {highlightText(p.quantity)} */}
@@ -500,11 +500,11 @@ const  udf= (p: OrderData) => (
 
   const  udf2= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>31:</b> {highlightText(p.ITS_R)}<br />
-      <b>36:</b> {highlightText(p.u36)}<br />
-      <b>u45:</b> {highlightText(p.Order_R)}<br />
-      <b>u46:</b> {highlightText(p.u46)}<br />
-      <b>u141:</b> {highlightText(p.Sample_R)}<br />
+      <b>31-ITS</b> {highlightText(p.ITS_R)}<br />
+      <b>36-CUT</b> {highlightText(p.u36)}<br />
+      <b>45-Ord</b> {highlightText(p.Order_R)}<br />
+      <b>46-Empty</b> {highlightText(p.u46)}<br />
+      <b>141-Sam</b> {highlightText(p.Sample_R)}<br />
       {/* <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
       <b>8-Fab:</b> {highlightText(p.u8)}<br />
       <b>14-Fabdy:</b> {highlightText(p.u14)}<br /> */}
@@ -517,11 +517,13 @@ const  udf= (p: OrderData) => (
 
 
 
+
+
 const   qualy= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>styleno:</b> {highlightText(p.styleno)}<br />
-      <b>styledesc:</b> {highlightText(p.styledesc)}<br />
-      <b>qcontr:</b> {highlightText(p.quality_controller)}<br />
+      <b>styleno-</b> {highlightText(p.styleno)}<br />
+      <b>styledesc-</b> {highlightText(p.styledesc)}<br />
+      <b>qcontr-</b> {highlightText(p.quality_controller)}<br />
 
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
   </div>
@@ -567,11 +569,13 @@ const   Alldate= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
       {/* <b>Week_R:</b> {highlightText(p.Week_R)}<br /> */}
-      <b>Mon_Yr:</b> {highlightText(p.FMonth_yr)}<br />
-      <b>ST:</b> {highlightText(p.styleno)}<br />
-      <b>Uom:</b> {highlightText(p.uom)}<br />
-      <b>Type:</b> {highlightText(p.production_type_inside_outside)}<br />
-      <b>Week:</b> {highlightText(p.Week_R)}<br />
+      <b>Month-</b> {highlightText(p.FMonth_yr)}<br />
+      <b>Week-</b> {highlightText(p.Week_R)}<br />
+      <b>Year-</b> {highlightText(p.wk)}<br />
+      {/* <b>ST:</b> {highlightText(p.styleno)}<br /> */}
+      <b>Uom-</b> {highlightText(p.uom)}<br />
+      <b>Type-</b> {highlightText(p.production_type_inside_outside)}<br />
+      
     </div>
   );
 
@@ -1154,7 +1158,14 @@ const showVal = (val: any): string => {
       grid.height=window.innerHeight
 
     }
-      
+      const dateEditor = (props) => {
+  return (
+    <DatePickerComponent
+      value={props.finaldelvdate1}
+      change={(args) => props.setCellValue(props.column.field, args.value)}
+    />
+  );
+};
     // Background color implementation
     const recordClick=(args:any)=>
       {
@@ -1235,16 +1246,18 @@ const showVal = (val: any): string => {
           <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="200" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="n" headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
+          <ColumnDirective field="printing_R" headerText="printing_R" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="ITS_R" headerText="ITS_R" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="Week_R" headerText="Week_R" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
+           <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="90" template={genericHighlighter('finaldelvdate1')} /> 
+        <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
-          <ColumnDirective field="printing_R" headerText="printing_R" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
           <ColumnDirective field="u8" headerText="8 FAB" width="100"  allowEditing={false} template={genericHighlighter('u8')}  visible={false}  />
-          <ColumnDirective field="ITS_R" headerText="ITS_R" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="Week_R" headerText="Week_R" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> 
           <ColumnDirective field="production_type_inside_outside" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
@@ -1252,7 +1265,7 @@ const showVal = (val: any): string => {
           <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="120" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Emb" headerText="Emb img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1270,6 +1283,13 @@ const showVal = (val: any): string => {
           {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
           <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
           <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="100" template={genericHighlighter('finaldelvdate1')} />
+               <ColumnDirective
+      field="finaldelvdate1"
+      headerText="Final Delivery Date"
+      width="120"
+      editTemplate={dateEditor}
+    />
+           
           <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="Others3" headerText="other10" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
           <ColumnDirective field="Others4" headerText="other11" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1290,7 +1310,7 @@ const showVal = (val: any): string => {
           {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
           <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
           {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
-          <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
+          {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} /> */}
           {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
           <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
           <ColumnDirective field='punit_sh' headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> */}

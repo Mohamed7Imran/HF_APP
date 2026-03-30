@@ -1240,8 +1240,6 @@ const showVal = (val: any): string => {
         allowPdfExport={true}
         autoFit={true}
         sortSettings={{columns: [{ field: 'director_sample_order', direction: 'Descending' },{ field: 'Fdt', direction: 'Ascending' }]}}
-
- 
         gridLines="Both"
         searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
         toolbar={toolbarOptions}
@@ -1277,6 +1275,9 @@ const showVal = (val: any): string => {
           <ColumnDirective field="Others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
           <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
+          <ColumnDirective field="merch" headerText="merch" width="100" template={genericHighlighter('merch')} /> 
+          <ColumnDirective field="buyer1" headerText="buyer1" width="100" template={genericHighlighter('buyer1')} /> 
+          <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> 
           <ColumnDirective field="u8" headerText="8 FAB" width="100"  allowEditing={false} template={genericHighlighter('u8')}  visible={false}  />
           <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> 
           <ColumnDirective field="production_type_inside_outside" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
@@ -1577,7 +1578,7 @@ const showVal = (val: any): string => {
             placeholder="Select setting"
             style={{ width: '70px' }}
             value={savedSettings.find(s => s.name === selectedSetting)?.id || null}
-            change={() => setSelectedSetting(dropdownRef.current?.value as string)}
+            change={() => {setSelectedSetting(dropdownRef.current?.value as string);applySetting()}}
           />
           </div>
 

@@ -1057,12 +1057,27 @@ const showVal = (val: any): string => {
 
     const tooltipBeforeRender = (args: any) => {
   
-      const isHeaderCell = args.target.closest('.e-headercell');
       const isRowCell = args.target.closest('.e-rowcell');
   
-      if (isRowCell || isHeaderCell) {
-        let img = args.target.querySelector('img')
-        if (img && !isHeaderCell) {
+      if (isRowCell) {
+      const cell = args.target.closest('.e-rowcell');
+
+      if (!cell) return;
+
+      const column = gridRef.current?.getColumnByIndex(
+        parseInt(cell.getAttribute('aria-colindex')) - 1
+      );
+
+      const fieldName = column?.field;
+      const allowedColumn = "mainimagepath";
+
+      if (fieldName !== allowedColumn) {
+        args.cancel = true;
+        return;
+      }
+      
+      const img = args.target.querySelector('img') || args.target;
+      if (img) {
           // Get row information
           const rowInfo = gridRef.current?.getRowInfo(args.target.closest('td'));
           const rowData: OrderData = rowInfo?.rowData as OrderData;
@@ -1108,7 +1123,7 @@ const showVal = (val: any): string => {
             (tooltipRef.current as TooltipComponent).height = 'auto';
           }
         }
-        else if (img && isHeaderCell) {
+        else if (img) {
           // For header cells, show simple image
           let imgElem:any= args.target.innerHTML;
           const wrapper = document.createElement('div');
@@ -1123,28 +1138,7 @@ const showVal = (val: any): string => {
           (tooltipRef.current as TooltipComponent).width = '100px';
           (tooltipRef.current as TooltipComponent).height = '100px';
         }
-        else {args.cancel=!isHeaderCell
-          // Create a wrapper div for text content with styling
-          const textWrapper = document.createElement('div');
-          textWrapper.style.padding = '8px';
-          textWrapper.style.maxHeight = '150px';
-          textWrapper.style.overflowY = 'auto';
-          textWrapper.style.fontSize = '14px';
-          textWrapper.style.lineHeight = '1.5';
-          textWrapper.innerText = args.target.innerText;
-          (tooltipRef.current as TooltipComponent).content = textWrapper.outerHTML;
-          
-          // Set different dimensions for header cells
-          if (isHeaderCell) {
-            (tooltipRef.current as TooltipComponent).width = '100px';
-            (tooltipRef.current as TooltipComponent).height = '100px';
-          } else {
-            (tooltipRef.current as TooltipComponent).width = '150px';
-            (tooltipRef.current as TooltipComponent).height = '150px';
-          }
-        }
       }
-  
     }
 
     const load = () =>{
@@ -1183,7 +1177,7 @@ const showVal = (val: any): string => {
 
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
-    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
+    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
       <GridComponent
         id="default-aggregate-grid"
         ref={gridRef}

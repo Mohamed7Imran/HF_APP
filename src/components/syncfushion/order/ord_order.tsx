@@ -1266,7 +1266,7 @@ const showVal = (val: any): string => {
           <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="productiontype_inside_outside" headerText="pty" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
            <ColumnDirective field="finaldelvdate" type="date"  headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
         <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>

@@ -1259,14 +1259,14 @@ const showVal = (val: any): string => {
         load={load}
       >
         <ColumnsDirective>
-          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }}/>                 
+          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }}/>                 
           <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="200" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="200" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
-          <ColumnDirective field="printing_R" headerText="printing_R" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="ITS_R" headerText="ITS_R" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="Week_R" headerText="Week_R" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
            <ColumnDirective field="finaldelvdate" type="date"  headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
         <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1280,9 +1280,9 @@ const showVal = (val: any): string => {
           <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> 
           <ColumnDirective field="u8" headerText="8 FAB" width="100"  allowEditing={false} template={genericHighlighter('u8')}  visible={false}  />
           <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> 
-          <ColumnDirective field="production_type_inside_outside" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="All"headerText='All ' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
+          <ColumnDirective field="production_type_inside_outside" headerText="pty,dir,com,ordfol" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="styleno" headerText="sty,stydes,qcon" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="All"headerText='Fdt,Odt,dt' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
           <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1290,11 +1290,11 @@ const showVal = (val: any): string => {
           <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
-          <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          {/* <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="prdty" headerText="prdty" width="180" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="styleno" headerText="qualy" width="240" template={qualy} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="All"headerText='All ' width="200" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
+          <ColumnDirective field="All"headerText='All ' width="200" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
           <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
           <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
           {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
@@ -1607,7 +1607,7 @@ const showVal = (val: any): string => {
       </div>
 
       {/* Grid Container */}
-      <div style={{ flex: 1, overflow: 'auto'}}>
+      <div style={{ flex: 1, overflow: 'auto'}
         {loading ? (
           <div style={{ padding: '50px', textAlign: 'center' }}>Loading Data...</div>
         ) : error ? (

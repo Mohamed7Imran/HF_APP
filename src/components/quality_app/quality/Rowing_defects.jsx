@@ -253,20 +253,6 @@ const handleSavePiece = async () => {
           Save Piece ({inspectedCount + 1})
         </button>
 
-        {/* Tabs */}
-        {/* <div className="flex bg-gray-100 p-2 rounded-xl mb-6 gap-2">
-          <button
-            onClick={() => setActiveTab("rowing_qc")}
-            className={`flex-1 py-2 rounded-lg font-semibold ${
-              activeTab === "rowing_qc"
-                ? "bg-green-500 text-white"
-                : "text-gray-500"
-            }`}
-          >
-            rowing_qc ({getCategoryCount("rowing_qc")})
-          </button>
-
-        </div> */}
 
         {/* Defect List */}
         <div className="grid gap-4 md:grid-cols-2 max-h-[400px] overflow-y-auto pr-2">
@@ -309,10 +295,49 @@ const handleSavePiece = async () => {
               </div>
             ))
           )}
+          
 
-          <div>
-            <h1>Empty box</h1>
-          </div>
+          
+        </div>
+
+        <div className="my-4">
+          <hr className="border-t border-gray-300" />
+        </div>
+
+        <div className="mt-4 p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+            {/* Compact Checkbox Row */}
+            <div className="flex gap-2">
+              {[
+                { id: "shade_variation", label: "Shade Variation" },
+                { id: "number_sticker", label: "Number Sticker" }
+              ].map((item) => (
+                <label 
+                  key={item.id}
+                  className="flex-1 flex items-center justify-between px-3 py-2 bg-white rounded-xl border has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 cursor-pointer transition-all shadow-sm"
+                >
+                  <span className="text-[11px] font-bold text-slate-600 uppercase">{item.label}</span>
+                  <input
+                    type="checkbox"
+                    id={item.id}
+                    defaultChecked
+                    className="w-4 h-4 rounded border-gray-300 text-blue-600"
+                  />
+                </label>
+              ))}
+            </div>
+
+            {/* Styled Textarea Box */}
+            <div className="relative group">
+              <textarea
+                id="measurement"
+                rows="2"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm text-sm font-medium resize-none placeholder:text-slate-400"
+                placeholder="Enter remarks or measurements here..."
+              ></textarea>
+              <div className="absolute right-3 bottom-2 text-[9px] font-black text-slate-300 group-focus-within:text-blue-400 uppercase tracking-widest">
+                Remarks Box
+              </div>
+            </div>
         </div>
 
         

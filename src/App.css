@@ -9,7 +9,7 @@
 @import '../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
 @import '../node_modules/@syncfusion/ej2-notifications/styles/material.css';
 @import "../node_modules/@syncfusion/ej2-react-grids/styles/material.css";
-
+@import "../node_modules/@syncfusion/ej2-react-blockeditor/styles/material.css";
 @import "../node_modules/@syncfusion/ej2-gantt/styles/material.css";
 
 /* Tailwind must come after all other @import rules */

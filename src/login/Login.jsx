@@ -14,7 +14,10 @@ try {
     const data = await loginUser(username, password);
     console.log("Login success:", data);
     console.log("Access token in localStorage:", localStorage.getItem("access_token"));
-    navigate("/dashboard"); 
+    // ✅ Navigate to user's default_path if exists, otherwise fallback
+    const path = data.user?.default_path || "/dashboard";
+    // navigate("/dashboard"); 
+    navigate(path); 
 } catch (err) {
     setError("Invalid username or password");
 }

@@ -188,7 +188,9 @@ function OperatorProcess() {
             </label>
             <input
               type="text"
+              readOnly 
               value={searchTerm || process}
+              
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setDropdownOpen(true);

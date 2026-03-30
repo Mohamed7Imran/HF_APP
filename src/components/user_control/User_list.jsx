@@ -22,17 +22,30 @@ const User_list = () => {
   const [submitting, setSubmitting] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [submenus, setSubmenus] = useState([]);
+ 
 
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     role_id: "",
+    default_path: "",
   });
 
   useEffect(() => {
     fetchUsers();
     fetchRoles();
+    fetchSubmenus();
   }, []);
+
+const fetchSubmenus = async () => {
+  try {
+    const res = await api.get("submenus/"); // your DRF endpoint
+    setSubmenus(res.data); // make sure res.data is array of {id, name, path, menu_name}
+  } catch (err) {
+    console.error("Fetch Submenus Error:", err);
+  }
+};
 
   const fetchUsers = async () => {
     try {
@@ -54,14 +67,20 @@ const User_list = () => {
     }
   };
 
-  const toggleStatus = async (id) => {
-    try {
-      await api.patch(`users/${id}/toggle-status/`);
-      fetchUsers();
-    } catch (err) {
-      console.error("Toggle Error:", err);
-    }
-  };
+
+  const toggleStatus = async (id, isActive) => {
+  const action = isActive ? "deactivate" : "activate";
+  if (!window.confirm(`Are you sure you want to ${action} this user?`)) return;
+
+  try {
+    await api.patch(`users/${id}/toggle-status/`);
+    fetchUsers();
+  } catch (err) {
+    console.error("Toggle Error:", err);
+    alert("Failed to update user status.");
+  }
+};
+
 
   const deleteUser = async (id) => {
     if (!window.confirm("Permanent-ah delete panna mudiyum. Are you sure?")) return;
@@ -79,6 +98,7 @@ const User_list = () => {
       username: user.username,
       password: "",
       role_id: user.role?.id || "",
+      default_submenu_id: user.default_submenu?.id || "", // <-- fix here
     });
   };
 
@@ -99,6 +119,7 @@ const User_list = () => {
           username: formData.username,
           password: formData.password || undefined,
           role_id: formData.role_id,
+          default_submenu_id: formData.default_submenu_id || null,
         });
       } else {
         await api.post("users-create/", formData);
@@ -207,6 +228,7 @@ const User_list = () => {
                 <tr className="bg-slate-50/50 border-b border-slate-100">
                   <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Staff Info</th>
                   <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Role</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Menu</th>
                   <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
                   <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Joined</th>
                   <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Operations</th>
@@ -230,6 +252,20 @@ const User_list = () => {
                       <div className="flex items-center gap-2 text-slate-600">
                         <Shield size={14} className="text-slate-300" />
                         <span className="text-[12px] font-semibold capitalize tracking-tight">{user.role || "No Role"}</span>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-[12px] font-semibold capitalize tracking-tight px-2 py-1 rounded-md ${
+                            user.default_submenu
+                              ? "bg-emerald-50 text-emerald-700"  // If menu exists
+                              : "bg-rose-50 text-rose-700"      // If menu is null
+                          }`}
+                        >
+                          {user.default_submenu ? user.default_submenu.name : "No Menu"}
+                        </span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -319,6 +355,24 @@ const User_list = () => {
                     <option value="">Choose a role</option>
                     {roles.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
                   </select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Default Path</label>
+                  <select
+                  className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 ring-indigo-50 outline-none cursor-pointer"
+                  value={formData.default_submenu_id || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, default_submenu_id: e.target.value })
+                  }
+                >
+                  <option value="">Select a submenu</option>
+                  {submenus.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.menu_name} → {s.name}
+                    </option>
+                  ))}
+                </select>
                 </div>
               </div>
 

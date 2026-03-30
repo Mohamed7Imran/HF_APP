@@ -31,7 +31,7 @@ function Dashboard() {
 
         {/* Username */}
         <h2 className="mt-3 text-xl md:text-3xl font-semibold text-yellow-300">
-          {username} User
+          {username}
         </h2>
 
         

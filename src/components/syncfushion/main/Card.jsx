@@ -359,7 +359,7 @@ const Dashboard = () => {
               <FaReact className="text-yellow-500 text-2xl" />
             </div>
             <h2 className="text-lg font-semibold text-gray-800 group-hover:text-yellow-600 transition">
-             PivotView - K
+             Pivot New
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               Details about the order using Pivotview

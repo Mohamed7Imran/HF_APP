@@ -381,15 +381,6 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     });
   };
 
-  // const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value;
-  //   setSearchKey(value);
-  //   if (searchTimeout.current) clearTimeout(searchTimeout.current);
-  //   searchTimeout.current = setTimeout(() => {
-  //     if (gridRef.current) gridRef.current.search(value);
-  //   }, 400);
-  // };
-
   const genericHighlighter = (field: keyof OrderData) => (props: OrderData) => (
     <>{highlightText(props[field])}</>
   );
@@ -505,13 +496,7 @@ const  udf= (p: OrderData) => (
       <b>u45:</b> {highlightText(p.Order_R)}<br />
       <b>u46:</b> {highlightText(p.u46)}<br />
       <b>u141:</b> {highlightText(p.Sample_R)}<br />
-      {/* <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
-      <b>8-Fab:</b> {highlightText(p.u8)}<br />
-      <b>14-Fabdy:</b> {highlightText(p.u14)}<br /> */}
-      {/* <b>31:</b> {highlightText(p.u31)}<br /> */}
-      {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
-      {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
-      <b>Qty:</b> {highlightText(p.quantity)} */}
+      
     </div>
   );
 
@@ -940,28 +925,7 @@ const showVal = (val: any): string => {
                       }}
                     />
                   ) : null}
-{/* 
-                  {/* {grp.image1 ? (
-                    <img
-                      src={grp.image1}
-                      alt="print 2"
-                      style={{ width: "160px", border: "1px solid #ccc", padding: "6px", display: "block", objectFit: "contain", background: "#fff" }}
-                      onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                        (e.currentTarget as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                  ) : null}
 
-                  {grp.image2 ? (
-                    <img
-                      src={grp.image2}
-                      alt="image_tb"
-                      style={{ width: "160px", border: "1px solid #ccc", padding: "6px", display: "block", objectFit: "contain", background: "#fff" }}
-                      onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                        (e.currentTarget as HTMLImageElement).style.display = "none";
-                      }}
-                    />
-                   ) :} */}
                 </div> 
 
                 /* DATA BLOCK */
@@ -1257,38 +1221,11 @@ const showVal = (val: any): string => {
           <ColumnDirective field="Others5" headerText="imgs5" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others5')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others6" headerText="imgs6" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others6')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others7" headerText="imgs7" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
-          <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
-          <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
-          <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
-          {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
-          {/* <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} /> */}
-          {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
-          {/* <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} /> */}
-          {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} /> */}
-          {/* <ColumnDirective field="u8" headerText="8 FAB" width="100" template={genericHighlighter('u8')} /> */}
-          {/* <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} /> */}
-          {/* <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} /> */}
-          {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
-          {/* <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} /> */}
-          {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
-          {/* <ColumnDirective field="Emb" headerText="3 EMB" width="90" template={genericHighlighter('Emb')} /> */}
-          {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
-          <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
-          <ColumnDirective field='punit_sh' headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> */}
-
-{/* 
-          <ColumnDirective field="styleno" headerText="STYLE NO" width="110" template={genericHighlighter('styleno')} />
-          <ColumnDirective field="director_sample_order" headerText="DIR S/O" width="100" template={genericHighlighter('director_sample_order')} />
-          <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="100" template={genericHighlighter('order_follow_up')} />
-          <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
-          <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')} /> */}
+          
           <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
-          {/* <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} /> */}
-          {/* <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} /> */}
-          {/* <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} /> */}
+           
           <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
-          {/* <ColumnDirective field="company_name" headerText="COMPANY" width="90" template={genericHighlighter('company_name')} /> */}
+        
                     
         </ColumnsDirective>
         <AggregatesDirective>
@@ -1476,15 +1413,7 @@ const showVal = (val: any): string => {
           </li>
         </ol>
 
-        {/* <div className="header-controls bg-white">
-          <input 
-            type="text" 
-            placeholder="Search all columns..."
-            value={searchKey}
-            onChange={onSearchChange}
-            className="search-input"
-          />
-        </div> */}
+       
         <div style={{ padding: '0px 5px', marginLeft: '5px', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
             <div style={{ display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
               <TextBoxComponent
@@ -1503,7 +1432,7 @@ const showVal = (val: any): string => {
             </ButtonComponent>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <DropDownListComponent
+            {/* <DropDownListComponent
               ref={dropdownRef}
               id="settings-dropdown"
               dataSource={savedSettings
@@ -1516,7 +1445,20 @@ const showVal = (val: any): string => {
               placeholder="Select setting"
               style={{ width: '70px' }}
               change={() => setSelectedSetting(dropdownRef.current?.value as string)}
-            />
+            /> */}
+
+            <DropDownListComponent
+            ref={dropdownRef}
+            id="settings-dropdown"
+            dataSource={savedSettings
+              .filter(s => s.user?.toLowerCase() === username?.toLowerCase())
+              .map(s => ({ text: s.name, value: s.id }))}
+            fields={{ text: 'text', value: 'value' }}
+            placeholder="Select setting"
+            style={{ width: '70px' }}
+            value={savedSettings.find(s => s.name === selectedSetting)?.id || null}
+            change={() => setSelectedSetting(dropdownRef.current?.value as string)}
+          />
           </div>
 
             <ButtonComponent

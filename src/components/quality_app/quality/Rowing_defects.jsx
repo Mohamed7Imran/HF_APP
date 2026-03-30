@@ -15,7 +15,10 @@ export default function Rowing_defects() {
     colour,
     size,
     pieces,
-    bundle_id
+    bundle_id,
+    machineId,
+    operator,
+    process
   } = location.state || {};
 
 //   const [activeTab, setActiveTab] = useState("minor");

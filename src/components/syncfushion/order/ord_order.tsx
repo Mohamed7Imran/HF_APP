@@ -42,7 +42,7 @@ import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdo
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
 import "../../../App.css"
 import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
-
+import { DatePickerComponent } from '@syncfusion/ej2-react-calendars';
 registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
 interface OrderData {
   slno1?: number; // Added SL No field
@@ -56,7 +56,7 @@ interface OrderData {
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;number_03_emb:string;actdate:string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;Print:string;Others1:string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;Fab_R:string;
-  ITS_R:string;Order_R:string;Dy_R:string;Sample_R:string;Week_R:string;
+  ITS_R:string;Order_R:string;Dy_R:string;Sample_R:string;Week_R:string;FMonth_yr:string;Emb_R:string;Week_R1:string;year:string;wk:string;
   prnmeaimg?:string;mpic?:string;
   Others2:string;Others3:string;Others4:string;Others5:string;Others6:string;Others7:string,
 }
@@ -108,12 +108,12 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     'printing_R', 'Fdt', 'Emb', 'abc', 'order_follow_up',
     'quality_controller', 'reference', 'insdatenew', 'styledesc',
     'date', 'ourdelvdate', 'podate', 'vessel_dt', 'vessel_yr',
-    'shipment_complete', 'u7', 'u141', 'u45', 'u36', 'u31',
+    'shipment_complete', 'u7', 'u141', 'u45', 'u36', 'u31','Emb_R',
     'u15', 'u14', 'u8', 'u25', 'insdate', 'insdateyear', 'finaldelvdate1',
     'number_03_emb', 'actdate', 'actdaten', 'actyeardate', 'pono', 'u46', 'u37',
     'qltycontroller', 'Print', 'others1', 'mainimagepath', 'finaldelvdate',
-    'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img',
-    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R',
+    'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img','FMonth_yr','wk',
+    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R','year',
     'prnmeaimg', 'mpic', 'Others2', 'Others3', 'Others4', 'Others5', 'Others6', 'Others7'
   ];
 //  const groupOptions = {
@@ -147,8 +147,8 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
   const getPunitStyle = (punit_sh: string) => {
     const code = (punit_sh || '').trim().toUpperCase();
-    if (code === 'U1') return { backgroundColor: '#007bff', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
-    if (code === 'U2') return { backgroundColor: '#28a745', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
+    if (code === 'U1') return { backgroundColor: '#007bff', color: 'orange', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
+    if (code === 'U2') return { backgroundColor: '#28a745', color: 'orange', padding: '2px 6px', borderRadius: '4px', fontWeight: 'bold', display: 'inline-block' };
     return { color: '#555' };
   };
 
@@ -446,7 +446,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
                 if (col.field === "jobno_oms" || col.field === "Print" || col.field==="print_img" || col.field==="prnclr" || col.field==="merch" || col.field==="buyer1"
                   || col.field==="punit_sh" || col.field==="punit_sh" || col.field==="styleno" ||  col.field==="director_sample_order"  ||  col.field==="director_sample_order" ||
                     col.field==="abc"  ||  col.field==="order_follow_up" ||  col.field==="styledesc" ||  col.field==="company_name" ||  col.field==="quantity" ||  col.field==="production_type_inside_outside"
-                  ||  col.field==="prnmeaimg" || col.field==="Emb"   ||  col.field==="udf4"  ||  col.field==="All"  ||  col.field==="fsn"  || col.field==="prdty"  ||  col.field==="others1"  || col.field==="others7" ||   col.field==="u25" ||  col.field==="u45" ||  col.field==="slno1" || col.field==="u37" ||  col.field==="actdaten"  ||  col.field==="u46"  ||  col.field==="date" ||  col.field==="ourdelvdate" ||  col.field==="finaldelvdate1" ||  col.field==="u15" ||  col.field==="u14" ||  col.field==="others2" || col.field==="others3" || col.field==="others4"  || col.field==="others5" || col.field==="others6"||col.field==="Fdt"
+                  ||  col.field==="prnmeaimg" ||  col.field==="All"  ||  col.field==="fsn"  || col.field==="prdty"  ||  col.field==="Others1"  || col.field==="Others7" || col.field==="n" ||  col.field==="slno1" ||  col.field==="actdaten"  ||  col.field==="u46"  ||  col.field==="date" ||  col.field==="ourdelvdate" ||  col.field==="finaldelvdate1"  ||  col.field==="Others2" || col.field==="Others3" || col.field==="Others4"  || col.field==="Others5" || col.field==="Others6"||col.field==="Fdt"
                 ) {
                     // col.visible = false;
                 }
@@ -502,21 +502,21 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
   const orderSummaryTemplate = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>OR:</b> {highlightText(p.jobno_oms)}<br />
-      <b>Buy:</b> {highlightText(p.buyer1)}<br />
-      <b>Mer:</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ?  p.merch.split("Murthy-h ")[1] : p.merch): ""}<br />
-      <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
-      <b>Qty:</b> {highlightText(p.quantity)}
+      <b>OR-</b> {highlightText(p.jobno_oms)}<br />
+      <b>Buy-</b> {highlightText(p.buyer1)}<br />
+      <b>Mer-</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ?  p.merch.split("Murthy-h ")[1] : p.merch): ""}<br />
+      <b>Unit-</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
+      <b>Qty-</b> {highlightText(p.quantity)}
     </div>
   );
 
 const  udf= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b className='no-highlight'>1-Print:</b> {highlightText(p.printing_R)}<br />
-      <b className='no-highlight'>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
-      <b className='no-highlight'>7:</b> {highlightText(p.u7)}<br />
-      <b className='no-highlight'>8-Fab:</b> {highlightText(p.Fab_R)}<br />
-      <b className='no-highlight'>14-dy:</b> {highlightText(p.Dy_R)}<br />
+      <b className='no-highlight'>1-Print-</b> {highlightText(p.printing_R)}<br />
+      <b className='no-highlight'>3-Emb-</b> {highlightText(p.Emb_R)}<br />
+      <b className='no-highlight'>8-Fab-</b> {highlightText(p.Fab_R)}<br />
+      <b className='no-highlight'>14-dye-</b> {highlightText(p.Dy_R)}<br />
+      <b className='no-highlight'>7-cust</b> {highlightText(p.u7)}<br />
       {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
       {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
       <b>Qty:</b> {highlightText(p.quantity)} */}
@@ -525,11 +525,11 @@ const  udf= (p: OrderData) => (
 
   const  udf2= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>31:</b> {highlightText(p.ITS_R)}<br />
-      <b>36-ITS:</b> {highlightText(p.u36)}<br />
-      <b>u45:</b> {highlightText(p.Order_R)}<br />
-      <b>u46:</b> {highlightText(p.u46)}<br />
-      <b>u141:</b> {highlightText(p.Sample_R)}<br />
+      <b>31-ITS</b> {highlightText(p.ITS_R)}<br />
+      <b>36-CUT</b> {highlightText(p.u36)}<br />
+      <b>45-Ord</b> {highlightText(p.Order_R)}<br />
+      <b>46-Empty</b> {highlightText(p.u46)}<br />
+      <b>141-Sam</b> {highlightText(p.Sample_R)}<br />
       {/* <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
       <b>8-Fab:</b> {highlightText(p.u8)}<br />
       <b>14-Fabdy:</b> {highlightText(p.u14)}<br /> */}
@@ -542,11 +542,13 @@ const  udf= (p: OrderData) => (
 
 
 
+
+
 const   qualy= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>styleno:</b> {highlightText(p.styleno)}<br />
-      <b>styledesc:</b> {highlightText(p.styledesc)}<br />
-      <b>qcontr:</b> {highlightText(p.quality_controller)}<br />
+      <b>styleno-</b> {highlightText(p.styleno)}<br />
+      <b>styledesc-</b> {highlightText(p.styledesc)}<br />
+      <b>qcontr-</b> {highlightText(p.quality_controller)}<br />
 
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
   </div>
@@ -584,17 +586,21 @@ const   Alldate= (p: OrderData) => (
       <b>Dir:</b> {highlightText(p.director_sample_order)}<br />
       <b>ST:</b> {highlightText(p.styleno)}<br />
       <b>Uom:</b> {highlightText(p.uom)}<br />
-      <b>Type:</b> {highlightText(p.production_type_inside_outside)}
+      <b>PType:</b> {highlightText(p.production_type_inside_outside)}
     </div>
   );
 
   const udf4 = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
-      <b>Week_R:</b> {highlightText(p.Week_R)}<br />
-      <b>ST:</b> {highlightText(p.styleno)}<br />
-      <b>Uom:</b> {highlightText(p.uom)}<br />
-      <b>Type:</b> {highlightText(p.production_type_inside_outside)}
+      {/* <b>Week_R:</b> {highlightText(p.Week_R)}<br /> */}
+      <b>Month-</b> {highlightText(p.FMonth_yr)}<br />
+      <b>Week-</b> {highlightText(p.Week_R)}<br />
+      <b>Year-</b> {highlightText(p.wk)}<br />
+      {/* <b>ST:</b> {highlightText(p.styleno)}<br /> */}
+      <b>Uom-</b> {highlightText(p.uom)}<br />
+      <b>abc-</b> {highlightText(p.abc)}<br />
+      
     </div>
   );
 
@@ -1210,14 +1216,15 @@ const showVal = (val: any): string => {
         gridContainer.style.height = `${calculatedHeight}px`;
 
     }
-      const dateEditor = (props :any) => {
-  return (
-    <DatePickerComponent
-      value={props.finaldelvdate1}
-      change={(args) => props.setCellValue(props.column.field, args.value)}
-    />
-  );
-};
+    const dateEditor = (props :any) => {
+      return (
+        <DatePickerComponent
+          value={props.finaldelvdate1}
+          change={(args) => props.setCellValue(props.column.field, args.value)}
+        />
+      );
+    };
+
     // Background color implementation
     const recordClick=(args:any)=>
       {
@@ -1248,7 +1255,7 @@ const showVal = (val: any): string => {
 
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
-    // <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" width="130px" height="130px" >
+    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
     <div className='grid-container'
         style={{
           overflow: 'hidden',
@@ -1328,7 +1335,7 @@ const showVal = (val: any): string => {
           <ColumnDirective field="All"headerText='All ' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
           <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Emb" headerText="Emb img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
+          <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1344,7 +1351,14 @@ const showVal = (val: any): string => {
           <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
           {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
           <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
-          <ColumnDirective field="finaldelvdate1" headerText="finaldelvdate1" width="100" template={genericHighlighter('finaldelvdate1')} />
+          <ColumnDirective field="finaldelvdate" headerText="finaldelvdate" width="100" template={genericHighlighter('finaldelvdate')} />
+               <ColumnDirective
+      field="finaldelvdate1"
+      headerText="Final Delivery Date"
+      width="120"
+      editTemplate={dateEditor}
+    />
+           
           <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
           <ColumnDirective field="Others3" headerText="other10" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
           <ColumnDirective field="Others4" headerText="other11" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1359,13 +1373,13 @@ const showVal = (val: any): string => {
           {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
           {/* <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} /> */}
           {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} /> */}
-          {/* <ColumnDirective field="u8" headerText="8 FAB" width="100" template={genericHighlighter('u8')} /> */}
-          {/* <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} /> */}
+          <ColumnDirective field="u8" headerText="8 FAB" width="100"  allowEditing={false} template={genericHighlighter('u8')}  visible={false}  />
+          <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} />
           {/* <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} /> */}
           {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
-          {/* <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} /> */}
+          <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
           {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
-          {/* <ColumnDirective field="Emb" headerText="3 EMB" width="90" template={genericHighlighter('Emb')} /> */}
+          {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} /> */}
           {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
           <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
           <ColumnDirective field='punit_sh' headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> */}
@@ -1392,7 +1406,7 @@ const showVal = (val: any): string => {
         </AggregatesDirective>
         <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, DetailRow,Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
       </GridComponent></div>
-      // </TooltipComponent></div></>
+      </TooltipComponent></div></>
   ), [dataSource]);
 
   return (

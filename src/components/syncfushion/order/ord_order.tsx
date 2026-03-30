@@ -199,19 +199,49 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
             const typeA = (a.director_sample_order || '').toLowerCase();
             const typeB = (b.director_sample_order || '').toLowerCase();
             if (typeA !== typeB) {
-              if (typeA === 'sample') return -1; if (typeB === 'sample') return 1;
+              if (typeA === 'Sam D') return -1; if (typeB === 'Sam D') return 1;
               return typeA.localeCompare(typeB);
             }
             const dateA = new Date(a.finaldelvdate || a.final_delivery_date || 0).getTime();
             const dateB = new Date(b.finaldelvdate || b.final_delivery_date || 0).getTime();
             return dateA - dateB;
           })
+
+            .sort((a, b) => {
+            // Priority: Sample=0, Order=1, Others=2
+            const getPriority = (val: string) => {
+              const type = (val || '').toLowerCase().trim();
+              if (type === 'Sam D') return 0;
+              if (type === 'Ord D') return 1;
+              return 2;
+            };
+
+            const priorityA = getPriority(a.director_sample_order);
+            const priorityB = getPriority(b.director_sample_order);
+
+            // Sort by priority: Sample first, Order second, Others last
+            if (priorityA !== priorityB) {
+              return priorityA - priorityB;
+            }
+
+            // Within same priority, sort by finaldelvdate ascending
+            const dateA = parseDate(a.finaldelvdate);
+            const dateB = parseDate(b.finaldelvdate);
+
+            // Handle null/invalid dates — push them to the end
+            if (!dateA && !dateB) return 0;
+            if (!dateA) return 1;
+            if (!dateB) return -1;
+
+            return dateA.getTime() - dateB.getTime();
+          })
+        
           // --- FRONTEND SLNO GENERATION ---
           .map((item, index) => ({
             ...item,
             slno1: index + 1
           }));
-
+          
         setDataSource(processedData);
         setTotalCount(processedData.length);
         setShowingCount(processedData.length);
@@ -714,6 +744,7 @@ const showVal = (val: any): string => {
   const dataBound = () => {
     if (gridRef.current) {
       const records = gridRef.current.getFilteredRecords();
+      gridRef.current.autoFitColumns();
       setShowingCount(records ? (records as object[]).length : 0);
       if(gridRef.current.searchSettings.key &&gridRef.current.searchSettings.key.length>0 )
       {
@@ -1154,11 +1185,15 @@ const showVal = (val: any): string => {
     // }
 
     const load = () =>{
-      let grid = (document.getElementById('default-aggregate-grid')as any).ej2_instances[0]
-      grid.height=window.innerHeight
+    const gridContainer = document.querySelector('.grid-container') as HTMLElement | null;
+        if (!gridContainer) return;
+        const rect = gridContainer.getBoundingClientRect();
+        const topPosition = rect?.top ?? 0;
+        const calculatedHeight = window.innerHeight - topPosition - 10; // 10px buffer
+        gridContainer.style.height = `${calculatedHeight}px`;
 
     }
-      const dateEditor = (props) => {
+      const dateEditor = (props :any) => {
   return (
     <DatePickerComponent
       value={props.finaldelvdate1}
@@ -1197,13 +1232,19 @@ const showVal = (val: any): string => {
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
     // <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" width="130px" height="130px" >
+    <div className='grid-container'
+        style={{
+          overflow: 'hidden',
+          minHeight: 0
+        }}>
       <GridComponent
+
         id="default-aggregate-grid"
         ref={gridRef}
         dataSource={dataSource}
         dataBound={dataBound}
         pageSettings={{pageSize:30}}
-        height="80%"
+        height="100%"
         enableVirtualization={true}
         // allowPaging={true}
         allowSorting={true}
@@ -1218,7 +1259,7 @@ const showVal = (val: any): string => {
         // showColumnChooser={true}
         enableAdaptiveUI={true}
         adaptiveUIMode={'Mobile'}
-        allowTextWrap={true}
+        // allowTextWrap={true}
         allowReordering={true}
         allowResizing={true}
         allowPdfExport={true}
@@ -1248,6 +1289,7 @@ const showVal = (val: any): string => {
           <ColumnDirective field="n" headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective field="printing_R" headerText="printing_R" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="ITS_R" headerText="ITS_R" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Week_R" headerText="Week_R" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
            <ColumnDirective field="finaldelvdate" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
         <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
@@ -1262,7 +1304,6 @@ const showVal = (val: any): string => {
           <ColumnDirective field="production_type_inside_outside" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="All"headerText='All ' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
-          <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="120" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1270,7 +1311,6 @@ const showVal = (val: any): string => {
           <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
-          <ColumnDirective field="printing_R" headerText="udf" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="prdty" headerText="prdty" width="180" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
@@ -1338,7 +1378,7 @@ const showVal = (val: any): string => {
           </AggregateDirective>
         </AggregatesDirective>
         <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, DetailRow,Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
-      </GridComponent>
+      </GridComponent></div>
       // </TooltipComponent></div></>
   ), [dataSource]);
 
@@ -1583,7 +1623,7 @@ const showVal = (val: any): string => {
       </div>
 
       {/* Grid Container */}
-      <div style={{ flex: 1, overflow: 'scroll'}}>
+      <div style={{ flex: 1, overflow: 'auto'}}>
         {loading ? (
           <div style={{ padding: '50px', textAlign: 'center' }}>Loading Data...</div>
         ) : error ? (

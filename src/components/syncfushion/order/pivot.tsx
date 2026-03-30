@@ -14,7 +14,6 @@ import {
 } from '@syncfusion/ej2-react-pivotview';
 
 import {
-  Chart,
   LineSeries,
   ColumnSeries,
   BarSeries,
@@ -22,8 +21,8 @@ import {
   Legend,
   Tooltip
 } from '@syncfusion/ej2-react-charts';
-
-import { select, createElement } from '@syncfusion/ej2-base';
+import { SwitchComponent } from '@syncfusion/ej2-react-buttons';
+import { createElement } from '@syncfusion/ej2-base';
 import { registerLicense } from '@syncfusion/ej2-base';
 
 registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
@@ -57,8 +56,6 @@ const dataSourceSettings = {
   expandAll: false,
   filters: [{ name: 'production_unit' }]
 };
-
-const gridSettings = { rowHeight: 80 };
 
 function PivotTableExporting() {
   const toolbarOptions = [
@@ -169,36 +166,60 @@ function PivotTableExporting() {
   const cellTemplate = (args: any) => {
     if (!pivotObj) return;
     let data = pivotObj.engineModule.data;
+
     if (args.cellInfo && args.cellInfo.value) {
       if (args.cellInfo.axis === 'value' && args.cellInfo.actualText === "slno") {
         if (!args.cellInfo.isGrandSum) {
-          let srcValue;
+          let srcValue: number | undefined;
+
           for (let i = 0; i < data.length; i++) {
             if (args.cellInfo.rowHeaders === data[i].jobno_oms) {
               srcValue = i;
+              break;
             }
           }
-          let imgElement = createElement('img', {
-            className: 'ecustom-cell',
-            attrs: {
-              'src': data[srcValue] ? data[srcValue].mainimagepath : '',
-              'alt': 'No Img',
-              'width': '50',
-              'height': '50'
-            },
-          });
-          args.targetCell.firstElementChild.textContent = '';
-          args.targetCell.firstElementChild.appendChild(imgElement);
+
+          if (typeof srcValue === 'number') {
+            let imgElement = createElement('img', {
+              className: 'ecustom-cell',
+              attrs: {
+                'src': data[srcValue]?.mainimagepath || 'https://via.placeholder.com/50', // fallback
+                'alt': 'No Img',
+                'width': '50',
+                'height': '50'
+              },
+            });
+
+            if (args.targetCell.firstElementChild) {
+              args.targetCell.firstElementChild.textContent = '';
+              args.targetCell.firstElementChild.appendChild(imgElement);
+            }
+          } else {
+            if (args.targetCell.firstElementChild) {
+              args.targetCell.firstElementChild.textContent = '';
+            }
+          }
         } else {
-          args.targetCell.firstElementChild.textContent = '';
+          if (args.targetCell.firstElementChild) {
+            args.targetCell.firstElementChild.textContent = '';
+          }
         }
       }
     }
   };
+let pivotObj;
+ function onChange() {
+        pivotObj.gridSettings.layout = pivotObj.gridSettings.layout === 'Compact' ? 'Tabular' : 'Compact';
+    }
 
   return (
     <div className='control-pane'>
       <div className='control-section' id='pivot-table-section' style={{ overflow: 'initial' }}>
+         <div className="tabular-layout-switch">
+                    <label id="layout-label" htmlFor="layout-switch">Classic Layout</label>
+                    <SwitchComponent id="layout-switch" checked={true} cssClass="pivot-layout-switch" change={onChange}></SwitchComponent>
+         </div>
+
         <PivotViewComponent
           id='PivotView'
           ref={(scope) => { pivotObj = scope; }}
@@ -206,7 +227,7 @@ function PivotTableExporting() {
           width={'100%'}
           height={'450'}
           showFieldList={true}
-          gridSettings={{ columnWidth: 140 }}
+          gridSettings={{ columnWidth: 140, rowHeight: 80 }}
           allowExcelExport={true}
           allowNumberFormatting={true}
           allowConditionalFormatting={true}
@@ -223,6 +244,7 @@ function PivotTableExporting() {
           saveReport={saveReport}
           toolbarRender={beforeToolbarRender}
           chartSettings={{ title: 'Sales Analysis', load: chartOnLoad }}
+          cellTemplate={cellTemplate}   // ✅ wired in
         >
           <Inject services={[
             FieldList,

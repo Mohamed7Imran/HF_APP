@@ -1085,10 +1085,15 @@ const showVal = (val: any): string => {
           if (rowData) {
             // Get image source
             const imgSrc = img.src;
+            const printimg = rowData.Print  
+            const Emp = rowData.Emb
+            const others1 = rowData.Others1
+            const others2 = rowData.Others2
+            const others7 = rowData.Others7
             
             // Build order information HTML
             const orderInfo = `
-              <div style="padding: 12px; line-height: 1.6; font-size: 13px;">
+              <div style="padding: 12px; line-height: 1; font-size: 13px; display: flex; flex-wrap: wrap; gap: 2px">
                 <div style="margin-bottom: 8px;"><strong>Job No:</strong> ${rowData.jobno_oms || 'N/A'}</div>
                 <div style="margin-bottom: 8px;"><strong>Company:</strong> ${rowData.company_name || 'N/A'}</div>
                 <div style="margin-bottom: 8px;"><strong>Buyer:</strong> ${rowData.buyer1 || 'N/A'}</div>
@@ -1102,20 +1107,70 @@ const showVal = (val: any): string => {
               </div>
             `;
             
+            const images = [
+              { label: "Print Image", src: printimg },
+              { label: "Emp Image", src: Emp },
+              { label: "PLT-7 Image", src: others1 },
+              { label: "AOP-9 Image", src: others2 },
+              { label: "Fus-14 Image", src: others7 },
+            ];
+
+            // remove empty images
+            const validImages = images.filter(img => img.src);
+
+            const chunkSize = 3;
+            const columns = [];
+            for (let i = 0; i < validImages.length; i += chunkSize) {
+              columns.push(validImages.slice(i, i + chunkSize));
+            }
+
+            // generate html
+            const imagesHtml = columns.map(col => {
+              const count = col.length;
+
+              let height = "100%";
+              if (count === 2) height = "46%";
+              else if (count >= 3) height = "29.33%";
+
+              return `
+                <div style="display:flex; flex-direction:column; height:300px; gap: 20px;">
+                  ${col.map(img => `
+                    <div style="height:${height}; text-align:center;">
+                      <b>${img.label}</b><br/>
+                      <img 
+                        src="${img.src}" 
+                        style="max-height:100%; width:auto; object-fit:contain;"
+                      />
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            }).join('');
+
             // Create tooltip content with order info on left and image on right
             const tooltipContent = `
-              <div style="display: flex; max-width: 600px;">
-                <div style="flex: 1; min-width: 200px; max-width: 250px; border-right: 1px solid #e0e0e0;">
-                  ${orderInfo}
-                </div>
-                <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px;">
-                  <img 
-                    src="${imgSrc}" 
-                    style="max-width: 250px; max-height: 280px; width: auto; height: auto; object-fit: contain;" 
-                    alt="Order Image"
-                  />
-                </div>
+            <div style="flex: 1; min-width: 200px; max-width: 570px; border-bottom: 1px solid #e0e0e0;">
+              ${orderInfo}
+            </div>
+            <div style="display: flex; gap: 6px; max-width: 570px;">
+
+              <!-- LEFT BIG IMAGE -->
+              <div style="padding: 12px;">
+                <b>Order Image</b><br />
+                <img 
+                  src="${imgSrc}" 
+                  style="max-width: 250px; max-height: 300px; object-fit: contain;" 
+                />
               </div>
+
+              <!-- RIGHT DYNAMIC GRID -->
+              <div style="display: flex; gap: 10px; padding: 12px;">
+                ${imagesHtml}
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 200px; max-width: 570px; border-top: 1px solid #e0e0e0;">
+              ${orderInfo}
+            </div>
             `;
             
             (tooltipRef.current as TooltipComponent).content = tooltipContent;

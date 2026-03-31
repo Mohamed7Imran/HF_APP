@@ -1066,97 +1066,146 @@ const showVal = (val: any): string => {
   >
   </TooltipComponent>
 
-    // const tooltipBeforeRender = (args: any) => {
+ const tooltipBeforeRender = (args: any) => {
   
-    //   const isHeaderCell = args.target.closest('.e-headercell');
-    //   const isRowCell = args.target.closest('.e-rowcell');
+      const isRowCell = args.target.closest('.e-rowcell');
   
-    //   if (isRowCell || isHeaderCell) {
-    //     let img = args.target.querySelector('img')
-    //     if (img && !isHeaderCell) {
-    //       // Get row information
-    //       const rowInfo = gridRef.current?.getRowInfo(args.target.closest('td'));
-    //       const rowData: OrderData = rowInfo?.rowData as OrderData;
+      if (isRowCell) {
+      const cell = args.target.closest('.e-rowcell');
+
+      if (!cell) return;
+
+      const column = gridRef.current?.getColumnByIndex(
+        parseInt(cell.getAttribute('aria-colindex')) - 1
+      );
+
+      const fieldName = column?.field;
+      const allowedColumn = "mainimagepath";
+
+      if (fieldName !== allowedColumn) {
+        args.cancel = true;
+        return;
+      }
+      
+      const img = args.target.querySelector('img') || args.target;
+      if (img) {
+          // Get row information
+          const rowInfo = gridRef.current?.getRowInfo(args.target.closest('td'));
+          const rowData: OrderData = rowInfo?.rowData as OrderData;
           
-    //       if (rowData) {
-    //         // Get image source
-    //         const imgSrc = img.src;
+          if (rowData) {
+            // Get image source
+            const imgSrc = img.src;
+            const printimg = rowData.Print  
+            const Emp = rowData.Emb
+            const others1 = rowData.Others1
+            const others2 = rowData.Others2
+            const others7 = rowData.Others7
             
-    //         // Build order information HTML
-    //         const orderInfo = `
-    //           <div style="padding: 12px; line-height: 1.6; font-size: 13px;">
-    //             <div style="margin-bottom: 8px;"><strong>Job No:</strong> ${rowData.jobno_oms || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Company:</strong> ${rowData.company_name || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Buyer:</strong> ${rowData.buyer1 || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Style:</strong> ${rowData.stylename || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Style No:</strong> ${rowData.styleno || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Quantity:</strong> ${rowData.quantity || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Unit:</strong> ${rowData.punit_sh || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Merch:</strong> ${rowData.merch || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Delivery Date:</strong> ${rowData.Fdt || rowData.final_delivery_date || 'N/A'}</div>
-    //             <div style="margin-bottom: 8px;"><strong>Type:</strong> ${rowData.director_sample_order || 'N/A'}</div>
-    //           </div>
-    //         `;
+            // Build order information HTML
+            const orderInfo = `
+              <div style="padding: 12px; line-height: 1; font-size: 13px; display: flex; flex-wrap: wrap; gap: 2px">
+                <div style="margin-bottom: 8px;"><strong>Job No:</strong> ${rowData.jobno_oms || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Company:</strong> ${rowData.company_name || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Buyer:</strong> ${rowData.buyer1 || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Style:</strong> ${rowData.stylename || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Style No:</strong> ${rowData.styleno || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Quantity:</strong> ${rowData.quantity || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Unit:</strong> ${rowData.punit_sh || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Merch:</strong> ${rowData.merch || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Delivery Date:</strong> ${rowData.Fdt || rowData.final_delivery_date || 'N/A'}</div>
+                <div style="margin-bottom: 8px;"><strong>Type:</strong> ${rowData.director_sample_order || 'N/A'}</div>
+              </div>
+            `;
             
-    //         // Create tooltip content with order info on left and image on right
-    //         const tooltipContent = `
-    //           <div style="display: flex; max-width: 600px;">
-    //             <div style="flex: 1; min-width: 200px; max-width: 250px; border-right: 1px solid #e0e0e0;">
-    //               ${orderInfo}
-    //             </div>
-    //             <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px;">
-    //               <img 
-    //                 src="${imgSrc}" 
-    //                 style="max-width: 250px; max-height: 280px; width: auto; height: auto; object-fit: contain;" 
-    //                 alt="Order Image"
-    //               />
-    //             </div>
-    //           </div>
-    //         `;
+            const images = [
+              { label: "Print Image", src: printimg },
+              { label: "Emp Image", src: Emp },
+              { label: "PLT-7 Image", src: others1 },
+              { label: "AOP-9 Image", src: others2 },
+              { label: "Fus-14 Image", src: others7 },
+            ];
+
+            // remove empty images
+            const validImages = images.filter(img => img.src);
+
+            const chunkSize = 3;
+            const columns = [];
+            for (let i = 0; i < validImages.length; i += chunkSize) {
+              columns.push(validImages.slice(i, i + chunkSize));
+            }
+
+            // generate html
+            const imagesHtml = columns.map(col => {
+              const count = col.length;
+
+              let height = "100%";
+              if (count === 2) height = "46%";
+              else if (count >= 3) height = "29.33%";
+
+              return `
+                <div style="display:flex; flex-direction:column; height:300px; gap: 20px;">
+                  ${col.map(img => `
+                    <div style="height:${height}; text-align:center;">
+                      <b>${img.label}</b><br/>
+                      <img 
+                        src="${img.src}" 
+                        style="max-height:100%; width:auto; object-fit:contain;"
+                      />
+                    </div>
+                  `).join('')}
+                </div>
+              `;
+            }).join('');
+
+            // Create tooltip content with order info on left and image on right
+            const tooltipContent = `
+            <div style="flex: 1; min-width: 200px; max-width: 570px; border-bottom: 1px solid #e0e0e0;">
+              ${orderInfo}
+            </div>
+            <div style="display: flex; gap: 6px; max-width: 570px;">
+
+              <!-- LEFT BIG IMAGE -->
+              <div style="padding: 12px;">
+                <b>Order Image</b><br />
+                <img 
+                  src="${imgSrc}" 
+                  style="max-width: 250px; max-height: 300px; object-fit: contain;" 
+                />
+              </div>
+
+              <!-- RIGHT DYNAMIC GRID -->
+              <div style="display: flex; gap: 10px; padding: 12px;">
+                ${imagesHtml}
+              </div>
+            </div>
+            <div style="flex: 1; min-width: 200px; max-width: 570px; border-top: 1px solid #e0e0e0;">
+              ${orderInfo}
+            </div>
+            `;
             
-    //         (tooltipRef.current as TooltipComponent).content = tooltipContent;
-    //         (tooltipRef.current as TooltipComponent).width = '450px';
-    //         (tooltipRef.current as TooltipComponent).height = 'auto';
-    //       }
-    //     }
-    //     else if (img && isHeaderCell) {
-    //       // For header cells, show simple image
-    //       let imgElem:any= args.target.innerHTML;
-    //       const wrapper = document.createElement('div');
-    //       wrapper.innerHTML = imgElem;
-    //       const tooltipImg = wrapper.querySelector('img');
-    //       if (tooltipImg) {
-    //         tooltipImg.style.width = '100px';
-    //         tooltipImg.style.height = '100px';
-    //         tooltipImg.style.objectFit = 'contain';
-    //       }
-    //       (tooltipRef.current as TooltipComponent).content = wrapper.innerHTML;
-    //       (tooltipRef.current as TooltipComponent).width = '100px';
-    //       (tooltipRef.current as TooltipComponent).height = '100px';
-    //     }
-    //     else {args.cancel=!isHeaderCell
-    //       // Create a wrapper div for text content with styling
-    //       const textWrapper = document.createElement('div');
-    //       textWrapper.style.padding = '8px';
-    //       textWrapper.style.maxHeight = '150px';
-    //       textWrapper.style.overflowY = 'auto';
-    //       textWrapper.style.fontSize = '14px';
-    //       textWrapper.style.lineHeight = '1.5';
-    //       textWrapper.innerText = args.target.innerText;
-    //       (tooltipRef.current as TooltipComponent).content = textWrapper.outerHTML;
-          
-    //       // Set different dimensions for header cells
-    //       if (isHeaderCell) {
-    //         (tooltipRef.current as TooltipComponent).width = '100px';
-    //         (tooltipRef.current as TooltipComponent).height = '100px';
-    //       } else {
-    //         (tooltipRef.current as TooltipComponent).width = '150px';
-    //         (tooltipRef.current as TooltipComponent).height = '150px';
-    //       }
-    //     }
-    //   }
-  
-    // }
+            (tooltipRef.current as TooltipComponent).content = tooltipContent;
+            (tooltipRef.current as TooltipComponent).width = '450px';
+            (tooltipRef.current as TooltipComponent).height = 'auto';
+          }
+        }
+        else if (img) {
+          // For header cells, show simple image
+          let imgElem:any= args.target.innerHTML;
+          const wrapper = document.createElement('div');
+          wrapper.innerHTML = imgElem;
+          const tooltipImg = wrapper.querySelector('img');
+          if (tooltipImg) {
+            tooltipImg.style.width = '100px';
+            tooltipImg.style.height = '100px';
+            tooltipImg.style.objectFit = 'contain';
+          }
+          (tooltipRef.current as TooltipComponent).content = wrapper.innerHTML;
+          (tooltipRef.current as TooltipComponent).width = '100px';
+          (tooltipRef.current as TooltipComponent).height = '100px';
+        }
+      }
+    }
 
     const load = () =>{
     const gridContainer = document.querySelector('.grid-container') as HTMLElement | null;
@@ -1202,10 +1251,10 @@ const showVal = (val: any): string => {
         args.element.style.width = 'auto';
       }
     };
-// beforeRender={tooltipBeforeRender}  beforeOpen={beforeOpen}
+    
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
-    // <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell, .e-headercell" width="130px" height="130px" >
+    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
     <div className='grid-container'
         style={{
           overflow: 'hidden',
@@ -1259,14 +1308,15 @@ const showVal = (val: any): string => {
         load={load}
       >
         <ColumnsDirective>
-          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="ORDER INFO" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }}/>                 
+          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }}/>                 
           <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="200" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="200" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
-          <ColumnDirective field="printing_R" headerText="printing_R" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="ITS_R" headerText="ITS_R" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="Week_R" headerText="Week_R" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
            <ColumnDirective field="finaldelvdate" type="date"  headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
         <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1280,9 +1330,9 @@ const showVal = (val: any): string => {
           <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> 
           <ColumnDirective field="u8" headerText="8 FAB" width="100"  allowEditing={false} template={genericHighlighter('u8')}  visible={false}  />
           <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> 
-          <ColumnDirective field="production_type_inside_outside" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="styleno" headerText="qualy" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="All"headerText='All ' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
+          <ColumnDirective field="production_type_inside_outside" headerText="pty,dir,com,ordfol" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="styleno" headerText="sty,stydes,qcon" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="All"headerText='Fdt,Odt,dt' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
           <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
           <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
@@ -1290,11 +1340,11 @@ const showVal = (val: any): string => {
           <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
-          <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          {/* <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="prdty" headerText="prdty" width="180" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="styleno" headerText="qualy" width="240" template={qualy} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="All"headerText='All ' width="200" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
+          <ColumnDirective field="All"headerText='All ' width="200" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
           <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
           <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
           {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
@@ -1356,7 +1406,7 @@ const showVal = (val: any): string => {
         </AggregatesDirective>
         <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, DetailRow,Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
       </GridComponent></div>
-      // </TooltipComponent></div></>
+      </TooltipComponent></div></>
   ), [dataSource]);
 
   return (
@@ -1615,7 +1665,7 @@ const showVal = (val: any): string => {
         ) : (
           memoizedGridComponent
         )}
-      </div>
+      </div> 
     </div>
   );
 };

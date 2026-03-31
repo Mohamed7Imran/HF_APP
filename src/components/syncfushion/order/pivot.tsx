@@ -29,7 +29,22 @@ registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3h
 
 let pivotObj: PivotViewComponent | null = null;
 
-fetch('https://app.herofashion.com/order_panda/')
+
+const dataSourceSettings = {
+  enableSorting: true,
+  columns: [{ name: 'buyer1' }, { name: 'insdatenew' }],
+  valueSortSettings: { headerDelimiter: ' - ' },
+  values: [{ name: 'slno', caption: 'Units Sold' }, { name: 'merch' }],
+  rows: [{ name: 'jobno_oms' }],
+  formatSettings: [{ name: 'Amount', format: 'C0' }],
+  expandAll: false,
+  filters: [{ name: 'production_unit' }]
+};
+
+function PivotTableExporting() {
+  React.useEffect(()=>
+  {
+    fetch('https://app.herofashion.com/order_panda/')
   .then(response => {
     if (!response.ok) {
       throw new Error('Network response was not ok ' + response.statusText);
@@ -46,18 +61,7 @@ fetch('https://app.herofashion.com/order_panda/')
     console.error('There was a problem with the fetch operation:', error);
   });
 
-const dataSourceSettings = {
-  enableSorting: true,
-  columns: [{ name: 'buyer1' }, { name: 'insdatenew' }],
-  valueSortSettings: { headerDelimiter: ' - ' },
-  values: [{ name: 'slno', caption: 'Units Sold' }, { name: 'merch' }],
-  rows: [{ name: 'jobno_oms' }],
-  formatSettings: [{ name: 'Amount', format: 'C0' }],
-  expandAll: false,
-  filters: [{ name: 'production_unit' }]
-};
-
-function PivotTableExporting() {
+  },[])
   const toolbarOptions = [
     'New', 'Save', 'SaveAs', 'Rename', 'Remove', 'Load',
     'Grid', 'Chart', 'Export', 'SubTotal', 'GrandTotal',
@@ -208,8 +212,16 @@ function PivotTableExporting() {
     }
   };
 let pivotObj;
- function onChange() {
-        pivotObj.gridSettings.layout = pivotObj.gridSettings.layout === 'Compact' ? 'Tabular' : 'Compact';
+ function onChange(args:any) {
+      if(!args.checked)
+      {
+        pivotObj.gridSettings.layout = 'Compact';
+      }
+      else
+      {
+        pivotObj.gridSettings.layout = 'Tabular';
+      }
+        
     }
 
   return (
@@ -225,9 +237,10 @@ let pivotObj;
           ref={(scope) => { pivotObj = scope; }}
           dataSourceSettings={dataSourceSettings}
           width={'100%'}
+          gridSettings={{layout:'Tabular',columnWidth: 140, rowHeight: 80 }}
           height={'450'}
           showFieldList={true}
-          gridSettings={{ columnWidth: 140, rowHeight: 80 }}
+          // gridSettings={}
           allowExcelExport={true}
           allowNumberFormatting={true}
           allowConditionalFormatting={true}

@@ -1,5 +1,6 @@
 import {  Routes, Route, } from 'react-router-dom';
 import HeroFashionGrid13 from "../order/ord_order.tsx"
+import IframeBold from "../order/sync_iframe.jsx"
 import HrReportGrid from "../order/ord1 ok.tsx"
 import TallyBalanceReport from "../order/tally.tsx"
 import OrdPagination from "../order/ord_pagination.tsx"
@@ -31,6 +32,7 @@ function Home() {
     <Routes>
         <Route path="/" element={<CardGrid />} />
         <Route path="/order" element={<HeroFashionGrid13 />} />
+        <Route path="/sync_iframe" element={<IframeBold />} />
         <Route path="/HrReportGrid" element={<HrReportGrid />} /> 
         <Route path="/OrdPagination" element={<OrdPagination />} /> 
         <Route path='/store' element= {<StoreGrid />} />

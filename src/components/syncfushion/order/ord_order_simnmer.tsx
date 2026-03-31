@@ -39,10 +39,11 @@ import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdowns';
-import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
 import "../../../App.css"
 import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 import { DatePickerComponent } from '@syncfusion/ej2-react-calendars';
+import { ButtonComponent, ChipListComponent } from '@syncfusion/ej2-react-buttons';
+import { TabComponent } from '@syncfusion/ej2-react-navigations';
 registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
 interface OrderData {
   slno1?: number; // Added SL No field
@@ -387,6 +388,269 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     alert('Failed to delete setting');
   }
 };
+ const detailTemplate = (props: OrderData) => {
+    const printingRows = Array.isArray(props.Printing) ? props.Printing : [];
+    const printGroups = groupByPrint(printingRows);
+    
+    // Helper for chips
+    const chipTags = (tags: string[]) => {
+        return (<ChipListComponent chips={tags} cssClass={'e-outline'} />);
+    };
+
+    return (
+      <div>
+        <TabComponent heightAdjustMode="Auto">
+            <div className="e-tab-header">
+                <div> Order Details </div>
+                <div> Print Details </div>
+                <div> NewData </div>
+                <div> New OrdImageTab </div>
+            </div>
+            <div className="e-content">
+
+                {/* TAB 1: ORDER DETAILS */}
+                <div className='content-tab' style={{ padding: '5px' ,height:'80px' }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "0.2fr 0.2fr 0.2fr", columnGap: "2px", rowGap: "1px", fontSize: "14px",height:"80px" }}>
+                      
+                        <div><b>Job No:</b> {showVal(props.jobno_oms)}</div>
+                        <div><b>Buyer:</b> {showVal(props.buyer1)}</div>
+                        <div><b>Company:</b> {showVal(props.company_name)}</div>
+                        {/* <div><b>ref:</b> {showVal(props.reference)}</div> */}
+
+                        <div><b>Style Name:</b> {showVal(props.stylename)}</div>
+                        <div><b>Style No:</b> {showVal(props.styleno)}</div>
+                        <div><b>Merchandiser:</b> {showVal(props.merch)}</div>
+
+                        <div><b>Quantity:</b> {showVal(props.quantity)}</div>
+                        <div><b>Unit:</b> {showVal(props.punit_sh)}</div>
+                        <div><b>Production Type:</b> {showVal(props.production_type_inside_outside)}</div>
+
+                        <div><b>Delivery Date:</b> {showVal(props.final_delivery_date)}</div>
+                        <div><b>Director Sample:</b> {showVal(props.director_sample_order)}</div>
+                        <div><b>UOM:</b> {showVal(props.uom)}</div>
+                    </div>
+                </div>
+
+                {/* TAB 2: PRINT DETAILS */}
+                <div>
+                    {printGroups.length === 0 && <div style={{color: '#999', textAlign: 'center',height:'30px', padding: '20px'}}>No Print Details Available</div>}
+                    
+                    {printGroups.map((grp: any, idx: number) => {
+                        const colours = getUniqueColours(grp.rows);
+                        const images = [grp.image, grp.image1, grp.image2].filter(Boolean);
+                        
+                        return (
+                            <div key={idx} style={{ marginBottom: "20px", borderBottom: "2px solid #003399", paddingBottom: "20px" }}>
+                                <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", columnGap: "30px", alignItems: "start" }}>
+                                    
+                                    {/* Left: Image */}
+                                    <div style={{ border: '1px solid #eee', padding: '5px', background: '#fff' }}>
+                                        {images.length > 0 ? (
+                                            <img src={images[0]} alt="print" style={{ width: "100px", height: "100px", objectFit: "contain" }}
+                                                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} />
+                                        ) : (
+                                            <div style={{width: '50%', height: '80px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc'}}>
+                                                No Image
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Right: Data & Colors */}
+                                    <div style={{ width: '100%' }}>
+                                        <div style={{ display: "grid", gridTemplateColumns: "0.4fr 0.4fr 0.4fr 0.4fr", columnGap: "1px", rowGap: "1px", fontSize: "13px", marginBottom: "15px" }}>
+                                            <div><b>Job No:</b> {showVal(grp.jobno)}</div>
+                                            <div><b>Print Type:</b> {showVal(grp.print_type)}</div>
+                                            <div><b>Print Description:</b> {showVal(grp.print_description)}</div>
+
+                                            <div><b>Inside / Outside:</b> {showVal(grp.inside_outside_print_emb)}</div>
+                                            <div><b>Individual Part:</b> {showVal(grp.individual_part_print_emb)}</div>
+                                            <div><b>Top / Bottom:</b> {showVal(grp.top_bottom)}</div>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                    {colours.map((c: any, i: number) => (
+                                                        <div key={i} style={{ display: "flex", alignItems: "center", gap: "4px", background: '#f5f5f5', padding: '2px 6px', borderRadius: '4px' }}>
+                                                            <div style={{ width: "16px", height: "16px", background: c.rgb || "#fff", border: "1px solid #ccc" }} />
+                                                            <span style={{ fontSize: '12px' }}>{showVal(c.colour)}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            
+                                            <div><b>Print Screen 1:</b> {showVal(grp.print_screen_1)}</div>
+                                            <div><b>Print Screen 2:</b> {showVal(grp.print_screen_2)}</div>
+                                            <div><b>Print Screen 3:</b> {showVal(grp.print_screen_3)}</div>
+                                        
+                                        </div>
+
+                                        {/* Colors Row */}
+                                        {/* {colours.length > 0 && (
+                                            <div style={{ marginTop: '10px', borderTop: '1px solid #eee', paddingTop: '10px' }}>
+                                                <b style={{ fontSize: '13px', display: 'block', marginBottom: '5px' }}>Colours:</b>
+                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                                    {colours.map((c: any, i: number) => (
+                                                        <div key={i} style={{ display: "flex", alignItems: "center", gap: "4px", background: '#f5f5f5', padding: '2px 6px', borderRadius: '4px' }}>
+                                                            <div style={{ width: "16px", height: "16px", background: c.rgb || "#fff", border: "1px solid #ccc" }} />
+                                                            <span style={{ fontSize: '12px' }}>{showVal(c.colour)}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )} */}
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* TAB 3: NEWDATA (Product Card Style) */}
+                  <div style={{ padding: '8px', background: '#f5f5f5', maxHeight: '150px', overflowY: 'auto'}}>
+                    {/* <h4 style={{ margin: '0 0 15px 0', color: '#333', fontSize: '16px' }}>PRINTING MENU</h4> */}
+                    
+                    {printGroups.length === 0 && <div style={{color: '#999',width:'50px', textAlign: 'center', background: '#fff', borderRadius: '8px'}}>No Print Details Available</div>}
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))', gap: '15px' }}>
+                        {printGroups.map((grp: any, idx: number) => {
+                            const tags = [grp.print_screen_1, grp.print_screen_2, grp.individual_part_print_emb].filter(t => t && t !== "–");
+
+                            return (
+                                <div key={idx} style={{ 
+                                    background: '#fff', 
+                                    borderRadius: '8px', 
+                                    overflow: 'hidden',
+                                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    height: '100%'
+                                }}>
+                                    <div style={{ 
+                                        width: '110px', 
+                                        background: '#f9f9f9', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center',
+                                        padding: '5px',
+                                        borderRight: '1px solid #eee' 
+                                    }}>
+                                        {grp.image ? (
+                                            <img src={grp.image} alt="print" style={{ width: "100%", height: "auto", maxHeight: "50px", objectFit: "contain", display: 'block' }}
+                                                onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/100x80?text=No+Img'; }} />
+                                        ) : (
+                                            <div style={{color: '#ccc', fontSize: '10px', textAlign: 'center'}}>No Image</div>
+                                        )}
+                                    </div>
+
+                                    <div style={{ flex: 1, padding: '10px', position: 'relative' }}>
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            right: '10px',
+                                            background: '#ffc107',
+                                            color: '#333',
+                                            fontSize: '11px',
+                                            fontWeight: 'bold',
+                                            padding: '2px 8px',
+                                            borderRadius: '10px'
+                                        }}>
+                                            {showVal(grp.reference)} ref
+                                        </div>
+                                            <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', marginBottom: '2px', paddingRight: '80px' }}>
+                                            {showVal(grp.jobno_oms)}
+                                        </div>
+                                        <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#333', marginBottom: '2px', paddingRight: '80px' }}>
+                                            {showVal(grp.print_type)}
+                                        </div>
+                                      
+                                        <div style={{ fontSize: '12px', color: '#666', marginBottom: '5px' }}>
+                                            Size: {showVal(grp.inside_outside_print_emb)}
+                                        </div>
+
+                                        <div style={{ fontSize: '11px', color: '#888', marginBottom: '10px', lineHeight: '1.3' }}>
+                                            {showVal(grp.print_description)}
+                                        </div>
+
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                            {tags.map((t, i) => (
+                                                <span key={i} style={{
+                                                    background: '#e8f5e9',
+                                                    color: '#2e7d32',
+                                                    fontSize: '10px',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '4px',
+                                                    border: '1px solid #c8e6c9'
+                                                }}>
+                                                    {t}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* TAB 4: NEW ORDIMAGETAB (Exact Pizza Layout with Order Data) */}
+                <div style={{ padding: '0' }}>
+                    {/* Using the exact structure from reference */}
+                    <div className="details e-pizza-cell">
+                        <div className="e-pizza-info-container">
+                          <div>
+                            <h1>Hai</h1>
+                          </div>
+                            {/* Image Layout */}
+                            <div className="e-pizza-image-layout">
+                                {props.mainimagepath ? (
+                                    <img className="e-pizza-image" src={props.mainimagepath} alt={props.stylename} 
+                                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = 'https://via.placeholder.com/100x80?text=No+Img'; }} />
+                                ) : (
+                                    <div style={{width: '100%', height: '100%', background: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa'}}>No Image</div>
+                                )}
+                            </div>
+
+                            {/* Info Layout */}
+                            <div className="e-pizza-info-layout">
+                                <div className="e-info-text-separator">
+                                    <span className="e-pizza-title">{showVal(props.stylename)}</span>
+                                    <span className="e-pizza-size">({showVal(props.styleno)} size)</span>
+                                    {/* <span className="e-pizza-price-text">Ref &nbsp;</span> */}
+                                    <span className="e-pizza-size">({showVal(props.reference)})</span>
+                                </div>
+                                <div className="e-info-text-separator">
+                                    <span>{showVal(props.buyer1)} - {showVal(props.company_name)}</span>
+                                </div>
+                                {/* <div> <span className="e-pizza-size">({showVal(props.reference)})</span></div> */}
+                               
+                                {/* <div className="e-info-text-separator">
+                                    {chipTags([showVal(props.punit_sh), showVal(props.production_type_inside_outside), showVal(props.director_sample_order)])}
+                                </div> */}
+
+
+                                  {/* <div className="e-pizza-price-min-layout e-info-text-separator">
+                                    <span className="e-pizza-price-text">({showVal(props.reference)})</span>
+                                  </div>
+                                  */}
+                                <div className="e-pizza-price-min-layout e-info-text-separator">
+                                    <span className="e-pizza-price-text">Total Qty&nbsp;</span>
+                                    <span className="e-pizza-price">{showVal(props.quantity)}</span>
+                                    <span className="e-pizza-original-price">{showVal(props.uom)}</span>
+                                </div>
+                            </div>
+                            
+                            <div className="e-flex-grow"></div>
+                            
+                            {/* Right Price Layout */}
+                            <div className="e-pizza-price-layout">
+                                <div className="e-info-text-separator"><span className="e-pizza-price-text">Total Qty</span></div>
+                                <div className="e-info-text-separator"><span className="e-pizza-price">{showVal(props.quantity)}</span></div>
+                                <div className="e-info-text-separator"><span className="e-pizza-original-price">{showVal(props.uom)}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </TabComponent>
+      </div>
+    );
+  };
 
   // --- Search & Highlight Logic ---
   const highlightText = (text: any) => {
@@ -409,6 +673,15 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
       gridRef.current?.search(event.target?.value);
     });
   };
+
+  // const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setSearchKey(value);
+  //   if (searchTimeout.current) clearTimeout(searchTimeout.current);
+  //   searchTimeout.current = setTimeout(() => {
+  //     if (gridRef.current) gridRef.current.search(value);
+  //   }, 400);
+  // };
 
   const genericHighlighter = (field: keyof OrderData) => (props: OrderData) => (
     <>{highlightText(props[field])}</>
@@ -766,7 +1039,7 @@ const showVal = (val: any): string => {
         gridRef.current.setProperties({
 
           allowPaging: !isPaging,
-          
+
           enableVirtualization: isPaging,
 
         }, true);
@@ -972,7 +1245,28 @@ const showVal = (val: any): string => {
                       }}
                     />
                   ) : null}
+{/* 
+                  {/* {grp.image1 ? (
+                    <img
+                      src={grp.image1}
+                      alt="print 2"
+                      style={{ width: "160px", border: "1px solid #ccc", padding: "6px", display: "block", objectFit: "contain", background: "#fff" }}
+                      onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  ) : null}
 
+                  {grp.image2 ? (
+                    <img
+                      src={grp.image2}
+                      alt="image_tb"
+                      style={{ width: "160px", border: "1px solid #ccc", padding: "6px", display: "block", objectFit: "contain", background: "#fff" }}
+                      onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                        (e.currentTarget as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                   ) :} */}
                 </div> 
 
                 /* DATA BLOCK */
@@ -1234,12 +1528,14 @@ const showVal = (val: any): string => {
         showColumnChooser={true}
         enableAdaptiveUI={true}
         adaptiveUIMode={'Mobile'}
-        allowTextWrap={true}
+        // allowTextWrap={true}
         allowReordering={true}
         allowResizing={true}
         allowPdfExport={true}
         autoFit={true}
         sortSettings={{columns: [{ field: 'director_sample_order', direction: 'Descending' },{ field: 'Fdt', direction: 'Ascending' }]}}
+
+ 
         gridLines="Both"
         searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
         toolbar={toolbarOptions}
@@ -1254,6 +1550,7 @@ const showVal = (val: any): string => {
         actionComplete={actionComplete}
         created={created}
         frozenColumns={2}
+        detailTemplate={detailTemplate}
         toolbarClick={toolbarClick} 
         recordClick={recordClick}
         load={load}
@@ -1275,9 +1572,6 @@ const showVal = (val: any): string => {
           <ColumnDirective field="Others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
           {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
           <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
-          <ColumnDirective field="merch" headerText="merch" width="100" template={genericHighlighter('merch')} /> 
-          <ColumnDirective field="buyer1" headerText="buyer1" width="100" template={genericHighlighter('buyer1')} /> 
-          <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> 
           <ColumnDirective field="u8" headerText="8 FAB" width="100"  allowEditing={false} template={genericHighlighter('u8')}  visible={false}  />
           <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> 
           <ColumnDirective field="production_type_inside_outside" headerText="prdty" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
@@ -1341,9 +1635,11 @@ const showVal = (val: any): string => {
           <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
           <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')} /> */}
           <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
-           
+          {/* <ColumnDirective field="u14" headerText="14 DY" width="70" minWidth="90" template={genericHighlighter('u14')} /> */}
+          {/* <ColumnDirective field="styledesc" headerText="DESC" width="160" template={genericHighlighter('styledesc')} /> */}
+          {/* <ColumnDirective field="reference" headerText="reference" width="250" maxWidth="250" template={genericHighlighter('reference')} /> */}
           <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
-        
+          {/* <ColumnDirective field="company_name" headerText="COMPANY" width="90" template={genericHighlighter('company_name')} /> */}
                     
         </ColumnsDirective>
         <AggregatesDirective>
@@ -1532,7 +1828,15 @@ const showVal = (val: any): string => {
           </li>
         </ol>
 
-       
+        {/* <div className="header-controls bg-white">
+          <input 
+            type="text" 
+            placeholder="Search all columns..."
+            value={searchKey}
+            onChange={onSearchChange}
+            className="search-input"
+          />
+        </div> */}
         <div style={{ padding: '0px 5px', marginLeft: '5px', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
             <div style={{ display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
               <TextBoxComponent
@@ -1551,7 +1855,7 @@ const showVal = (val: any): string => {
             </ButtonComponent>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {/* <DropDownListComponent
+            <DropDownListComponent
               ref={dropdownRef}
               id="settings-dropdown"
               dataSource={savedSettings
@@ -1565,21 +1869,6 @@ const showVal = (val: any): string => {
               style={{ width: '70px' }}
               change={() => {setSelectedSetting(dropdownRef.current?.value as string);applySetting()}}
             />
-              change={() => setSelectedSetting(dropdownRef.current?.value as string)}
-            /> */}
-
-            <DropDownListComponent
-            ref={dropdownRef}
-            id="settings-dropdown"
-            dataSource={savedSettings
-              .filter(s => s.user?.toLowerCase() === username?.toLowerCase())
-              .map(s => ({ text: s.name, value: s.id }))}
-            fields={{ text: 'text', value: 'value' }}
-            placeholder="Select setting"
-            style={{ width: '70px' }}
-            value={savedSettings.find(s => s.name === selectedSetting)?.id || null}
-            change={() => {setSelectedSetting(dropdownRef.current?.value as string);applySetting()}}
-          />
           </div>
 
             {/* <ButtonComponent

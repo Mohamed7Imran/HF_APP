@@ -1300,6 +1300,8 @@ const showVal = (val: any): string => {
         enableAdaptiveUI={true}
         adaptiveUIMode={'Mobile'}
         allowReordering={true}
+        allowTextWrap={true}
+        textWrapSettings={{wrapMode: "Header"}}
         allowResizing={true}
         allowPdfExport={true}
         autoFit={true}
@@ -1332,8 +1334,8 @@ const showVal = (val: any): string => {
           <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
-           <ColumnDirective field="finaldelvdate" type="date"  headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
-        <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="finaldelvdate" type="date"  headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
+          <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>

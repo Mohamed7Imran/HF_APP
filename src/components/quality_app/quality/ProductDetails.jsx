@@ -62,9 +62,25 @@ const fillBundleData = async (bundle) => {
   try {
     const response = await fetch(
       `https://hfapi.herofashion.com/qcapp/get_bundle_data/?bundle_id=${bundle}`
+      // `http://10.1.21.154:7000/qcapp/get_bundle_data/?bundle_id=${bundle}`
     );
 
     const data = await response.json();
+    // 🔴 If message வந்தா
+    if (data.message) {
+      alert(data.message);
+
+      // reset fields
+      setJobNo("");
+      setProduct("");
+      setColour("");
+      setSize("");
+      setPieces("");
+      setBundleNo("");
+      setBundleid("");
+
+      return;
+    }
 
     if (!data || data.length === 0) {
       alert("Bundle Not Found");

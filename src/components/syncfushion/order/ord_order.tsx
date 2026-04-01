@@ -448,7 +448,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
                     col.field==="abc"  ||  col.field==="order_follow_up" ||  col.field==="styledesc" ||  col.field==="company_name" ||  col.field==="quantity" ||  col.field==="production_type_inside_outside"
                   ||  col.field==="prnmeaimg" ||  col.field==="All"  ||  col.field==="fsn"  || col.field==="prdty"  ||  col.field==="Others1"  || col.field==="Others7" || col.field==="n" ||  col.field==="slno1" ||  col.field==="actdaten"  ||  col.field==="u46"  ||  col.field==="date" ||  col.field==="ourdelvdate" ||  col.field==="finaldelvdate1"  ||  col.field==="Others2" || col.field==="Others3" || col.field==="Others4"  || col.field==="Others5" || col.field==="Others6"||col.field==="Fdt"
                 ) {
-                    // col.visible = false;
+                    col.visible = false;
                 }
             }
         }
@@ -461,7 +461,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         //         }
         //     }
         // }
-        if (gridRef.current && args.requestType === 'save') {
+        if (gridRef.current && (args.requestType === 'save' || args.requestType === 'cancel')) {
             const cols: any = gridRef.current?.columns;
              for (const col of cols) {
                 if (col.field === "jobno_oms" || col.field === "Print" || col.field==="print_img" || col.field==="prnclr" || col.field==="merch" || col.field==="buyer1"
@@ -469,7 +469,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
                     col.field==="abc"  ||  col.field==="order_follow_up" ||  col.field==="styledesc" ||  col.field==="company_name" ||  col.field==="quantity" ||  col.field==="production_type_inside_outside"
                   ||  col.field==="prnmeaimg" ||  col.field==="All"  ||  col.field==="fsn"  || col.field==="prdty"  ||  col.field==="Others1"  || col.field==="Others7" || col.field==="n" ||  col.field==="slno1" ||  col.field==="actdaten"  ||  col.field==="u46"  ||  col.field==="date" ||  col.field==="ourdelvdate" ||  col.field==="finaldelvdate1"  ||  col.field==="Others2" || col.field==="Others3" || col.field==="Others4"  || col.field==="Others5" || col.field==="Others6"||col.field==="Fdt"
                 ) {
-                    // col.visible = true;
+                    col.visible = true;
                 }
             
             }
@@ -500,7 +500,9 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     }
   };
 
-  const orderSummaryTemplate = (p: OrderData) => (
+  const orderSummaryTemplate = (p: OrderData) => 
+  {
+    return (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>OR-</b> {highlightText(p.jobno_oms)}<br />
       <b>Buy-</b> {highlightText(p.buyer1)}<br />
@@ -509,6 +511,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
       <b>Qty-</b> {highlightText(p.quantity)}
     </div>
   );
+  }
 
 const  udf= (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -604,9 +607,38 @@ const   Alldate= (p: OrderData) => (
     </div>
   );
 
-  
+      const searchTemplate = useMemo(() => {
+    return () => {
+      const handleSearchInput = (e: any) => {
+        const value = e.value || '';
+          if (gridRef.current) {
+            gridRef.current.search(value);
+          }
+
+      };
+
+      return (
+        <div>
+          <TextBoxComponent
+            id="customSearch"
+            placeholder="Search..."
+            input={handleSearchInput}
+            showClearButton={true}
+            style={{ width: '100px' }}
+            cssClass="custom-search-textbox"
+          />
+        </div>
+      );
+    };
+  }, []);
+
   const toolbarOptions: any[] = [
-    { text: 'Search', prefixIcon: 'e-icons e-search', id: 'default-aggregate-grid_search', align: 'Left' as any },
+    {
+      id: 'searching',
+      align: 'Left' as any,
+      template: searchTemplate,
+    },
+    // { text: 'Search', prefixIcon: 'e-icons e-search', id: 'default-aggregate-grid_search', align: 'Left' as any },
     { text: '', prefixIcon: 'e-add', id: 'add_icon', tooltipText: 'Add Records' },
     'Edit',
     'Delete',
@@ -1207,8 +1239,9 @@ const showVal = (val: any): string => {
       }
     }
 
-    const load = () =>{
-    const gridContainer = document.querySelector('.grid-container') as HTMLElement | null;
+    const load = (args:any) =>{
+      args.enableSeamlessScrolling=true;
+      const gridContainer = document.querySelector('.grid-container') as HTMLElement | null;
         if (!gridContainer) return;
         const rect = gridContainer.getBoundingClientRect();
         const topPosition = rect?.top ?? 0;
@@ -1218,29 +1251,15 @@ const showVal = (val: any): string => {
     }
       const dateEditor = (props :any) => {
   return (
-    <DatePickerComponent
+   <div>
+     <DatePickerComponent
       value={props.finaldelvdate1}
       change={(args) => props.setCellValue(props.column.field, args.value)}
     />
+   </div>
   );
 };
-    // Background color implementation
-    const recordClick=(args:any)=>
-      {
-        // Remove background from previously clicked cell
-        if (previousCellRef.current) {
-          previousCellRef.current.style.backgroundColor = '';
-        }
-        
-        // Set yellow background on the newly clicked cell
-        if (args.cell) {
-          args.cell.style.backgroundColor = 'yellow';
-          // Store the current cell as the previous cell for next click
-          previousCellRef.current = args.cell;
-        }
-        
-        console.log('Cell clicked:', args);
-      }
+
   
     const beforeOpen = (args: any) => {
       // Adjust tooltip dimensions based on content type
@@ -1251,8 +1270,7 @@ const showVal = (val: any): string => {
         args.element.style.width = 'auto';
       }
     };
-    
-  // Memoize the grid component to prevent unnecessary re-renders
+   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
     <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
     <div className='grid-container'
@@ -1266,25 +1284,24 @@ const showVal = (val: any): string => {
         ref={gridRef}
         dataSource={dataSource}
         dataBound={dataBound}
-        pageSettings={{pageSize:30}}
+        pageSettings={{pageSize:15}}
         height="100%"
         rowHeight={100}
         enableVirtualization={true}
         // allowPaging={true}
         allowSorting={true}
-        allowFiltering={true}
+        allowFiltering={!Browser.isDevice }
         allowMultiSorting={true}
-        // filterSettings={{type:'CheckBox'}}
-        filterSettings={{ type: 'Menu' }}
+        filterSettings={{ showFilterBarOperator: true, mode: "Immediate"}}
         statelessTemplates={['directiveTemplates']}
         allowGrouping={true}
         groupSettings={{showGroupedColumn:true, showDropArea : !Browser.isDevice}}
-        // showColumnMenu={true}
         showColumnChooser={true}
         enableAdaptiveUI={true}
         adaptiveUIMode={'Mobile'}
-        allowTextWrap={true}
         allowReordering={true}
+        allowTextWrap={true}
+        textWrapSettings={{wrapMode: "Header"}}
         allowResizing={true}
         allowPdfExport={true}
         autoFit={true}
@@ -1303,8 +1320,8 @@ const showVal = (val: any): string => {
         actionComplete={actionComplete}
         created={created}
         frozenColumns={2}
-        toolbarClick={toolbarClick} 
-        recordClick={recordClick}
+        enableVirtualMaskRow={false}
+        toolbarClick={toolbarClick}
         load={load}
       >
         <ColumnsDirective>
@@ -1312,13 +1329,13 @@ const showVal = (val: any): string => {
           <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="200" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
-          <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" template={udf} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150"  type="string" template={udf} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
-           <ColumnDirective field="finaldelvdate" type="date"  headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
-        <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="finaldelvdate" type="date"  headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
+          <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }}/>
           <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>

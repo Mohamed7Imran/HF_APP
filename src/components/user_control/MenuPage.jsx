@@ -173,14 +173,14 @@ const RoleMenuPermissions = () => {
                 <input
                   type="text"
                   placeholder="Module Name"
-                  className="col-span-7 md:col-span-8 bg-slate-50 border border-slate-100 px-4 py-3 rounded-xl text-[13px] font-bold focus:bg-white focus:ring-2 ring-indigo-50 outline-none transition-all"
+                  className="col-span-7 md:col-span-6 bg-slate-50 border border-slate-100 px-4 py-3 rounded-xl text-[13px] font-bold focus:bg-white focus:ring-2 ring-indigo-50 outline-none transition-all"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
                 <input
                   type="number"
                   placeholder="0"
-                  className="col-span-2 md:col-span-1 bg-slate-50 border border-slate-100 px-2 py-3 rounded-xl text-[13px] font-bold text-center outline-none"
+                  className="col-span-2 md:col-span-2 bg-slate-50 border border-slate-100 rounded-xl text-[13px] font-bold text-center outline-none"
                   value={formData.order}
                   onChange={(e) => setFormData({ ...formData, order: e.target.value })}
                 />

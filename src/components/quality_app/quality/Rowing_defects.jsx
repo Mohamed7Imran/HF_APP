@@ -15,25 +15,34 @@ export default function Rowing_defects() {
     colour,
     size,
     pieces,
-    bundle_id
+    bundle_id,
+    machineId,
+    operator,
+    process,
+    
   } = location.state || {};
 
-//   const [activeTab, setActiveTab] = useState("minor");
   const [qcdatas, setQcdatas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [counts, setCounts] = useState({});
   const [inspectedCount, setInspectedCount] = useState(0);
   const [forceSave, setForceSave] = useState(false);
+  
+  // State for Checkboxes and Remarks
+  const [shadeVariation, setShadeVariation] = useState(true);
+  const [numberSticker, setNumberSticker] = useState(true);
+  const [remarks, setRemarks] = useState("");
 
   const totalPieces = Number(pieces) || 0;
 
+  // 1. Fetch Mistakes Master Data
   useEffect(() => {
     const fetch_qcdata = async () => {
       try {
         const res = await api.get("qcapp/qcadmin_mistakes/");
         setQcdatas(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("Mistakes Fetch Error:", err);
       } finally {
         setLoading(false);
       }
@@ -41,319 +50,235 @@ export default function Rowing_defects() {
     fetch_qcdata();
   }, []);
 
-
-   // 🔹 Fetch last checked piece for this bundle
+  // 2. FIXED: Fetch last checked piece (Triggers on bundle_id/unit/line change)
   useEffect(() => {
     const fetchLastBundle = async () => {
+      if (!bundle_id) return;
       try {
         const res = await api.get(`qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`);
         const last = res.data;
 
-        if (last && last.bundle_id === bundle_id) {
-          // Set inspected count to reflect already checked pieces
-          setInspectedCount(last.checked_pieces || 0);
+        // CRITICAL FIX: Ensure bundle_id match regardless of string/number type
+        if (last && String(last.bundle_id) === String(bundle_id)) {
+          console.log("Bundle match found. Setting inspected count to:", last.checked_pieces);
+          setInspectedCount(Number(last.checked_pieces) || 0);
+        } else {
+          setInspectedCount(0);
         }
       } catch (err) {
-        console.error("Failed to fetch last bundle:", err);
+        console.error("Failed to fetch last bundle status:", err);
       }
     };
 
-    if (bundle_id) fetchLastBundle();
-  }, [bundle_id]);
+    fetchLastBundle();
+  }, [bundle_id, unit, line, qc_type]);
 
-//   const getFilteredData = () => {
-//     return qcdatas.filter((item) => {
-//       if (activeTab === "rowing_qc") return item.category === "rowing_qc";
-//       return false;
-//     });
-//   };
-
-const getFilteredData = () => {
-  return qcdatas.filter((item) => item.category === "rowing_qc");
-};
-
-  const getCategoryCount = (categoryName) => {
-  return qcdatas
-    .filter((item) => item.category === categoryName)
-    .reduce((total, item) => {
-      return total + (counts[item.id] || 0);
-    }, 0);
-};
+  const getFilteredData = () => {
+    return qcdatas.filter((item) => item.category === "rowing_qc");
+  };
 
   const handleIncrement = (id) => {
-    setCounts((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 0) + 1,
-    }));
+    setCounts((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
 
   const handleDecrement = (id) => {
-    setCounts((prev) => ({
-      ...prev,
-      [id]: Math.max((prev[id] || 0) - 1, 0),
-    }));
+    setCounts((prev) => ({ ...prev, [id]: Math.max((prev[id] || 0) - 1, 0) }));
   };
 
   const totalMistakes = Object.values(counts).reduce((a, b) => a + b, 0);
+  const mistakePercent = totalPieces > 0 ? ((totalMistakes / totalPieces) * 100).toFixed(1) : 0;
 
-  const mistakePercent =
-    totalPieces > 0 ? ((totalMistakes / totalPieces) * 100).toFixed(1) : 0;
+  const handleSavePiece = async () => {
+    if (inspectedCount >= totalPieces) return;
 
+    const defectsArray = Object.entries(counts).map(([id, count]) => {
+      const defect = qcdatas.find((item) => item.id === Number(id));
+      return {
+        mistake_name: defect.name,
+        mistake_count: count,
+        category: defect.category,
+      };
+    }).filter(d => d.mistake_count > 0);
 
-const handleSavePiece = async () => {
-  if (inspectedCount >= totalPieces) return;
+    if (defectsArray.length === 0) {
+      defectsArray.push({ mistake_name: "no_mistake", mistake_count: 0, category: "no_mistake" });
+    }
 
-  // Prepare defects array
-  const defectsArray = Object.entries(counts).map(([id, count]) => {
-    const defect = qcdatas.find((item) => item.id === Number(id));
-    return {
-      mistake_name: defect.name,
-      mistake_count: count,
-      category: defect.category,
+    const payload = {
+      bundle_no: bundleNo,
+      bundle_id,
+      jobno: jobNo,
+      product,
+      color: colour,
+      size,
+      unit,
+      line,
+      qc_type: "rowing_qc",
+      total_pieces: totalPieces,
+      piece_no: inspectedCount + 1,
+      total_mistake: totalMistakes,
+      mistake_percentage: mistakePercent,
+      defects: defectsArray,
+      shade_variation: shadeVariation,
+      number_sticker: numberSticker,
+      remarks: remarks,
+      machineId,
+      operator,
+      process
     };
-  });
 
-  // If no defects, push a single record with null values
-  if (defectsArray.length === 0) {
-    defectsArray.push({
-      mistake_name: "no_mistake",
-      mistake_count: 0,
-      category: "no_mistake",
-    });
-  }
- // Calculate total mistakes and percentage
-  const totalMistakes = Object.values(counts).reduce((a, b) => a + b, 0);
-  const mistakePercentage =
-    totalPieces > 0 ? ((totalMistakes / totalPieces) * 100).toFixed(1) : "0";
-    
-  const payload = {
-    bundle_no: bundleNo,
-    bundle_id,
-    jobno: jobNo,
-    product,
-    color: colour,
-    size,
-    unit,
-    line,
-    qc_type:"rowing_qc",
-    total_pieces: totalPieces,
-    piece_no: inspectedCount + 1,
-    total_mistake: totalMistakes,
-    mistake_percentage: mistakePercentage,
-    defects: defectsArray,
+    try {
+      await api.post("qcapp/save_piece/", payload);
+      alert(`Piece ${inspectedCount + 1} saved ✅`);
+      setInspectedCount((prev) => prev + 1);
+      setCounts({});
+      setRemarks(""); // Reset remarks for next piece
+    } catch (err) {
+      alert("Failed to save piece ❌");
+    }
   };
-
-  try {
-    await api.post("qcapp/save_piece/", payload);
-    alert(`Piece ${inspectedCount + 1} saved ✅`);
-    setInspectedCount((prev) => prev + 1);
-    setCounts({});
-  } catch (err) {
-    console.error(err);
-    alert("Failed to save piece ❌");
-  }
-};
 
   const handleFinalSubmit = async () => {
-  try {
-  
-  await api.post("qcapp/save_final_piece/", {
-    bundle_no: bundleNo,
-    bundle_id,
-    jobno: jobNo,
-    product,
-    color: colour,
-    size,
-    unit,
-    line,
-    qc_type:"rowing_qc",
-    total_pieces: totalPieces,
-    checked_piece: inspectedCount,
-    force_save: forceSave,
-  });
-
-    alert("Saved Successfully ✅");
-    navigate(-1);
-  } catch (err) {
-    console.error(err);
-    alert("Save failed ❌");
-  }
-};
-
-  const tabs = [
-    { id: "rowing_qc", label: "rowing_qc" },
-    
-  ];
+    try {
+      await api.post("qcapp/save_final_piece/", {
+        bundle_no: bundleNo,
+        bundle_id,
+        jobno: jobNo,
+        product,
+        color: colour,
+        size,
+        unit,
+        line,
+        qc_type: "rowing_qc",
+        total_pieces: totalPieces,
+        checked_piece: inspectedCount,
+        force_save: forceSave,
+      });
+      alert("Bundle Completed Successfully ✅");
+      navigate(-1);
+    } catch (err) {
+      alert("Final save failed ❌");
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 flex justify-center mt-12 sm:mt-12 md:mt-4 lg:mt-0">
-      <div className="w-full max-w-6xl bg-white rounded-3xl shadow-lg p-6 md:p-8">
-
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+    <div className="min-h-screen bg-slate-100 p-4 pb-12 flex justify-center">
+      <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+        
+        {/* Header Section */}
+        <div className="bg-slate-900 p-6 text-white flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">
-              Rowing Qc
-            </h1>
-            <p className="text-gray-400">Record quality issues</p>
+            <h1 className="text-xl font-black uppercase tracking-tight">Rowing QC</h1>
+            <p className="text-slate-400 text-xs font-bold">UNIT: {unit} | LINE: {line}</p>
           </div>
-          <div>
-            <label className="inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={forceSave}
-                onChange={(e) => setForceSave(e.target.checked)}
-              />
-              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              <span className="ms-3 text-md font-medium text-green-500 dark:text-gray-300">Force Save</span>
+          <div className="flex items-center gap-3">
+            <span className={`text-[10px] font-bold px-2 py-1 rounded ${forceSave ? 'bg-orange-500' : 'bg-slate-700'}`}>
+              {forceSave ? 'FORCE SAVE ON' : 'NORMAL MODE'}
+            </span>
+            <label className="relative inline-flex items-center cursor-pointer scale-90">
+              <input type="checkbox" className="sr-only peer" checked={forceSave} onChange={(e) => setForceSave(e.target.checked)} />
+              <div className="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
             </label>
           </div>
-          <p className="text-blue-600 font-bold">
-            Unit - {unit} / Line - {line}
-          </p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-
-          <div className="bg-gray-100 rounded-2xl p-4">
-            <p className="text-gray-500 text-sm">Garments Inspected</p>
-            <p className="text-2xl font-bold text-slate-800">
-              {inspectedCount}/{totalPieces}
-            </p>
-          </div>
-
-          <div className="bg-gray-100 rounded-2xl p-4">
-            <p className="text-gray-500 text-sm">Mistakes Found</p>
-            <p className="text-2xl font-bold text-red-500">
-              {totalMistakes}
-            </p>
-          </div>
-
-          <div className="bg-gray-100 rounded-2xl p-4">
-            <p className="text-gray-500 text-sm">Mistake %</p>
-            <p className="text-2xl font-bold text-yellow-500">
-              {mistakePercent}%
-            </p>
-          </div>
-
-        </div>
-
-        {/* Save Piece */}
-        <button
-          onClick={handleSavePiece}
-          disabled={inspectedCount >= totalPieces}
-          className={`w-full py-3 rounded-xl font-bold text-lg mb-6 transition ${
-            inspectedCount >= totalPieces
-              ? "bg-gray-300 text-gray-500"
-              : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
-        >
-          Save Piece ({inspectedCount + 1})
-        </button>
-
-
-        {/* Defect List */}
-        <div className="grid gap-4 md:grid-cols-2 max-h-[400px] overflow-y-auto pr-2">
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            getFilteredData().map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center p-4 border rounded-xl hover:shadow-md transition"
-              >
-                <div className="flex items-center gap-3">
-                  <img
-                    src={`https://hfapi.herofashion.com${item.image}`}
-                    alt={item.name}
-                    className="w-12 h-12 rounded-lg object-cover"
-                  />
-                  <p className="font-semibold text-gray-700">
-                    {item.name}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => handleDecrement(item.id)}
-                    className="px-3 py-1 bg-red-200 rounded-lg hover:bg-red-300"
-                  >
-                    -
-                  </button>
-                  <span className="w-6 text-center font-bold">
-                    {counts[item.id] || 0}
-                  </span>
-                  <button
-                    onClick={() => handleIncrement(item.id)}
-                    className="px-3 py-1 bg-green-200 rounded-lg hover:bg-green-300"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+        <div className="p-4 md:p-6 space-y-4">
           
+          {/* Bundle Info Card */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div className="col-span-2"><p className="text-[10px] text-slate-400 font-bold uppercase">Bundle / Job</p><p className="font-bold text-slate-700">{bundleNo} | {jobNo}</p></div>
+            <div><p className="text-[10px] text-slate-400 font-bold uppercase">Size</p><p className="font-bold text-slate-700">{size}</p></div>
+            <div><p className="text-[10px] text-slate-400 font-bold uppercase">Color</p><p className="font-bold text-slate-700 truncate">{colour}</p></div>
+            <div><p className="text-[10px] text-slate-400 font-bold uppercase">machineId</p><p className="font-bold text-slate-700 truncate">{machineId}</p></div>
+            <div><p className="text-[10px] text-slate-400 font-bold uppercase">operator</p><p className="font-bold text-slate-700 truncate">{operator}</p></div>
+            <div><p className="text-[10px] text-slate-400 font-bold uppercase">process</p><p className="font-bold text-slate-700 truncate">{process}</p></div>
+          </div>
 
-          
-        </div>
+          {/* Stats Bar */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white border p-3 rounded-2xl text-center shadow-sm">
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Inspected</p>
+              <p className="text-xl font-black text-blue-600">{inspectedCount}/{totalPieces}</p>
+            </div>
+            <div className="bg-white border p-3 rounded-2xl text-center shadow-sm">
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Mistakes</p>
+              <p className="text-xl font-black text-red-500">{totalMistakes}</p>
+            </div>
+            <div className="bg-white border p-3 rounded-2xl text-center shadow-sm">
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Mistake %</p>
+              <p className="text-xl font-black text-orange-500">{mistakePercent}%</p>
+            </div>
+          </div>
 
-        <div className="my-4">
-          <hr className="border-t border-gray-300" />
-        </div>
+          {/* Save Piece Button */}
+          <button
+            onClick={handleSavePiece}
+            disabled={inspectedCount >= totalPieces}
+            className={`w-full py-4 rounded-2xl font-black text-lg transition shadow-lg active:scale-95 ${
+              inspectedCount >= totalPieces ? "bg-slate-200 text-slate-400" : "bg-blue-600 text-white shadow-blue-200"
+            }`}
+          >
+            SAVE PIECE #{inspectedCount + 1}
+          </button>
 
-        <div className="mt-4 p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-            {/* Compact Checkbox Row */}
+          {/* Scrollable Defect List */}
+          <div className="grid gap-3 md:grid-cols-2 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+            {loading ? (
+              <div className="col-span-full py-10 text-center font-bold text-slate-400 animate-pulse uppercase tracking-widest">Loading Mistakes...</div>
+            ) : (
+              getFilteredData().map((item) => (
+                <div key={item.id} className="flex justify-between items-center p-3 bg-white border border-slate-100 rounded-2xl shadow-sm hover:border-blue-200 transition">
+                  <div className="flex items-center gap-3">
+                    <img src={`https://hfapi.herofashion.com${item.image}`} alt="" className="w-12 h-12 rounded-xl object-cover bg-slate-50 border shadow-inner" />
+                    <p className="font-bold text-slate-700 text-xs uppercase">{item.name}</p>
+                  </div>
+                  <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
+                    <button onClick={() => handleDecrement(item.id)} className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-red-500 font-black">-</button>
+                    <span className="w-8 text-center font-black text-slate-700">{counts[item.id] || 0}</span>
+                    <button onClick={() => handleIncrement(item.id)} className="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm text-green-500 font-black">+</button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Compact Checkboxes & Textarea Remarks */}
+          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
             <div className="flex gap-2">
-              {[
-                { id: "shade_variation", label: "Shade Variation" },
-                { id: "number_sticker", label: "Number Sticker" }
-              ].map((item) => (
-                <label 
-                  key={item.id}
-                  className="flex-1 flex items-center justify-between px-3 py-2 bg-white rounded-xl border has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 cursor-pointer transition-all shadow-sm"
-                >
-                  <span className="text-[11px] font-bold text-slate-600 uppercase">{item.label}</span>
-                  <input
-                    type="checkbox"
-                    id={item.id}
-                    defaultChecked
-                    className="w-4 h-4 rounded border-gray-300 text-blue-600"
-                  />
-                </label>
-              ))}
+              <label className="flex-1 flex items-center justify-between px-3 py-2 bg-white rounded-xl border has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 cursor-pointer transition-all shadow-sm">
+                <span className="text-[10px] font-bold text-slate-600 uppercase">Shade Var.</span>
+                <input type="checkbox" checked={shadeVariation} onChange={(e) => setShadeVariation(e.target.checked)} className="w-4 h-4 rounded text-blue-600" />
+              </label>
+              <label className="flex-1 flex items-center justify-between px-3 py-2 bg-white rounded-xl border has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50 cursor-pointer transition-all shadow-sm">
+                <span className="text-[10px] font-bold text-slate-600 uppercase">No. Sticker</span>
+                <input type="checkbox" checked={numberSticker} onChange={(e) => setNumberSticker(e.target.checked)} className="w-4 h-4 rounded text-blue-600" />
+              </label>
             </div>
 
-            {/* Styled Textarea Box */}
             <div className="relative group">
               <textarea
-                id="measurement"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
                 rows="2"
-                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm text-sm font-medium resize-none placeholder:text-slate-400"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none transition-all shadow-sm text-sm font-medium resize-none placeholder:text-slate-300"
                 placeholder="Enter remarks or measurements here..."
               ></textarea>
-              <div className="absolute right-3 bottom-2 text-[9px] font-black text-slate-300 group-focus-within:text-blue-400 uppercase tracking-widest">
-                Remarks Box
-              </div>
+              <div className="absolute right-3 bottom-2 text-[8px] font-black text-slate-300 group-focus-within:text-blue-400 uppercase tracking-widest">Remarks Box</div>
             </div>
+          </div>
+
+          {/* Final Action Button */}
+          <button
+            onClick={handleFinalSubmit}
+            disabled={!(inspectedCount === totalPieces || forceSave)}
+            className={`w-full py-4 rounded-2xl text-lg font-black transition-all shadow-xl active:scale-95 ${
+              inspectedCount === totalPieces || forceSave ? "bg-slate-900 text-white hover:bg-black" : "bg-slate-200 text-slate-400 cursor-not-allowed"
+            }`}
+          >
+            COMPLETE & SAVE BUNDLE
+          </button>
+
         </div>
-
-        
-        {/* Final Submit */}
-        <button
-          onClick={handleFinalSubmit}
-          disabled={!(inspectedCount === totalPieces || forceSave)}
-          className={`w-full mt-6 py-4 rounded-xl text-lg font-bold transition ${
-            inspectedCount === totalPieces || forceSave
-              ? "bg-black text-white hover:bg-gray-800"
-              : "bg-gray-300 text-gray-500 cursor-not-allowed"
-          }`}
-        >
-          Complete & Save Record
-        </button>
-
       </div>
     </div>
   );

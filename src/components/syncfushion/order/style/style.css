@@ -170,3 +170,7 @@
 .e-grid .editCss .e-headertext {
   color: blue;
 }
+
+.e-grid.e-grid td.e-focused {
+  background-color:yellow ;
+}

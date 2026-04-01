@@ -1275,7 +1275,7 @@ const showVal = (val: any): string => {
         allowFiltering={true}
         allowMultiSorting={true}
         // filterSettings={{type:'CheckBox'}}
-        filterSettings={{ type: 'Menu' }}
+        // filterSettings={{ type: 'Menu' }}
         statelessTemplates={['directiveTemplates']}
         allowGrouping={true}
         groupSettings={{showGroupedColumn:true, showDropArea : !Browser.isDevice}}
@@ -1284,6 +1284,7 @@ const showVal = (val: any): string => {
         enableAdaptiveUI={true}
         adaptiveUIMode={'Mobile'}
         allowTextWrap={true}
+        textWrapSettings={{wrapMode:"Header"}}
         allowReordering={true}
         allowResizing={true}
         allowPdfExport={true}

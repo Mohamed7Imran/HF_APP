@@ -4,7 +4,7 @@ import {
   FaDribbble, FaRegSmileWink, FaTencentWeibo, FaMixcloud,
   FaCodepen, FaAirbnb, FaDove, FaPushed, FaRaspberryPi,
   FaRegPaperPlane, FaVirus, FaBity , FaVolleyballBall,
-  FaReact
+  FaReact, FaGalacticRepublic
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -41,8 +41,8 @@ const Dashboard = () => {
       </ol>
 
       {/* Cards container */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="flex-1 overflow-x-hidden pl-2 pt-3 pr-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
           {/* Card 1 */}
           <div
@@ -349,20 +349,36 @@ const Dashboard = () => {
             </p>
           </div>
          
-
-         <div
+          {/* Card  */}
+          <div
             onClick={() => navigate("PivotTableExporting")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-yellow-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaReact className="text-yellow-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaBity className="text-blue-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-yellow-600 transition">
-             Pivot New
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+            Pivot New
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               Details about the order using Pivotview
+            </p>
+          </div>
+
+          <div
+            onClick={() => navigate("adaptive")}
+            className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+          >
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaGalacticRepublic className="text-blue-500 text-2xl" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+             Adaptive - K
+            </h2>
+            <p className="text-gray-500 text-sm mt-1">
+              Details about the order using adaptive
             </p>
           </div>
 

@@ -5,10 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-
-  "build": "node --max-old-space-size=8192 node_modules/webpack-cli/bin/cli.js",
-
-
+    "build": "webpack --max-old-space-size=8192",
     "lint": "eslint .",
     "preview": "vite preview"
   },

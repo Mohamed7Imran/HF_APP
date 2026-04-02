@@ -10,7 +10,7 @@ import {
   Resize,
   Filter,
   Group,
-  GroupSettingsModel,
+  // GroupSettingsModel,
   Reorder,
   Search,
   VirtualScroll,
@@ -31,18 +31,20 @@ import {
   AggregateColumnDirective,
   AggregateDirective,
   AggregatesDirective,
-  PdfExport,DetailRow,
-  ExcelExport,
-  recordClick
-}from '@syncfusion/ej2-react-grids';
+  PdfExport, DetailRow,
+  // ExcelExport,
+  // recordClick
+} from '@syncfusion/ej2-react-grids';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
-import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
+import { TextBoxComponent, UploaderComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdowns';
-import { ButtonComponent } from '@syncfusion/ej2-react-buttons'
+import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import "../../../App.css"
-import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
-import { DatePickerComponent } from '@syncfusion/ej2-react-calendars';
+// import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
+import { DatePickerComponent, DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
+import { DateRangePicker } from '@syncfusion/ej2-calendars';
+import { DataUtil } from '@syncfusion/ej2-data';
 registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
 interface OrderData {
   slno1?: number; // Added SL No field
@@ -53,12 +55,12 @@ interface OrderData {
   quality_controller: string; reference: string; insdatenew: string; styledesc: string;
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
   shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
-  u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string;finaldelvdate1:string;number_03_emb:string;actdate:string;
-  actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string;Print:string;Others1:string;
-  mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string;clr?:string;print_img?:string;Fab_R:string;
-  ITS_R:string;Order_R:string;Dy_R:string;Sample_R:string;Week_R:string;FMonth_yr:string;Emb_R:string;Week_R1:string;year:string;wk:string;
-  prnmeaimg?:string;mpic?:string;
-  Others2:string;Others3:string;Others4:string;Others5:string;Others6:string;Others7:string,
+  u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string; finaldelvdate1: string; number_03_emb: string; actdate: string;
+  actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string; Print: string; Others1: string;
+  mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string; clr?: string; print_img?: string; Fab_R: string;
+  ITS_R: string; Order_R: string; Dy_R: string; Sample_R: string; Week_R: string; FMonth_yr: string; Emb_R: string; Week_R1: string; year: string; wk: string;
+  prnmeaimg?: string; mpic?: string;
+  Others2: string; Others3: string; Others4: string; Others5: string; Others6: string; Others7: string,
 }
 
 const HeroFashionGrid131: React.FC = () => {
@@ -72,25 +74,25 @@ const HeroFashionGrid131: React.FC = () => {
   const { username } = useContext(UserContext);
 
   // const [savedSettings, setSavedSettings] = useState<Array<{
-    // id: number; name: string; data: any; user: string; 
-// }>>([]);
+  // id: number; name: string; data: any; user: string; 
+  // }>>([]);
 
 
-interface SavedSetting {
-  id: number;
-  name: string;
-  data: any;
-  user: string; // <-- add this
-}
+  interface SavedSetting {
+    id: number;
+    name: string;
+    data: any;
+    user: string; // <-- add this
+  }
 
-const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
+  const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
   const [selectedSetting, setSelectedSetting] = useState<string>('');
   const [qualityControllers, setQualityControllers] = useState<any[]>([]);
 
   const settingNameRef = useRef<TextBoxComponent>(null);
   const dropdownRef = useRef<DropDownListComponent>(null);
-  const tooltipRef = useRef<TooltipComponent>(null);  
+  const tooltipRef = useRef<TooltipComponent>(null);
   const previousCellRef = useRef<HTMLElement | null>(null);
   const gridRef = useRef<GridComponent>(null);
   const searchTimeout = useRef<any>(null);
@@ -101,26 +103,26 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
   //   'printing_R', 'Emb', 'abc', 'u46', 'uom', 'final_delivery_date',
   //   'production_type_inside_outside', 'prnclr'
   // ];
-    const searchableFields = [
+  const searchableFields = [
     'slno1', 'jobno_oms', 'company_name', 'buyer1', 'stylename', 'uom',
     'final_delivery_date', 'merch', 'punit_sh', 'styleno',
     'production_type_inside_outside', 'quantity', 'director_sample_order',
     'printing_R', 'Fdt', 'Emb', 'abc', 'order_follow_up',
     'quality_controller', 'reference', 'insdatenew', 'styledesc',
     'date', 'ourdelvdate', 'podate', 'vessel_dt', 'vessel_yr',
-    'shipment_complete', 'u7', 'u141', 'u45', 'u36', 'u31','Emb_R',
+    'shipment_complete', 'u7', 'u141', 'u45', 'u36', 'u31', 'Emb_R',
     'u15', 'u14', 'u8', 'u25', 'insdate', 'insdateyear', 'finaldelvdate1',
     'number_03_emb', 'actdate', 'actdaten', 'actyeardate', 'pono', 'u46', 'u37',
     'qltycontroller', 'Print', 'others1', 'mainimagepath', 'finaldelvdate',
-    'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img','FMonth_yr','wk',
-    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R','year',
+    'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img', 'FMonth_yr', 'wk',
+    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R', 'year',
     'prnmeaimg', 'mpic', 'Others2', 'Others3', 'Others4', 'Others5', 'Others6', 'Others7'
   ];
-//  const groupOptions = {
-//     columns: ["abc"], // Group by "Category" column
-//     showDropArea: true,
-//     showGroupedColumn: true
-//   };
+  //  const groupOptions = {
+  //     columns: ["abc"], // Group by "Category" column
+  //     showDropArea: true,
+  //     showGroupedColumn: true
+  //   };
   // --- Helpers ---
   const parseDate = (dateStr: string) => {
     if (!dateStr) return null;
@@ -167,7 +169,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
         const orderData: OrderData[] = await orderResponse.json();
         const printData: any[] = await printResponse.json();
-        const qcData : any[] = await qcResponse.json();
+        const qcData: any[] = await qcResponse.json();
 
         const printMap: Record<string, any> = {};
         printData.forEach(item => { if (item.jobno) printMap[item.jobno] = item; });
@@ -207,7 +209,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
             return dateA - dateB;
           })
 
-            .sort((a, b) => {
+          .sort((a, b) => {
             // Priority: Sample=0, Order=1, Others=2
             const getPriority = (val: string) => {
               const type = (val || '').toLowerCase().trim();
@@ -235,14 +237,15 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
 
             return dateA.getTime() - dateB.getTime();
           })
-        
+
           // --- FRONTEND SLNO GENERATION ---
           .map((item, index) => ({
             ...item,
             slno1: index + 1
           }));
-          
-        setDataSource(processedData);
+        // Convert UTC date strings to Date objects for proper grid date handling
+        const gridData = (DataUtil as any).parse.parseJson(JSON.stringify(processedData));
+        setDataSource(gridData);
         setTotalCount(processedData.length);
         setShowingCount(processedData.length);
         setQualityControllers(qcData.slice(0, 10));
@@ -251,21 +254,21 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
       } finally { setLoading(false); }
     };
     fetchData();
-   
+
     fetchSavedSettings();
   }, []);
-  
+
   const STORAGE_KEY = 'MainSettings';
 
   const fetchSavedSettings = async () => {
-  try {
-    const res = await fetch('https://hfapi.herofashion.com/syncfushion/api/grid-settings/');
-    const data = await res.json();
-    setSavedSettings(data);  // data is an array of {id, name, data}
-  } catch (e) {
-    console.error('Failed to fetch settings', e);
-  }
-};
+    try {
+      const res = await fetch('https://hfapi.herofashion.com/syncfushion/api/grid-settings/');
+      const data = await res.json();
+      setSavedSettings(data);  // data is an array of {id, name, data}
+    } catch (e) {
+      console.error('Failed to fetch settings', e);
+    }
+  };
 
   const saveSetting = async () => {
     const name = (settingNameRef.current?.value || '').trim();
@@ -275,79 +278,79 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     }
     if (!gridRef.current) return;
 
-  try {
-    const persist = gridRef.current.getPersistData();
-    let persistedSettings: any = persist;
-    try { persistedSettings = JSON.parse(persist); } catch {}
+    try {
+      const persist = gridRef.current.getPersistData();
+      let persistedSettings: any = persist;
+      try { persistedSettings = JSON.parse(persist); } catch { }
 
-    const gridColumns = Object.assign([], (gridRef.current as any).getColumns());
-    if (persistedSettings.columns && Array.isArray(persistedSettings.columns)) {
-      persistedSettings.columns.forEach((persistedColumn: any) => {
-        const origCol = gridColumns.find((c: any) => c.field === persistedColumn.field);
-        if (origCol) {
-          persistedColumn.template = origCol.template;
-          persistedColumn.headerTemplate = origCol.headerTemplate;
-          persistedColumn.formatter = origCol.formatter;
-          persistedColumn.valueAccessor = origCol.valueAccessor;
-        }
-      });
-    }
-    const payload = { name, data: persistedSettings, user: username };
-
-    console.log("Saving payload:", payload);
-
-    const existing = savedSettings.find(s => s.name === name);
-    
-    const method = existing ? 'PUT' : 'POST';
-    const url = existing
-      ? `https://hfapi.herofashion.com/syncfushion/api/grid-settings/${existing.id}/`
-      : `https://hfapi.herofashion.com/syncfushion/api/grid-settings/`;
-
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error('Save failed');
-
-    const saved = await res.json();
-    await fetchSavedSettings();
-    setSelectedSetting(saved.name);
-    if (settingNameRef.current) {
-      settingNameRef.current.value = '';
+      const gridColumns = Object.assign([], (gridRef.current as any).getColumns());
+      if (persistedSettings.columns && Array.isArray(persistedSettings.columns)) {
+        persistedSettings.columns.forEach((persistedColumn: any) => {
+          const origCol = gridColumns.find((c: any) => c.field === persistedColumn.field);
+          if (origCol) {
+            persistedColumn.template = origCol.template;
+            persistedColumn.headerTemplate = origCol.headerTemplate;
+            persistedColumn.formatter = origCol.formatter;
+            persistedColumn.valueAccessor = origCol.valueAccessor;
+          }
+        });
       }
-    alert('Setting saved');
-    console.log("Saving grid setting for user:", username);
-  } catch (err) {
-    console.error(err);
-    alert('Failed to save setting');
-  }
-};
+      const payload = { name, data: persistedSettings, user: username };
+
+      console.log("Saving payload:", payload);
+
+      const existing = savedSettings.find(s => s.name === name);
+
+      const method = existing ? 'PUT' : 'POST';
+      const url = existing
+        ? `https://hfapi.herofashion.com/syncfushion/api/grid-settings/${existing.id}/`
+        : `https://hfapi.herofashion.com/syncfushion/api/grid-settings/`;
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Save failed');
+
+      const saved = await res.json();
+      await fetchSavedSettings();
+      setSelectedSetting(saved.name);
+      if (settingNameRef.current) {
+        settingNameRef.current.value = '';
+      }
+      alert('Setting saved');
+      console.log("Saving grid setting for user:", username);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to save setting');
+    }
+  };
 
   const applySetting = () => {
-  const key = dropdownRef.current?.value as string;
-  if (!key) return alert('Select a setting');
+    const key = dropdownRef.current?.value as string;
+    if (!key) return alert('Select a setting');
 
-  const setting = savedSettings.find(s => s.id === Number(key));
-  if (!setting) return alert('Setting not found');
-  if (!gridRef.current) return;
+    const setting = savedSettings.find(s => s.id === Number(key));
+    if (!setting) return alert('Setting not found');
+    if (!gridRef.current) return;
 
-  try {
-    let persistedState = setting.data;
-    const gridColumns = Object.assign([], (gridRef.current as any).getColumns());
-    if (persistedState.columns && Array.isArray(persistedState.columns)) {
-      persistedState.columns.forEach((persistedColumn: any) => {
-        const origCol = gridColumns.find((c: any) => c.field === persistedColumn.field);
-        if (origCol) {
-          persistedColumn.template = origCol.template;
-          persistedColumn.headerTemplate = origCol.headerTemplate;
-          persistedColumn.formatter = origCol.formatter;
-          persistedColumn.valueAccessor = origCol.valueAccessor;
-        }
-      });
-    }
+    try {
+      let persistedState = setting.data;
+      const gridColumns = Object.assign([], (gridRef.current as any).getColumns());
+      if (persistedState.columns && Array.isArray(persistedState.columns)) {
+        persistedState.columns.forEach((persistedColumn: any) => {
+          const origCol = gridColumns.find((c: any) => c.field === persistedColumn.field);
+          if (origCol) {
+            persistedColumn.template = origCol.template;
+            persistedColumn.headerTemplate = origCol.headerTemplate;
+            persistedColumn.formatter = origCol.formatter;
+            persistedColumn.valueAccessor = origCol.valueAccessor;
+          }
+        });
+      }
 
-    (gridRef.current as any).setProperties(persistedState, true);
+      (gridRef.current as any).setProperties(persistedState, true);
       setTimeout(() => {
         if (gridRef.current) {
           (gridRef.current as any).freezeRefresh();
@@ -358,51 +361,68 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
       console.error('Apply error', e);
       alert('Failed to apply setting');
     }
-};
+  };
 
   const deleteSetting = async () => {
-  const key = dropdownRef.current?.value;
-  if (!key) return alert('Select a saved setting to delete');
+    const key = dropdownRef.current?.value;
+    if (!key) return alert('Select a saved setting to delete');
 
-  const setting = savedSettings.find(s => s.id === Number(key));
-  if (!setting) return alert('Setting not found');
+    const setting = savedSettings.find(s => s.id === Number(key));
+    if (!setting) return alert('Setting not found');
 
-  try {
-    const res = await fetch(`https://hfapi.herofashion.com/syncfushion/api/grid-settings/${setting.id}/`, {
-      method: 'DELETE',
-    });
+    try {
+      const res = await fetch(`https://hfapi.herofashion.com/syncfushion/api/grid-settings/${setting.id}/`, {
+        method: 'DELETE',
+      });
 
-    if (!res.ok) throw new Error('Delete failed');
+      if (!res.ok) throw new Error('Delete failed');
 
-    // Refresh the saved settings from backend
-    await fetchSavedSettings();
+      // Refresh the saved settings from backend
+      await fetchSavedSettings();
 
-    // Clear dropdown and selection
-    if (dropdownRef.current) dropdownRef.current.value = null;
-    setSelectedSetting('');
+      // Clear dropdown and selection
+      if (dropdownRef.current) dropdownRef.current.value = null;
+      setSelectedSetting('');
 
-    alert('Setting deleted');
-  } catch (err) {
-    console.error(err);
-    alert('Failed to delete setting');
-  }
-};
+      alert('Setting deleted');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete setting');
+    }
+  };
 
   // --- Search & Highlight Logic ---
-  const highlightText = (text: any) => {
-    if (!searchKey || text === undefined || text === null) return text;
-    const stringText = String(text);
-    const escapedKey = searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const parts = stringText.split(new RegExp(`(${escapedKey})`, 'gi'));
-    return (
-      <span>
-        {parts.map((part, i) =>
-          part.toLowerCase() === searchKey.toLowerCase() ?
-            <span key={i} className="custom-highlight">{part}</span> : part
-        )}
-      </span>
-    );
-  };
+    const highlightText = (text: any) => {
+      // Handle null/undefined
+      if (text === undefined || text === null) return text;
+      
+      // Convert Date objects to readable string format
+      let stringText: string;
+      if (text instanceof Date) {
+        // Format date as dd/MM/yyyy
+        const day = String(text.getDate()).padStart(2, '0');
+        const month = String(text.getMonth() + 1).padStart(2, '0');
+        const year = text.getFullYear();
+        stringText = `${day}/${month}/${year}`;
+      } else {
+        stringText = String(text);
+      }
+      
+      // If no search key, return the formatted string
+      if (!searchKey) return stringText;
+      
+      // Apply highlighting
+      const escapedKey = searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const parts = stringText.split(new RegExp(`(${escapedKey})`, 'gi'));
+      return (
+        <span>
+          {parts.map((part, i) =>
+            part.toLowerCase() === searchKey.toLowerCase() ?
+              <span key={i} className="custom-highlight">{part}</span> : part
+          )}
+        </span>
+      );
+    };
 
   const created = () => {
     document.getElementById(gridRef.current?.element.id + "_searchbar")?.addEventListener('keyup', (event: any) => {
@@ -415,7 +435,7 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
   );
 
   // --- Templates ---
-  const imageFieldTemplate = (field: 'mainimagepath' |'Print'| 'print_img' | 'prnmeaimg' | 'img_fpath'| 'Emb' |  'Others1' | 'Others2' | 'Others3' | 'Others4' | 'Others5' | 'Others6' | 'Others7'  ) => (p: OrderData) => { 
+  const imageFieldTemplate = (field: 'mainimagepath' | 'Print' | 'print_img' | 'prnmeaimg' | 'img_fpath' | 'Emb' | 'Others1' | 'Others2' | 'Others3' | 'Others4' | 'Others5' | 'Others6' | 'Others7') => (p: OrderData) => {
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
     return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
   };
@@ -433,47 +453,40 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
         gridRef.current?.closeEdit();
       },
     });
-    console.log(args)
-    if(args.requestType==='searching')
-    {
-      if (gridRef.current?.element) {
-        // searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current.element);
+    if (gridRef.current && args.requestType === 'beginEdit') {
+      const cols: any = gridRef.current?.columns;
+      for (const col of cols) {
+        if (col.field === "jobno_oms" || col.field === "Print" || col.field === "print_img" || col.field === "prnclr" || col.field === "merch" || col.field === "buyer1"
+          || col.field === "punit_sh" || col.field === "punit_sh" || col.field === "styleno" || col.field === "director_sample_order" || col.field === "director_sample_order" ||
+          col.field === "abc" || col.field === "order_follow_up" || col.field === "styledesc" || col.field === "company_name" || col.field === "quantity" || col.field === "production_type_inside_outside"
+          || col.field === "prnmeaimg" || col.field === "All" || col.field === "fsn" || col.field === "prdty" || col.field === "Others1" || col.field === "Others7" || col.field === "n" || col.field === "slno1" || col.field === "actdaten" || col.field === "u46" || col.field === "date" || col.field === "ourdelvdate" || col.field === "finaldelvdate1" || col.field === "Others2" || col.field === "Others3" || col.field === "Others4" || col.field === "Others5" || col.field === "Others6" || col.field === "Fdt"
+        ) {
+          col.visible = false;
+        }
       }
     }
-     if (gridRef.current && args.requestType === 'beginEdit') {
-            const cols: any = gridRef.current?.columns;
-            for (const col of cols) {
-                if (col.field === "jobno_oms" || col.field === "Print" || col.field==="print_img" || col.field==="prnclr" || col.field==="merch" || col.field==="buyer1"
-                  || col.field==="punit_sh" || col.field==="punit_sh" || col.field==="styleno" ||  col.field==="director_sample_order"  ||  col.field==="director_sample_order" ||
-                    col.field==="abc"  ||  col.field==="order_follow_up" ||  col.field==="styledesc" ||  col.field==="company_name" ||  col.field==="quantity" ||  col.field==="production_type_inside_outside"
-                  ||  col.field==="prnmeaimg" ||  col.field==="All"  ||  col.field==="fsn"  || col.field==="prdty"  ||  col.field==="Others1"  || col.field==="Others7" || col.field==="n" ||  col.field==="slno1" ||  col.field==="actdaten"  ||  col.field==="u46"  ||  col.field==="date" ||  col.field==="ourdelvdate" ||  col.field==="finaldelvdate1"  ||  col.field==="Others2" || col.field==="Others3" || col.field==="Others4"  || col.field==="Others5" || col.field==="Others6"||col.field==="Fdt"
-                ) {
-                    col.visible = false;
-                }
-            }
+
+    // if (gridRef.current && args.requestType === 'add') {
+    //     const cols: any = gridRef.current?.columns;
+    //     for (const col of cols) {
+    //         if (col.field === "jobno_oms" || col.field === "mainimagepath") {
+    //             col.visible = true;
+    //         }
+    //     }
+    // }
+    if (gridRef.current && (args.requestType === 'save' || args.requestType === 'cancel')) {
+      const cols: any = gridRef.current?.columns;
+      for (const col of cols) {
+        if (col.field === "jobno_oms" || col.field === "Print" || col.field === "print_img" || col.field === "prnclr" || col.field === "merch" || col.field === "buyer1"
+          || col.field === "punit_sh" || col.field === "punit_sh" || col.field === "styleno" || col.field === "director_sample_order" || col.field === "director_sample_order" ||
+          col.field === "abc" || col.field === "order_follow_up" || col.field === "styledesc" || col.field === "company_name" || col.field === "quantity" || col.field === "production_type_inside_outside"
+          || col.field === "prnmeaimg" || col.field === "All" || col.field === "fsn" || col.field === "prdty" || col.field === "Others1" || col.field === "Others7" || col.field === "n" || col.field === "slno1" || col.field === "actdaten" || col.field === "u46" || col.field === "date" || col.field === "ourdelvdate" || col.field === "finaldelvdate1" || col.field === "Others2" || col.field === "Others3" || col.field === "Others4" || col.field === "Others5" || col.field === "Others6" || col.field === "Fdt"
+        ) {
+          col.visible = true;
         }
 
-        // if (gridRef.current && args.requestType === 'add') {
-        //     const cols: any = gridRef.current?.columns;
-        //     for (const col of cols) {
-        //         if (col.field === "jobno_oms" || col.field === "mainimagepath") {
-        //             col.visible = true;
-        //         }
-        //     }
-        // }
-        if (gridRef.current && (args.requestType === 'save' || args.requestType === 'cancel')) {
-            const cols: any = gridRef.current?.columns;
-             for (const col of cols) {
-                if (col.field === "jobno_oms" || col.field === "Print" || col.field==="print_img" || col.field==="prnclr" || col.field==="merch" || col.field==="buyer1"
-                  || col.field==="punit_sh" || col.field==="punit_sh" || col.field==="styleno" ||  col.field==="director_sample_order"  ||  col.field==="director_sample_order" ||
-                    col.field==="abc"  ||  col.field==="order_follow_up" ||  col.field==="styledesc" ||  col.field==="company_name" ||  col.field==="quantity" ||  col.field==="production_type_inside_outside"
-                  ||  col.field==="prnmeaimg" ||  col.field==="All"  ||  col.field==="fsn"  || col.field==="prdty"  ||  col.field==="Others1"  || col.field==="Others7" || col.field==="n" ||  col.field==="slno1" ||  col.field==="actdaten"  ||  col.field==="u46"  ||  col.field==="date" ||  col.field==="ourdelvdate" ||  col.field==="finaldelvdate1"  ||  col.field==="Others2" || col.field==="Others3" || col.field==="Others4"  || col.field==="Others5" || col.field==="Others6"||col.field==="Fdt"
-                ) {
-                    col.visible = true;
-                }
-            
-            }
-        }
+      }
+    }
     if (args.requestType === 'save') {
       if ((args as any).action === 'edit') {
         console.log(args)
@@ -500,20 +513,19 @@ const [savedSettings, setSavedSettings] = useState<SavedSetting[]>([]);
     }
   };
 
-  const orderSummaryTemplate = (p: OrderData) => 
-  {
+  const orderSummaryTemplate = (p: OrderData) => {
     return (
-    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      <b>OR-</b> {highlightText(p.jobno_oms)}<br />
-      <b>Buy-</b> {highlightText(p.buyer1)}<br />
-      <b>Mer-</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ?  p.merch.split("Murthy-h ")[1] : p.merch): ""}<br />
-      <b>Unit-</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
-      <b>Qty-</b> {highlightText(p.quantity)}
-    </div>
-  );
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>OR-</b> {highlightText(p.jobno_oms)}<br />
+        <b>Buy-</b> {highlightText(p.buyer1)}<br />
+        <b>Mer-</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ? p.merch.split("Murthy-h ")[1] : p.merch) : ""}<br />
+        <b>Unit-</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
+        <b>Qty-</b> {highlightText(p.quantity)}
+      </div>
+    );
   }
 
-const  udf= (p: OrderData) => (
+  const udf = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b className='no-highlight'>1-Print-</b> {highlightText(p.printing_R)}<br />
       <b className='no-highlight'>3-Emb-</b> {highlightText(p.Emb_R)}<br />
@@ -526,7 +538,7 @@ const  udf= (p: OrderData) => (
     </div>
   );
 
-  const  udf2= (p: OrderData) => (
+  const udf2 = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>31-ITS</b> {highlightText(p.ITS_R)}<br />
       <b>36-CUT</b> {highlightText(p.u36)}<br />
@@ -547,17 +559,17 @@ const  udf= (p: OrderData) => (
 
 
 
-const   qualy= (p: OrderData) => (
+  const qualy = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>styleno-</b> {highlightText(p.styleno)}<br />
       <b>styledesc-</b> {highlightText(p.styledesc)}<br />
       <b>qcontr-</b> {highlightText(p.quality_controller)}<br />
 
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
-  </div>
+    </div>
   );
 
-const   prdty= (p: OrderData) => (
+  const prdty = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>ptype:</b> {highlightText(p.production_type_inside_outside)}<br />
       <b>dir_sam_ord:</b> {highlightText(p.director_sample_order)}<br />
@@ -567,11 +579,11 @@ const   prdty= (p: OrderData) => (
       {/* <b>ref:</b> {highlightText(p.reference)}<br /> */}
       {/* <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br /> */}
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
-  </div>
+    </div>
   );
-  
 
-const   Alldate= (p: OrderData) => (
+
+  const Alldate = (p: OrderData) => (
     <div style={{ fontSize: '10px', lineHeight: '1.4' }}>
       <b>finaldelvdate:</b> {highlightText(p.finaldelvdate)}<br />
       <b>ourdelvdate:</b> {highlightText(p.ourdelvdate)}<br />
@@ -580,8 +592,9 @@ const   Alldate= (p: OrderData) => (
       <b>actdate:</b> {highlightText(p.actdate)}<br /> */}
       {/* <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br /> */}
       {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
-  </div>
+    </div>
   );
+
 
   const deliveryInfoTemplate = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -603,17 +616,17 @@ const   Alldate= (p: OrderData) => (
       {/* <b>ST:</b> {highlightText(p.styleno)}<br /> */}
       <b>Uom-</b> {highlightText(p.uom)}<br />
       <b>abc-</b> {highlightText(p.abc)}<br />
-      
+
     </div>
   );
 
-      const searchTemplate = useMemo(() => {
+  const searchTemplate = useMemo(() => {
     return () => {
       const handleSearchInput = (e: any) => {
         const value = e.value || '';
-          if (gridRef.current) {
-            gridRef.current.search(value);
-          }
+        if (gridRef.current) {
+          gridRef.current.search(value);
+        }
 
       };
 
@@ -659,7 +672,7 @@ const   Alldate= (p: OrderData) => (
     { text: '', prefixIcon: 'e-excelexport', id: 'export_excel', tooltipText: 'Export Excel' },
     { text: '', prefixIcon: 'e-pdfexport', id: 'export_pdf', tooltipText: 'Export PDF' },
     'ColumnChooser',
-    { text: '', prefixIcon: 'e-zoom-to-fit', id:"pagination_grid",tooltipText: 'Allow Pagination'}
+    { text: '', prefixIcon: 'e-zoom-to-fit', id: "pagination_grid", tooltipText: 'Allow Pagination' }
   ];
 
   const searchHighlightText = (key: string | undefined, gridElement: Node) => {
@@ -679,7 +692,7 @@ const   Alldate= (p: OrderData) => (
     const walker = document.createTreeWalker(
 
       gridElement,
-     
+
       NodeFilter.SHOW_TEXT,
 
       {
@@ -709,9 +722,8 @@ const   Alldate= (p: OrderData) => (
     let node;
 
     const regex = new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-
     while ((node = walker.nextNode())) {
-      const parentElem:any = node.parentNode;
+      const parentElem: any = node.parentNode;
       if (parentElem?.classList?.contains('no-highlight')) {
         continue;
       }
@@ -743,23 +755,23 @@ const   Alldate= (p: OrderData) => (
     }
 
   };
-const firstTruthy = (...vals: Array<any>) =>
-  vals.find((v) => typeof v === "string" && v.trim().length > 0) || "";
+  const firstTruthy = (...vals: Array<any>) =>
+    vals.find((v) => typeof v === "string" && v.trim().length > 0) || "";
 
-/** NEW: show any non-empty value (string/number/boolean) else dash */
-const showVal = (val: any): string => {
-  if (val === null || val === undefined) return "–";
-  if (typeof val === "string") {
-    const t = val.trim();
-    return t.length ? t : "–";
-  }
-  // number/boolean/object: stringify safely
-  try {
-    return String(val);
-  } catch {
-    return "–";
-  }
-};
+  /** NEW: show any non-empty value (string/number/boolean) else dash */
+  const showVal = (val: any): string => {
+    if (val === null || val === undefined) return "–";
+    if (typeof val === "string") {
+      const t = val.trim();
+      return t.length ? t : "–";
+    }
+    // number/boolean/object: stringify safely
+    try {
+      return String(val);
+    } catch {
+      return "–";
+    }
+  };
 
 
   const clearHighlights = () => {
@@ -773,13 +785,282 @@ const showVal = (val: any): string => {
       const records = gridRef.current.getFilteredRecords();
       gridRef.current.autoFitColumns();
       setShowingCount(records ? (records as object[]).length : 0);
-      if(gridRef.current.searchSettings.key &&gridRef.current.searchSettings.key.length>0 )
-      {
+      if (gridRef.current.searchSettings.key && gridRef.current.searchSettings.key.length > 0) {
         searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current?.element);
       }
     }
   };
+  // Dialog Form Component
+  const DialogFormTemplate = (props: OrderData) => {
+    console.log(props)
+    const jobnoRef = React.useRef<HTMLInputElement>(null);
+    const buyerRef = React.useRef<HTMLInputElement>(null);
+    const uploaderRef = React.useRef<UploaderComponent>(null);
 
+    const [data, setData] = React.useState<Partial<OrderData>>(
+      React.useMemo(() => ({ ...props }), [props])
+    );
+
+    // Helper function to check if a field exists in grid columns
+    const isFieldInGrid = (fieldName: string): boolean => {
+      if (!gridRef.current) return false;
+      const columns = gridRef.current.columns as any[];
+      return columns.some(col => col.field === fieldName);
+    };
+
+    React.useEffect(() => {
+      if (data.jobno_oms) {
+        buyerRef.current?.focus();
+      } else {
+        jobnoRef.current?.focus();
+      }
+    }, [data.jobno_oms]);
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const key = e.target.name;
+      const value = e.target.value;
+      setData(prevData => ({ ...prevData, [key]: value }));
+    };
+
+    const handleFileSelected = (e: any) => {
+      try {
+        if (e.filesData && e.filesData.length > 0) {
+          const file = e.filesData[0];
+          const reader = new FileReader();
+          reader.onload = (event: any) => {
+            setData(prev => ({ ...prev, mainimagepath: event.target.result }));
+          };
+          reader.readAsDataURL(file.rawFile);
+        }
+      } catch (error) {
+        console.error('Error reading file:', error);
+      }
+    };
+
+    const handleClearImage = () => {
+      try {
+        // Clear the uploader's internal file list
+        if (uploaderRef.current) {
+          uploaderRef.current.clearAll();
+        }
+        // Clear the image from state
+        setData(prev => ({ ...prev, mainimagepath: undefined }));
+      } catch (error) {
+        console.error('Error clearing image:', error);
+      }
+    };
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '15px' }}>
+        {/* Row 1 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          {isFieldInGrid('jobno_oms') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>jobno_oms</label>
+              <input ref={jobnoRef} id="jobno_oms" name="jobno_oms" type="text" disabled value={data.jobno_oms || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px', backgroundColor: '#f5f5f5' }} />
+            </div>
+          )}
+          {isFieldInGrid('printing_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>printing_R</label>
+              <input id="printing_R" name="printing_R" type="text" value={data.printing_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+        </div>
+        
+      
+   
+        {/* Row 1 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('Emb_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>Emb_R</label>
+              <input id="Emb_R" name="Emb_R" type="text" value={data.Emb_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('u7') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
+              <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+      
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('Fab_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u8</label>
+              <input id="Fab_R" name="Fab_R" type="text" value={data.Fab_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('u14') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u14</label>
+              <input id="u14" name="u14" type="text" value={data.u14 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+
+
+ 
+        {/* Row 1 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('Week_R1') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u25</label>
+              <input id="Week_R1" name="Week_R1" type="text" value={data.Week_R1 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('u31') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
+              <input id="u31" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('u36') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+              <input id="u36" name="u36" type="text" value={data.u36 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('ITS_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+              <input id="ITS_R" name="ITS_R" type="text" value={data.ITS_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+       
+         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('Order_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+              <input id="Order_R" name="Order_R" type="text" value={data.Order_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('u46') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
+              <input id="u46" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('u141') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+              <input id="u141" name="u141" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('Sample_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>141</label>
+              <input id="Sample_R" name="u31" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+
+
+         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+     
+          {isFieldInGrid('u7') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
+              <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+      </div>
+
+        {/* Row 2 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          {isFieldInGrid('quantity') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>quantity</label>
+              <input id="quantity" name="quantity" type="text" value={data.quantity || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+          {isFieldInGrid('u45') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+              <input id="u45" name="u45" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+
+          {isFieldInGrid('u46') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
+              <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+        </div>
+
+        {/* Row 3 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          {isFieldInGrid('u141') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u141</label>
+              <input id="u141" name="u141" type="text" value={data.u141 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+        </div>
+
+        {/* Row 4 - Full width image uploader */}
+        {isFieldInGrid('mainimagepath') && (
+          <div style={{ textAlign: 'center', paddingTop: '15px', borderTop: '1px solid #eee' }}>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '15px', fontWeight: 'bold' }}>mainimagepath</label>
+            {data.mainimagepath && (
+              <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'center' }}>
+                <img src={data.mainimagepath} alt="Current" style={{ maxWidth: '200px', maxHeight: '150px', border: '2px solid #5E5FE3', borderRadius: '4px', padding: '5px' }} />
+              </div>
+            )}
+            <div key={`uploader-${props.jobno_oms}`} style={{ display: 'contents' }}>
+              <UploaderComponent
+                ref={uploaderRef}
+                id='mainimagepath'
+                type='file'
+                asyncSettings={{ saveUrl: 'https://services.syncfusion.com/react/base/api/FileUpload/Save', removeUrl: 'https://services.syncfusion.com/react/base/api/FileUpload/Remove' }}
+                autoUpload={false}
+                sequentialUpload={true}
+                showFileList={false}
+                success={() => {
+                  // can get the raw file
+                }}
+                selected={handleFileSelected}
+                clearing={handleClearImage}
+                change={(e: any) => {
+                  // Reset uploader if user cancels file selection after clearing
+                  if (!e.filesData || e.filesData.length === 0) {
+                    if (uploaderRef.current) {
+                      uploaderRef.current.clearAll();
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Dialog Template Wrapper
+  const dialogTemplate = (props: OrderData) => <DialogFormTemplate {...props} />;
   const toolbarClick = (args: any) => {
     if (!gridRef.current) return;
 
@@ -791,14 +1072,14 @@ const showVal = (val: any): string => {
         gridRef.current.addRecord();
         break;
 
-       case 'pagination_grid': {
+      case 'pagination_grid': {
 
         const isPaging = gridRef.current.allowPaging;
 
         gridRef.current.setProperties({
 
           allowPaging: !isPaging,
-          
+
           enableVirtualization: isPaging,
 
         }, true);
@@ -809,7 +1090,7 @@ const showVal = (val: any): string => {
 
       }
 
- 
+
 
       case 'clearsorting_icon':
         console.log('Clear Sorting clicked');
@@ -862,7 +1143,7 @@ const showVal = (val: any): string => {
         break;
     }
   };
-  
+
   const rollnoTemplate = (props: any) => {
     let rollno = props.index
     if (rollno) {
@@ -1005,7 +1286,7 @@ const showVal = (val: any): string => {
                     />
                   ) : null}
 
-                </div> 
+                </div>
 
                 /* DATA BLOCK */
                 <div
@@ -1082,27 +1363,27 @@ const showVal = (val: any): string => {
     );
   };
 
-  <TooltipComponent 
-    target=".image-tooltip-target" 
-    cssClass="custom-tooltip-size" 
-    width="450px" 
+  <TooltipComponent
+    target=".image-tooltip-target"
+    cssClass="custom-tooltip-size"
+    width="450px"
     height="450px"
     content={(args: any) => (
       <div style={{ width: '100%', height: '100%' }}>
-        <img 
-          src={args.target.src} 
-          style={{ width: '200%', height: '200%', objectFit: 'contain' }} 
+        <img
+          src={args.target.src}
+          style={{ width: '200%', height: '200%', objectFit: 'contain' }}
         />
       </div>
     )}
   >
   </TooltipComponent>
 
- const tooltipBeforeRender = (args: any) => {
-  
-      const isRowCell = args.target.closest('.e-rowcell');
-  
-      if (isRowCell) {
+  const tooltipBeforeRender = (args: any) => {
+
+    const isRowCell = args.target.closest('.e-rowcell');
+
+    if (isRowCell) {
       const cell = args.target.closest('.e-rowcell');
 
       if (!cell) return;
@@ -1118,24 +1399,24 @@ const showVal = (val: any): string => {
         args.cancel = true;
         return;
       }
-      
+
       const img = args.target.querySelector('img') || args.target;
       if (img) {
-          // Get row information
-          const rowInfo = gridRef.current?.getRowInfo(args.target.closest('td'));
-          const rowData: OrderData = rowInfo?.rowData as OrderData;
-          
-          if (rowData) {
-            // Get image source
-            const imgSrc = img.src;
-            const printimg = rowData.Print  
-            const Emp = rowData.Emb
-            const others1 = rowData.Others1
-            const others2 = rowData.Others2
-            const others7 = rowData.Others7
-            
-            // Build order information HTML
-            const orderInfo = `
+        // Get row information
+        const rowInfo = gridRef.current?.getRowInfo(args.target.closest('td'));
+        const rowData: OrderData = rowInfo?.rowData as OrderData;
+
+        if (rowData) {
+          // Get image source
+          const imgSrc = img.src;
+          const printimg = rowData.Print
+          const Emp = rowData.Emb
+          const others1 = rowData.Others1
+          const others2 = rowData.Others2
+          const others7 = rowData.Others7
+
+          // Build order information HTML
+          const orderInfo = `
               <div style="padding: 12px; line-height: 1; font-size: 13px; display: flex; flex-wrap: wrap; gap: 2px">
                 <div style="margin-bottom: 8px;"><strong>Job No:</strong> ${rowData.jobno_oms || 'N/A'}</div>
                 <div style="margin-bottom: 8px;"><strong>Company:</strong> ${rowData.company_name || 'N/A'}</div>
@@ -1149,33 +1430,33 @@ const showVal = (val: any): string => {
                 <div style="margin-bottom: 8px;"><strong>Type:</strong> ${rowData.director_sample_order || 'N/A'}</div>
               </div>
             `;
-            
-            const images = [
-              { label: "Print Image", src: printimg },
-              { label: "Emp Image", src: Emp },
-              { label: "PLT-7 Image", src: others1 },
-              { label: "AOP-9 Image", src: others2 },
-              { label: "Fus-14 Image", src: others7 },
-            ];
 
-            // remove empty images
-            const validImages = images.filter(img => img.src);
+          const images = [
+            { label: "Print Image", src: printimg },
+            { label: "Emp Image", src: Emp },
+            { label: "PLT-7 Image", src: others1 },
+            { label: "AOP-9 Image", src: others2 },
+            { label: "Fus-14 Image", src: others7 },
+          ];
 
-            const chunkSize = 3;
-            const columns = [];
-            for (let i = 0; i < validImages.length; i += chunkSize) {
-              columns.push(validImages.slice(i, i + chunkSize));
-            }
+          // remove empty images
+          const validImages = images.filter(img => img.src);
 
-            // generate html
-            const imagesHtml = columns.map(col => {
-              const count = col.length;
+          const chunkSize = 3;
+          const columns = [];
+          for (let i = 0; i < validImages.length; i += chunkSize) {
+            columns.push(validImages.slice(i, i + chunkSize));
+          }
 
-              let height = "100%";
-              if (count === 2) height = "46%";
-              else if (count >= 3) height = "29.33%";
+          // generate html
+          const imagesHtml = columns.map(col => {
+            const count = col.length;
 
-              return `
+            let height = "100%";
+            if (count === 2) height = "46%";
+            else if (count >= 3) height = "29.33%";
+
+            return `
                 <div style="display:flex; flex-direction:column; height:300px; gap: 20px;">
                   ${col.map(img => `
                     <div style="height:${height}; text-align:center;">
@@ -1188,10 +1469,10 @@ const showVal = (val: any): string => {
                   `).join('')}
                 </div>
               `;
-            }).join('');
+          }).join('');
 
-            // Create tooltip content with order info on left and image on right
-            const tooltipContent = `
+          // Create tooltip content with order info on left and image on right
+          const tooltipContent = `
             <div style="flex: 1; min-width: 200px; max-width: 570px; border-bottom: 1px solid #e0e0e0;">
               ${orderInfo}
             </div>
@@ -1215,213 +1496,250 @@ const showVal = (val: any): string => {
               ${orderInfo}
             </div>
             `;
-            
-            (tooltipRef.current as TooltipComponent).content = tooltipContent;
-            (tooltipRef.current as TooltipComponent).width = '450px';
-            (tooltipRef.current as TooltipComponent).height = 'auto';
-          }
-        }
-        else if (img) {
-          // For header cells, show simple image
-          let imgElem:any= args.target.innerHTML;
-          const wrapper = document.createElement('div');
-          wrapper.innerHTML = imgElem;
-          const tooltipImg = wrapper.querySelector('img');
-          if (tooltipImg) {
-            tooltipImg.style.width = '100px';
-            tooltipImg.style.height = '100px';
-            tooltipImg.style.objectFit = 'contain';
-          }
-          (tooltipRef.current as TooltipComponent).content = wrapper.innerHTML;
-          (tooltipRef.current as TooltipComponent).width = '100px';
-          (tooltipRef.current as TooltipComponent).height = '100px';
+
+          (tooltipRef.current as TooltipComponent).content = tooltipContent;
+          (tooltipRef.current as TooltipComponent).width = '450px';
+          (tooltipRef.current as TooltipComponent).height = 'auto';
         }
       }
-    }
-
-    const load = (args:any) =>{
-      args.enableSeamlessScrolling=true;
-      const gridContainer = document.querySelector('.grid-container') as HTMLElement | null;
-        if (!gridContainer) return;
-        const rect = gridContainer.getBoundingClientRect();
-        const topPosition = rect?.top ?? 0;
-        const calculatedHeight = window.innerHeight - topPosition - 10; // 10px buffer
-        gridContainer.style.height = `${calculatedHeight}px`;
-
-    }
-      const dateEditor = (props :any) => {
-  return (
-   <div>
-     <DatePickerComponent
-      value={props.finaldelvdate1}
-      change={(args) => props.setCellValue(props.column.field, args.value)}
-    />
-   </div>
-  );
-};
-
-  
-    const beforeOpen = (args: any) => {
-      // Adjust tooltip dimensions based on content type
-      const hasOrderInfo = args.element.innerHTML.includes('Job No:');
-      
-      if (hasOrderInfo) {
-        args.element.style.maxWidth = '750px';
-        args.element.style.width = 'auto';
+      else if (img) {
+        // For header cells, show simple image
+        let imgElem: any = args.target.innerHTML;
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = imgElem;
+        const tooltipImg = wrapper.querySelector('img');
+        if (tooltipImg) {
+          tooltipImg.style.width = '100px';
+          tooltipImg.style.height = '100px';
+          tooltipImg.style.objectFit = 'contain';
+        }
+        (tooltipRef.current as TooltipComponent).content = wrapper.innerHTML;
+        (tooltipRef.current as TooltipComponent).width = '100px';
+        (tooltipRef.current as TooltipComponent).height = '100px';
       }
-    };
-   // Memoize the grid component to prevent unnecessary re-renders
+    }
+  }
+
+  const load = (args: any) => {
+    args.enableSeamlessScrolling = true;
+    const gridContainer = document.querySelector('.grid-container') as HTMLElement | null;
+    if (!gridContainer) return;
+    const rect = gridContainer.getBoundingClientRect();
+    const topPosition = rect?.top ?? 0;
+    const calculatedHeight = window.innerHeight - topPosition - 10; // 10px buffer
+    gridContainer.style.height = `${calculatedHeight}px`;
+
+  }
+  const dateEditor = (props: any) => {
+    return (
+      <div>
+        <DatePickerComponent
+          value={props.finaldelvdate1}
+          change={(args) => props.setCellValue(props.column.field, args.value)}
+        />
+      </div>
+    );
+  };
+
+  const dateRangeFilterTemplate = {
+    create: () => {
+      const elem = document.createElement('input');
+      elem.setAttribute('id', 'daterange');
+      return elem;
+    },
+    write: (args: any) => {
+      const dateRangePicker = new DateRangePicker({
+        placeholder: 'Select date range',
+        format: 'dd/MM/yyyy',
+        change: (e: any) => {
+          if (e.startDate && e.endDate && gridRef.current) {
+            // Clear existing filters for this column first
+            gridRef.current.clearFiltering(['finaldelvdate1']);
+
+            // Apply date range filter using predicates
+            gridRef.current.filterByColumn('finaldelvdate1', 'greaterthanorequal', e.startDate, 'and');
+            gridRef.current.filterByColumn('finaldelvdate1', 'lessthanorequal', e.endDate, 'and');
+          } else if (!e.startDate && !e.endDate && gridRef.current) {
+            // Clear filter if dates are cleared
+            gridRef.current.clearFiltering(['finaldelvdate1']);
+          }
+        }
+      });
+      dateRangePicker.appendTo('#daterange');
+    }
+  };
+
+
+  const beforeOpen = (args: any) => {
+    // Adjust tooltip dimensions based on content type
+    const hasOrderInfo = args.element.innerHTML.includes('Job No:');
+
+    if (hasOrderInfo) {
+      args.element.style.maxWidth = '750px';
+      args.element.style.width = 'auto';
+    }
+  };
+  // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
     <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
-    <div className='grid-container'
+      <div className='grid-container'
         style={{
           overflow: 'hidden',
           minHeight: 0
         }}>
-      <GridComponent
+        <GridComponent
 
-        id="default-aggregate-grid"
-        ref={gridRef}
-        dataSource={dataSource}
-        dataBound={dataBound}
-        pageSettings={{pageSize:15}}
-        height="100%"
-        rowHeight={100}
-        enableVirtualization={true}
-        // allowPaging={true}
-        allowSorting={true}
-        allowFiltering={!Browser.isDevice }
-        allowMultiSorting={true}
-        filterSettings={{ showFilterBarOperator: true, mode: "Immediate"}}
-        statelessTemplates={['directiveTemplates']}
-        allowGrouping={true}
-        groupSettings={{showGroupedColumn:true, showDropArea : !Browser.isDevice}}
-        showColumnChooser={true}
-        enableAdaptiveUI={true}
-        adaptiveUIMode={'Mobile'}
-        allowReordering={true}
-        allowResizing={true}
-        allowPdfExport={true}
-        autoFit={true}
-        sortSettings={{columns: [{ field: 'director_sample_order', direction: 'Descending' },{ field: 'Fdt', direction: 'Ascending' }]}}
-        gridLines="Both"
-        searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }} 
-        toolbar={toolbarOptions}
-        editSettings={{
-          allowDeleting: true,
-          allowEditing: true,
-          allowEditOnDblClick: false,
-          allowAdding: true,
-          mode: "Dialog"
-        }}
-        actionBegin={actionBegin}
-        actionComplete={actionComplete}
-        created={created}
-        frozenColumns={2}
-        enableVirtualMaskRow={false}
-        toolbarClick={toolbarClick}
-        load={load}
-      >
-        <ColumnsDirective>
-          <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }}/>                 
-          <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="200" maxWidth="150" template={deliveryInfoTemplate} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
-          <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150"  type="string" template={udf} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" maxWidth="100" customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
-           <ColumnDirective field="finaldelvdate" type="date"  headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> 
-        <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150"  template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
-          {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
-          <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
-          <ColumnDirective field="merch" headerText="merch" width="100" template={genericHighlighter('merch')} /> 
-          <ColumnDirective field="buyer1" headerText="buyer1" width="100" template={genericHighlighter('buyer1')} /> 
-          <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> 
-          <ColumnDirective field="u8" headerText="8 FAB" width="100"  allowEditing={false} template={genericHighlighter('u8')}  visible={false}  />
-          <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> 
-          <ColumnDirective field="production_type_inside_outside" headerText="pty,dir,com,ordfol" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="styleno" headerText="sty,stydes,qcon" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }}/>
-          <ColumnDirective field="All"headerText='Fdt,Odt,dt' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
-          <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
-          <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
-          <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
-          {/* <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          id="default-aggregate-grid"
+          ref={gridRef}
+          dataSource={dataSource}
+          dataBound={dataBound}
+          pageSettings={{ pageSize: 15 }}
+          height="100%"
+          rowHeight={100}
+          enableVirtualization={true}
+          // allowPaging={true}
+          allowSorting={true}
+          allowFiltering={true}
+          allowMultiSorting={true}
+          filterSettings={{ showFilterBarOperator: true, mode: 'Immediate' }}
+          statelessTemplates={['directiveTemplates']}
+          allowGrouping={true}
+          groupSettings={{ showGroupedColumn: true, showDropArea: !Browser.isDevice }}
+          showColumnChooser={true}
+          enableAdaptiveUI={true}
+          adaptiveUIMode={'Mobile'}
+          allowReordering={true}
+          allowResizing={true}
+          allowPdfExport={true}
+          allowTextWrap={true}
+          textWrapSettings={{ wrapMode: 'Both' }}
+          autoFit={true}
+          sortSettings={{ columns: [{ field: 'director_sample_order', direction: 'Descending' }, { field: 'Fdt', direction: 'Ascending' }] }}
+          gridLines="Both"
+          searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }}
+          toolbar={toolbarOptions}
+          editSettings={{
+            allowDeleting: true,
+            allowEditing: true,
+            allowEditOnDblClick: false,
+            allowAdding: true,
+            mode: "Dialog",
+            template: dialogTemplate
+          }}
+          actionBegin={actionBegin}
+          actionComplete={actionComplete}
+          created={created}
+          frozenColumns={2}
+          enableVirtualMaskRow={false}
+          toolbarClick={toolbarClick}
+          load={load}
+        >
+          <ColumnsDirective>
+            <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="200" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
+            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" filter={{ operator: 'startsWith' }} maxWidth="100" customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="finaldelvdate" type="date" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} />
+            <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150" template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective
+              field="finaldelvdate1"
+              headerText="Final Delivery Date"
+              width="120"
+              format={'dd/MM/yyyy'}
+              type="date"
+              editTemplate={dateEditor}
+              filterBarTemplate={dateRangeFilterTemplate}
+            />
+            <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
+            <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
+            <ColumnDirective field="merch" headerText="merch" width="100" template={genericHighlighter('merch')} />
+            <ColumnDirective field="buyer1" headerText="buyer1" width="100" template={genericHighlighter('buyer1')} />
+            <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} />
+            <ColumnDirective field="u8" headerText="8 FAB" width="100" allowEditing={false} template={genericHighlighter('u8')} visible={false} />
+            <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
+            {/* <ColumnDirective field="production_type_inside_outside" headerText="pty,dir,com,ordfol" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="styleno" headerText="sty,stydes,qcon" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="All" headerText='Fdt,Odt,dt' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
+            <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
+            <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Fab_R" headerText="Fab_R" width="100" template={genericHighlighter('Fab_R')} />
+            <ColumnDirective field="Week_R1" headerText="Week_R1" width="100" template={genericHighlighter('Week_R1')} />
+            {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
+            {/* <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="prdty" headerText="prdty" width="180" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="styleno" headerText="qualy" width="240" template={qualy} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="All"headerText='All ' width="200" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
-          <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
-          <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
-          {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
-          <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
-          {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
-          <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
-          <ColumnDirective field="finaldelvdate" headerText="finaldelvdate" width="100" template={genericHighlighter('finaldelvdate')} />
-               <ColumnDirective
-      field="finaldelvdate1"
-      headerText="Final Delivery Date"
-      width="120"
-      editTemplate={dateEditor}
-    />
-           
-          <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
-          <ColumnDirective field="Others3" headerText="other10" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
-          <ColumnDirective field="Others4" headerText="other11" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others5" headerText="other12" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others5')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          <ColumnDirective field="Others6" headerText="other13" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others6')} allowEditing={false} customAttributes={{ class: 'img' }}/>
-          {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
-          <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
+            <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
+            <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
+            {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
+            {/* <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} /> */}
+            {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
+            {/* <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} /> */}
+            {/* <ColumnDirective field="finaldelvdate" headerText="finaldelvdate" width="100" template={genericHighlighter('finaldelvdate')} /> */}
+
+
+            {/* <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
+            <ColumnDirective field="Others3" headerText="other10" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others4" headerText="other11" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others5" headerText="other12" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others5')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others6" headerText="other13" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others6')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} /> */}
+          {/* <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
           <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
           <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
-          {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
-          {/* <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} /> */}
-          {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
-          {/* <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} /> */}
-          {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} /> */}
-          <ColumnDirective field="u8" headerText="8 FAB" width="100"  allowEditing={false} template={genericHighlighter('u8')}  visible={false}  />
-          <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} />
-          {/* <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} /> */}
-          {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
-          <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
-          {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
-          {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} /> */}
-          {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
+            {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
+            {/* <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} /> */}
+            {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
+            {/* <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} /> */}
+            {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} /> */}
+            {/* <ColumnDirective field="u8" headerText="8 FAB" width="100" allowEditing={false} template={genericHighlighter('u8')} visible={false} /> */}
+            {/* <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} /> */}
+            {/* <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} /> */}
+            {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
+            {/* <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} /> */}
+            {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
+            {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} /> */}
+            {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
           <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
           <ColumnDirective field='punit_sh' headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> */}
 
-{/* 
+            {/* 
           <ColumnDirective field="styleno" headerText="STYLE NO" width="110" template={genericHighlighter('styleno')} />
           <ColumnDirective field="director_sample_order" headerText="DIR S/O" width="100" template={genericHighlighter('director_sample_order')} />
           <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="100" template={genericHighlighter('order_follow_up')} />
           <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
           <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')} /> */}
-          <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
-           
-          <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
-        
-                    
-        </ColumnsDirective>
-        <AggregatesDirective>
-          <AggregateDirective>
-            <AggregateColumnsDirective>
-              <AggregateColumnDirective field='slno1' type='Count' footerTemplate={footerCount} format='N'> </AggregateColumnDirective>
-              <AggregateColumnDirective field='quantity' type='Sum' footerTemplate={footerSum} format='N'> </AggregateColumnDirective>
-            </AggregateColumnsDirective>
-          </AggregateDirective>
-        </AggregatesDirective>
-        <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, DetailRow,Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
-      </GridComponent></div>
-      </TooltipComponent></div></>
+            <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
+
+            <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
+
+
+          </ColumnsDirective>
+          <AggregatesDirective>
+            <AggregateDirective>
+              <AggregateColumnsDirective>
+                <AggregateColumnDirective field='slno1' type='Count' footerTemplate={footerCount} format='N'> </AggregateColumnDirective>
+                <AggregateColumnDirective field='quantity' type='Sum' footerTemplate={footerSum} format='N'> </AggregateColumnDirective>
+              </AggregateColumnsDirective>
+            </AggregateDirective>
+          </AggregatesDirective>
+          <Inject services={[Sort, Edit, Filter, Group, Reorder, Search, VirtualScroll, DetailRow, Freeze, Resize, ContextMenu, Page, Toolbar, ColumnChooser, ColumnMenu, Aggregate, PdfExport]} />
+        </GridComponent></div>
+    </TooltipComponent></div></>
   ), [dataSource]);
 
   return (
@@ -1597,23 +1915,23 @@ const showVal = (val: any): string => {
           </li>
         </ol>
 
-       
-        <div style={{ padding: '0px 5px', marginLeft: '5px', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-            <div style={{ display: 'flex', alignItems: 'center', fontWeight:'bold' }}>
-              <TextBoxComponent
-                ref={settingNameRef}
-                placeholder="setting name"
-                style={{ width: '70px' }}
-              />
-            </div>
 
-            <ButtonComponent
-              onClick={saveSetting}
-              cssClass="e-primary"
-              style={{ padding: '3px 6px', fontSize: '13px' }}
-            >
-              💾
-            </ButtonComponent>
+        <div style={{ padding: '0px 5px', marginLeft: '5px', display: 'flex', gap: 7, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+          <div style={{ display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+            <TextBoxComponent
+              ref={settingNameRef}
+              placeholder="setting name"
+              style={{ width: '70px' }}
+            />
+          </div>
+
+          <ButtonComponent
+            onClick={saveSetting}
+            cssClass="e-primary"
+            style={{ padding: '3px 6px', fontSize: '13px' }}
+          >
+            💾
+          </ButtonComponent>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             {/* <DropDownListComponent
@@ -1634,20 +1952,20 @@ const showVal = (val: any): string => {
             /> */}
 
             <DropDownListComponent
-            ref={dropdownRef}
-            id="settings-dropdown"
-            dataSource={savedSettings
-              .filter(s => s.user?.toLowerCase() === username?.toLowerCase())
-              .map(s => ({ text: s.name, value: s.id }))}
-            fields={{ text: 'text', value: 'value' }}
-            placeholder="Select setting"
-            style={{ width: '70px' }}
-            value={savedSettings.find(s => s.name === selectedSetting)?.id || null}
-            change={() => {setSelectedSetting(dropdownRef.current?.value as string);applySetting()}}
-          />
+              ref={dropdownRef}
+              id="settings-dropdown"
+              dataSource={savedSettings
+                .filter(s => s.user?.toLowerCase() === username?.toLowerCase())
+                .map(s => ({ text: s.name, value: s.id }))}
+              fields={{ text: 'text', value: 'value' }}
+              placeholder="Select setting"
+              style={{ width: '70px' }}
+              value={savedSettings.find(s => s.name === selectedSetting)?.id || null}
+              change={() => { setSelectedSetting(dropdownRef.current?.value as string); applySetting() }}
+            />
           </div>
 
-            {/* <ButtonComponent
+          {/* <ButtonComponent
               onClick={applySetting}
               cssClass="e-outline"
               style={{ padding: '3px 6px', fontSize: '15px' }}
@@ -1655,24 +1973,24 @@ const showVal = (val: any): string => {
             ✔
             </ButtonComponent> */}
 
-            <ButtonComponent
-              onClick={deleteSetting}
-              cssClass="e-outline e-danger"
-              style={{ padding: '3px 6px', fontSize: '15px'}}
-            >
-              🗑
-            </ButtonComponent>
-                    <div className='count mr-1'>
+          <ButtonComponent
+            onClick={deleteSetting}
+            cssClass="e-outline e-danger"
+            style={{ padding: '3px 6px', fontSize: '15px' }}
+          >
+            🗑
+          </ButtonComponent>
+          <div className='count mr-1'>
 
-          <div className="count-display1">
-            {showingCount} / {totalCount}
+            <div className="count-display1">
+              {showingCount} / {totalCount}
+            </div>
           </div>
-        </div>
         </div>
       </div>
 
       {/* Grid Container */}
-      <div style={{ flex: 1, overflow: 'auto'}}>
+      <div style={{ flex: 1, overflow: 'auto' }}>
         {loading ? (
           <div style={{ padding: '50px', textAlign: 'center' }}>Loading Data...</div>
         ) : error ? (
@@ -1680,7 +1998,7 @@ const showVal = (val: any): string => {
         ) : (
           memoizedGridComponent
         )}
-      </div> 
+      </div>
     </div>
   );
 };

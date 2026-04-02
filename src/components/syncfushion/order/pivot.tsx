@@ -10,27 +10,35 @@ import {
   PDFExport,
   ExcelExport,
   ConditionalFormatting,
-  NumberFormatting
+  NumberFormatting,
+  ToolbarItems
 } from '@syncfusion/ej2-react-pivotview';
-import { SwitchComponent } from '@syncfusion/ej2-react-buttons';
-import { select, createElement, Browser } from '@syncfusion/ej2-base';
-import { DataManager, WebApiAdaptor, Query } from '@syncfusion/ej2-data';
 
-/**
- * PivotView Default Sample.
- */
-let pivotData;
-let pivotObj;
+import {
+  LineSeries,
+  ColumnSeries,
+  BarSeries,
+  Category,
+  Legend,
+  Tooltip
+} from '@syncfusion/ej2-react-charts';
+import { SwitchComponent } from '@syncfusion/ej2-react-buttons';
+import { createElement } from '@syncfusion/ej2-base';
+import { registerLicense } from '@syncfusion/ej2-base';
+
+registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
+
+let pivotObj: PivotViewComponent | null = null;
+
 
 const dataSourceSettings = {
   enableSorting: true,
   columns: [{ name: 'buyer1' }, { name: 'insdatenew' }],
   valueSortSettings: { headerDelimiter: ' - ' },
   values: [{ name: 'slno', caption: 'Units Sold' }, { name: 'merch' }],
-  rows: [{ name: 'jobno_oms' }, { name: 'mainimagepath' }],
+  rows: [{ name: 'jobno_oms', expandAll: true }, { name: 'mainimagepath' }],
   formatSettings: [{ name: 'Amount', format: 'C0' }],
-  expandAll: false,
-  drilledMembers:[{name: 'jobno_oms', items: ['H12558A'] }],
+  //expandAll: true,
   filters: [{ name: 'production_unit' }],
   showRowSubTotals: false 
 };
@@ -56,14 +64,14 @@ function PivotTableExporting() {
   });
 
   },[])
-  const toolbarOptions = [
+  const toolbarOptions: ToolbarItems[] = [
     'New', 'Save', 'SaveAs', 'Rename', 'Remove', 'Load',
     'Grid', 'Chart', 'Export', 'SubTotal', 'GrandTotal',
     'Formatting', 'FieldList'
   ];
 
-  const saveReport = (args) => {
-    let reports = [];
+  const saveReport = (args: any) => {
+    let reports: any[] = [];
     let isSaved = false;
 
     if (localStorage.pivotviewReports && localStorage.pivotviewReports !== "") {
@@ -84,9 +92,9 @@ function PivotTableExporting() {
     }
   };
 
-  const fetchReport = (args) => {
-    let reportCollection = [];
-    let reportList = [];
+  const fetchReport = (args: any) => {
+    let reportCollection: any[] = [];
+    let reportList: string[] = [];
 
     if (localStorage.pivotviewReports && localStorage.pivotviewReports !== "") {
       reportCollection = JSON.parse(localStorage.pivotviewReports);
@@ -96,8 +104,8 @@ function PivotTableExporting() {
     args.reportName = reportList;
   };
 
-  const loadReport = (args) => {
-    let reportCollection = [];
+  const loadReport = (args: any) => {
+    let reportCollection: any[] = [];
 
     if (localStorage.pivotviewReports && localStorage.pivotviewReports !== "") {
       reportCollection = JSON.parse(localStorage.pivotviewReports);
@@ -114,8 +122,8 @@ function PivotTableExporting() {
     }
   };
 
-  const removeReport = (args) => {
-    let reportCollection = [];
+  const removeReport = (args: any) => {
+    let reportCollection: any[] = [];
 
     if (localStorage.pivotviewReports && localStorage.pivotviewReports !== "") {
       reportCollection = JSON.parse(localStorage.pivotviewReports);
@@ -125,8 +133,8 @@ function PivotTableExporting() {
     localStorage.pivotviewReports = JSON.stringify(reportCollection);
   };
 
-  const renameReport = (args) => {
-    let reportsCollection = [];
+  const renameReport = (args: any) => {
+    let reportsCollection: any[] = [];
 
     if (localStorage.pivotviewReports && localStorage.pivotviewReports !== "") {
       reportsCollection = JSON.parse(localStorage.pivotviewReports);
@@ -147,12 +155,12 @@ function PivotTableExporting() {
     }
   };
 
-  const beforeToolbarRender = (args) => {
+  const beforeToolbarRender = (args: any) => {
     args.customToolbar.splice(6, 0, { type: 'Separator' });
     args.customToolbar.splice(9, 0, { type: 'Separator' });
   };
 
-  const chartOnLoad = (args) => {
+  const chartOnLoad = (args: any) => {
     let selectedTheme = location.hash.split("/")[1];
     selectedTheme = selectedTheme ? selectedTheme : "Material";
     args.chart.theme = (selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1))
@@ -161,14 +169,14 @@ function PivotTableExporting() {
       .replace(/-highContrast/i, 'HighContrast');
   };
 
-  const cellTemplate = (args) => {
+  const cellTemplate = (args: any) => {
     if (!pivotObj) return;
     let data = pivotObj.engineModule.data;
 
     if (args.cellInfo && args.cellInfo.value) {
       if (args.cellInfo.axis === 'value' && args.cellInfo.actualText === "slno") {
         if (!args.cellInfo.isGrandSum) {
-          let srcValue;
+          let srcValue: number | undefined;
 
           for (let i = 0; i < data.length; i++) {
             if (args.cellInfo.rowHeaders === data[i].jobno_oms) {
@@ -204,7 +212,8 @@ function PivotTableExporting() {
         }
       }
     } else if (args.cellInfo && args.cellInfo.axis == 'row' && args.cellInfo.valueSort.axis == "mainimagepath") {
-      let imgElement = createElement('img', {
+      if(!args.targetCell.querySelector('img')?.classList.contains('e-custom-cell')) {
+        let imgElement = createElement('img', {
         className: 'e-custom-cell',
         attrs: {
           src: args.targetCell.firstElementChild.textContent,
@@ -213,13 +222,13 @@ function PivotTableExporting() {
           height: '50',
         },
       });
-      let cellValue = select('.e-cellvalue', args.targetCell);
       args.targetCell.firstElementChild.textContent = '';
       args.targetCell.firstElementChild.appendChild(imgElement);
+      }
     }
   };
 
-  const queryCellInfo = (args) => {
+  const queryCellInfo = (args: any) => {
     let colIndex = Number(args.cell.getAttribute('aria-colindex')) - 1;
     let cells = args.data[colIndex];
     if(!cells) {
@@ -241,8 +250,12 @@ function PivotTableExporting() {
       args.cell.querySelector('.e-cellvalue').innerHTML = `<div>${datasource[indexes[0]].jobno_oms}</div><div>${datasource[indexes[0]].Dy_R}</div><div>${datasource[indexes[0]].buyer}</div>`;
   }
 }
-let pivotObj;
- function onChange(args) {
+let pivotObj: {
+  pivotValues: any; dataSourceSettings: {
+    rows: any; dataSource: any; 
+}; setProperties: (arg0: { dataSourceSettings: { columns: never[]; rows: never[]; values: never[]; filters: never[]; }; }, arg1: boolean) => void; engineModule: { data: any; }; gridSettings: { layout: string; }; 
+};
+ function onChange(args:any) {
       if(!args.checked)
       {
         pivotObj.gridSettings.layout = 'Compact';
@@ -255,22 +268,21 @@ let pivotObj;
     }
 
   return (
-    <div className='control-pane'>
-      <div className='control-section' id='pivot-table-section' style={{ overflow: 'initial' }}>
-         <div className="tabular-layout-switch">
+    <div style={{ height: '100vh'}}>
+      <div id='pivot-table-section'>
+        <div className="tabular-layout-switch">
                     <label id="layout-label" htmlFor="layout-switch">Classic Layout</label>
                     <SwitchComponent id="layout-switch" checked={true} cssClass="pivot-layout-switch" change={onChange}></SwitchComponent>
-         </div>
-
+        </div>
+        <div style={{ height:'95vh', overflow: 'hidden' }}>
         <PivotViewComponent
           id='PivotView'
-          ref={(scope) => { pivotObj = scope; }}
+          ref={(scope: any) => { pivotObj = scope; }}
           dataSourceSettings={dataSourceSettings}
           width={'100%'}
           gridSettings={{layout:'Tabular',columnWidth: 140, rowHeight: 80, queryCellInfo: queryCellInfo }}
-          height={'1000px'}
+          height={'100%'}
           showFieldList={true}
-          allowDrillThrough={true}
           // gridSettings={}
           allowExcelExport={true}
           allowNumberFormatting={true}
@@ -278,7 +290,7 @@ let pivotObj;
           allowPdfExport={true}
           showToolbar={true}
           allowCalculatedField={true}
-          displayOption={{ view: 'Both' }}
+          displayOption={{ view: 'Table' }}
           toolbar={toolbarOptions}
           newReport={newReport}
           renameReport={renameReport}
@@ -297,11 +309,19 @@ let pivotObj;
             PDFExport,
             ExcelExport,
             ConditionalFormatting,
-            NumberFormatting
+            NumberFormatting,
+            LineSeries,
+            ColumnSeries,
+            BarSeries,
+            Category,
+            Legend,
+            Tooltip
           ]} />
         </PivotViewComponent>
+      </div>
       </div>
     </div>
   );
 }
+
 export default PivotTableExporting;

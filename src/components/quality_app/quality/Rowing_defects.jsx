@@ -155,7 +155,7 @@ export default function Rowing_defects() {
         force_save: forceSave,
       });
       alert("Bundle Completed Successfully ✅");
-      navigate(-1);
+      navigate(-2);
     } catch (err) {
       alert("Final save failed ❌");
     }

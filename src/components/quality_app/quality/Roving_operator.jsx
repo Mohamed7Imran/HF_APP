@@ -38,7 +38,6 @@ function OperatorProcess() {
       setOperator(data.emp_code || "");
       setProcesses(data.processes || []);
 
-      // Auto-select first process
       if (data.processes?.length) setProcess(data.processes[0].process_des);
 
     } catch (err) {
@@ -50,7 +49,6 @@ function OperatorProcess() {
     }
   };
 
-  // Debounced machine ID input
   useEffect(() => {
     if (!machineId) return;
 
@@ -61,7 +59,6 @@ function OperatorProcess() {
     return () => clearTimeout(delayDebounce);
   }, [machineId]);
 
-  // Close dropdown when clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

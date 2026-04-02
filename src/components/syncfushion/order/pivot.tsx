@@ -10,7 +10,8 @@ import {
   PDFExport,
   ExcelExport,
   ConditionalFormatting,
-  NumberFormatting
+  NumberFormatting,
+  ToolbarItems
 } from '@syncfusion/ej2-react-pivotview';
 
 import {
@@ -35,10 +36,11 @@ const dataSourceSettings = {
   columns: [{ name: 'buyer1' }, { name: 'insdatenew' }],
   valueSortSettings: { headerDelimiter: ' - ' },
   values: [{ name: 'slno', caption: 'Units Sold' }, { name: 'merch' }],
-  rows: [{ name: 'jobno_oms' }],
+  rows: [{ name: 'jobno_oms', expandAll: true }, { name: 'mainimagepath' }],
   formatSettings: [{ name: 'Amount', format: 'C0' }],
-  expandAll: false,
-  filters: [{ name: 'production_unit' }]
+  //expandAll: true,
+  filters: [{ name: 'production_unit' }],
+  showRowSubTotals: false 
 };
 
 function PivotTableExporting() {
@@ -62,7 +64,7 @@ function PivotTableExporting() {
   });
 
   },[])
-  const toolbarOptions = [
+  const toolbarOptions: ToolbarItems[] = [
     'New', 'Save', 'SaveAs', 'Rename', 'Remove', 'Load',
     'Grid', 'Chart', 'Export', 'SubTotal', 'GrandTotal',
     'Formatting', 'FieldList'
@@ -209,9 +211,50 @@ function PivotTableExporting() {
           }
         }
       }
+    } else if (args.cellInfo && args.cellInfo.axis == 'row' && args.cellInfo.valueSort.axis == "mainimagepath") {
+      if(!args.targetCell.querySelector('img')?.classList.contains('e-custom-cell')) {
+        let imgElement = createElement('img', {
+        className: 'e-custom-cell',
+        attrs: {
+          src: args.targetCell.firstElementChild.textContent,
+          alt: 'No Img',
+          width: '50',
+          height: '50',
+        },
+      });
+      args.targetCell.firstElementChild.textContent = '';
+      args.targetCell.firstElementChild.appendChild(imgElement);
+      }
     }
   };
-let pivotObj;
+
+  const queryCellInfo = (args: any) => {
+    let colIndex = Number(args.cell.getAttribute('aria-colindex')) - 1;
+    let cells = args.data[colIndex];
+    if(!cells) {
+      return;
+    }
+    let datasource = (pivotObj).dataSourceSettings.dataSource;
+    // Get the current cell information here.
+    let cell = (pivotObj).pivotValues[cells.rowIndex][cells.colIndex];
+    let rowlength = (pivotObj).dataSourceSettings.rows?.length;
+    // Check for the first row field member.
+    if (cell.axis === 'row' && cell.level === 0 && cell.hasChild) {
+      // Get the last row header value from the current cell information here.
+      let indexCell = (pivotObj).pivotValues[cells.rowIndex][rowlength - 1];
+      let indexObject= indexCell.indexObject;
+      let indexes = Object.keys(indexObject);
+      // Replace the "name" field member in the place of "email"
+      // args.cell.querySelector('.e-cellvalue').innerText = datasource[indexes[0]].Dy_R;
+      
+      args.cell.querySelector('.e-cellvalue').innerHTML = `<div>${datasource[indexes[0]].jobno_oms}</div><div>${datasource[indexes[0]].Dy_R}</div><div>${datasource[indexes[0]].buyer}</div>`;
+  }
+}
+let pivotObj: {
+  pivotValues: any; dataSourceSettings: {
+    rows: any; dataSource: any; 
+}; setProperties: (arg0: { dataSourceSettings: { columns: never[]; rows: never[]; values: never[]; filters: never[]; }; }, arg1: boolean) => void; engineModule: { data: any; }; gridSettings: { layout: string; }; 
+};
  function onChange(args:any) {
       if(!args.checked)
       {
@@ -225,20 +268,20 @@ let pivotObj;
     }
 
   return (
-    <div className='control-pane'>
-      <div className='control-section' id='pivot-table-section' style={{ overflow: 'initial' }}>
-         <div className="tabular-layout-switch">
+    <div style={{ height: '100vh'}}>
+      <div id='pivot-table-section'>
+        <div className="tabular-layout-switch">
                     <label id="layout-label" htmlFor="layout-switch">Classic Layout</label>
                     <SwitchComponent id="layout-switch" checked={true} cssClass="pivot-layout-switch" change={onChange}></SwitchComponent>
-         </div>
-
+        </div>
+        <div style={{ height:'95vh', overflow: 'hidden' }}>
         <PivotViewComponent
           id='PivotView'
-          ref={(scope) => { pivotObj = scope; }}
+          ref={(scope: any) => { pivotObj = scope; }}
           dataSourceSettings={dataSourceSettings}
           width={'100%'}
-          gridSettings={{layout:'Tabular',columnWidth: 140, rowHeight: 80 }}
-          height={'450'}
+          gridSettings={{layout:'Tabular',columnWidth: 140, rowHeight: 80, queryCellInfo: queryCellInfo }}
+          height={'100%'}
           showFieldList={true}
           // gridSettings={}
           allowExcelExport={true}
@@ -247,7 +290,7 @@ let pivotObj;
           allowPdfExport={true}
           showToolbar={true}
           allowCalculatedField={true}
-          displayOption={{ view: 'Both' }}
+          displayOption={{ view: 'Table' }}
           toolbar={toolbarOptions}
           newReport={newReport}
           renameReport={renameReport}
@@ -275,6 +318,7 @@ let pivotObj;
             Tooltip
           ]} />
         </PivotViewComponent>
+      </div>
       </div>
     </div>
   );

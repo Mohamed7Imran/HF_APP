@@ -40,7 +40,7 @@ import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent, UploaderComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect, CheckBoxSelection} from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
-import "../../../App.css"
+import "../../../App.css";
 // import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 import { DatePickerComponent, DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
 import { DateRangePicker } from '@syncfusion/ej2-calendars';

@@ -595,6 +595,7 @@ const HeroFashionGrid131: React.FC = () => {
     </div>
   );
 
+
   const deliveryInfoTemplate = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br />
@@ -866,6 +867,124 @@ const HeroFashionGrid131: React.FC = () => {
             </div>
           )}
         </div>
+        
+      
+   
+        {/* Row 1 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('Emb_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>Emb_R</label>
+              <input id="Emb_R" name="Emb_R" type="text" value={data.Emb_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('u7') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
+              <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+      
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('Fab_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u8</label>
+              <input id="Fab_R" name="Fab_R" type="text" value={data.Fab_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('u14') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u14</label>
+              <input id="u14" name="u14" type="text" value={data.u14 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+
+
+ 
+        {/* Row 1 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('Week_R1') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u25</label>
+              <input id="Week_R1" name="Week_R1" type="text" value={data.Week_R1 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('u31') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
+              <input id="u31" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('u36') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+              <input id="u36" name="u36" type="text" value={data.u36 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('ITS_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+              <input id="ITS_R" name="ITS_R" type="text" value={data.ITS_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+       
+         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('Order_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+              <input id="Order_R" name="Order_R" type="text" value={data.Order_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('u46') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
+              <input id="u46" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      
+          {isFieldInGrid('u141') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+              <input id="u141" name="u141" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          {isFieldInGrid('Sample_R') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>141</label>
+              <input id="Sample_R" name="u31" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+          
+        </div>
+
+
+         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+     
+          {isFieldInGrid('u7') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
+              <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+      </div>
 
         {/* Row 2 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
@@ -875,10 +994,18 @@ const HeroFashionGrid131: React.FC = () => {
               <input id="quantity" name="quantity" type="text" value={data.quantity || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
           )}
+          
           {isFieldInGrid('u45') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
               <input id="u45" name="u45" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+          )}
+
+          {isFieldInGrid('u46') && (
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
+              <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
           )}
         </div>
@@ -1514,7 +1641,7 @@ const HeroFashionGrid131: React.FC = () => {
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
             <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="director_sample_order" headerText="dir" width="70" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" filter={{ operator: 'startsWith' }} maxWidth="100" customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="finaldelvdate" type="date" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} />
@@ -1539,15 +1666,17 @@ const HeroFashionGrid131: React.FC = () => {
             <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} />
             <ColumnDirective field="u8" headerText="8 FAB" width="100" allowEditing={false} template={genericHighlighter('u8')} visible={false} />
             <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
-            <ColumnDirective field="production_type_inside_outside" headerText="pty,dir,com,ordfol" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }} />
+            {/* <ColumnDirective field="production_type_inside_outside" headerText="pty,dir,com,ordfol" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="styleno" headerText="sty,stydes,qcon" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="All" headerText='Fdt,Odt,dt' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} />
+            <ColumnDirective field="All" headerText='Fdt,Odt,dt' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
             <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
             <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Fab_R" headerText="Fab_R" width="100" template={genericHighlighter('Fab_R')} />
+            <ColumnDirective field="Week_R1" headerText="Week_R1" width="100" template={genericHighlighter('Week_R1')} />
             {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
             {/* <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
@@ -1557,17 +1686,17 @@ const HeroFashionGrid131: React.FC = () => {
             <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
             <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
             {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
-            <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} />
+            {/* <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} /> */}
             {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
-            <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
-            <ColumnDirective field="finaldelvdate" headerText="finaldelvdate" width="100" template={genericHighlighter('finaldelvdate')} />
-            <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
+            {/* <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} /> */}
+            {/* <ColumnDirective field="finaldelvdate" headerText="finaldelvdate" width="100" template={genericHighlighter('finaldelvdate')} /> */}
+            {/* <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
             <ColumnDirective field="Others3" headerText="other10" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others4" headerText="other11" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others5" headerText="other12" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others5')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others6" headerText="other13" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others6')} allowEditing={false} customAttributes={{ class: 'img' }} />
-            {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} />
-          <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
+            {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} /> */}
+          {/* <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
           <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
           <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
             {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
@@ -1575,11 +1704,11 @@ const HeroFashionGrid131: React.FC = () => {
             {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
             {/* <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} /> */}
             {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} /> */}
-            <ColumnDirective field="u8" headerText="8 FAB" width="100" allowEditing={false} template={genericHighlighter('u8')} visible={false} />
-            <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} />
+            {/* <ColumnDirective field="u8" headerText="8 FAB" width="100" allowEditing={false} template={genericHighlighter('u8')} visible={false} /> */}
+            {/* <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} /> */}
             {/* <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} /> */}
             {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
-            <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
+            {/* <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} /> */}
             {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
             {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} /> */}
             {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />

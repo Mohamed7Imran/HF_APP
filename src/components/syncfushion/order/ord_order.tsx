@@ -1759,7 +1759,8 @@ const HeroFashionGrid131: React.FC = () => {
           <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
           <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
             {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
-            {/* <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} /> */}
+            <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} />
+            <ColumnDirective field="u14" headerText="46 EMPTY" width="100" template={genericHighlighter('u14')} />
             {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
             {/* <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} /> */}
             {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} /> */}
@@ -1767,7 +1768,7 @@ const HeroFashionGrid131: React.FC = () => {
             {/* <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} /> */}
             {/* <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} /> */}
             {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
-            {/* <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} /> */}
+            <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
             {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
             {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} /> */}
             {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />

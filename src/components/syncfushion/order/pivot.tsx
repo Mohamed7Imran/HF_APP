@@ -1,4 +1,3 @@
-import { createRoot } from 'react-dom/client';
 import './index.css';
 import * as React from 'react';
 import {
@@ -10,35 +9,29 @@ import {
   PDFExport,
   ExcelExport,
   ConditionalFormatting,
-  NumberFormatting
+  NumberFormatting,
+  ToolbarItems,
+  QueryCellInfoEventArgs,
+  IDataSet
 } from '@syncfusion/ej2-react-pivotview';
-
-import {
-  LineSeries,
-  ColumnSeries,
-  BarSeries,
-  Category,
-  Legend,
-  Tooltip
-} from '@syncfusion/ej2-react-charts';
 import { SwitchComponent } from '@syncfusion/ej2-react-buttons';
 import { createElement } from '@syncfusion/ej2-base';
 import { registerLicense } from '@syncfusion/ej2-base';
 
 registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
 
-let pivotObj: PivotViewComponent | null = null;
-
+let pivotObj: PivotViewComponent;;
 
 const dataSourceSettings = {
   enableSorting: true,
   columns: [{ name: 'buyer1' }, { name: 'insdatenew' }],
   valueSortSettings: { headerDelimiter: ' - ' },
   values: [{ name: 'slno', caption: 'Units Sold' }, { name: 'merch' }],
-  rows: [{ name: 'jobno_oms' }],
+  rows: [{ name: 'jobno_oms', expandAll: true }, { name: 'mainimagepath' }],
   formatSettings: [{ name: 'Amount', format: 'C0' }],
-  expandAll: false,
-  filters: [{ name: 'production_unit' }]
+  //expandAll: true,
+  filters: [{ name: 'production_unit' }],
+  showRowSubTotals: false 
 };
 
 function PivotTableExporting() {
@@ -60,9 +53,9 @@ function PivotTableExporting() {
   .catch(error => {
     console.error('There was a problem with the fetch operation:', error);
   });
-
   },[])
-  const toolbarOptions = [
+
+  const toolbarOptions: ToolbarItems[] = [
     'New', 'Save', 'SaveAs', 'Rename', 'Remove', 'Load',
     'Grid', 'Chart', 'Export', 'SubTotal', 'GrandTotal',
     'Formatting', 'FieldList'
@@ -167,51 +160,66 @@ function PivotTableExporting() {
       .replace(/-highContrast/i, 'HighContrast');
   };
 
-  const cellTemplate = (args: any) => {
-    if (!pivotObj) return;
-    let data = pivotObj.engineModule.data;
+  const queryCellInfo = (args: QueryCellInfoEventArgs) => {
+    let colIndex: number = Number((args.cell as Element).getAttribute('aria-colindex')) - 1;
+    let currentCellData = (args.data as any)[colIndex];
+    let currentCellElement: HTMLElement = args.cell as HTMLElement;
+    if(!currentCellData || !currentCellElement) {
+      return;
+    }
+    let datasource: IDataSet[] = (pivotObj).dataSourceSettings.dataSource as IDataSet[];
+    // Get the current cell information here.
+    let cell = (pivotObj).pivotValues[currentCellData.rowIndex][currentCellData.colIndex];
+    // Get the last row header from the current cell information here to get the indexObject.
+    let indexCell = (pivotObj).pivotValues[currentCellData.rowIndex][pivotObj.engineModule.rowMaxLevel];
+    let indexObject: any = indexCell.indexObject;
+    let indexes: any = Object.keys(indexObject);
 
-    if (args.cellInfo && args.cellInfo.value) {
-      if (args.cellInfo.axis === 'value' && args.cellInfo.actualText === "slno") {
-        if (!args.cellInfo.isGrandSum) {
-          let srcValue: number | undefined;
-
-          for (let i = 0; i < data.length; i++) {
-            if (args.cellInfo.rowHeaders === data[i].jobno_oms) {
-              srcValue = i;
-              break;
-            }
-          }
-
-          if (typeof srcValue === 'number') {
-            let imgElement = createElement('img', {
-              className: 'ecustom-cell',
-              attrs: {
-                'src': data[srcValue]?.mainimagepath || 'https://via.placeholder.com/50', // fallback
-                'alt': 'No Img',
-                'width': '50',
-                'height': '50'
-              },
-            });
-
-            if (args.targetCell.firstElementChild) {
-              args.targetCell.firstElementChild.textContent = '';
-              args.targetCell.firstElementChild.appendChild(imgElement);
-            }
-          } else {
-            if (args.targetCell.firstElementChild) {
-              args.targetCell.firstElementChild.textContent = '';
-            }
-          }
-        } else {
-          if (args.targetCell.firstElementChild) {
-            args.targetCell.firstElementChild.textContent = '';
+    // Check for the first row field member.
+    if (cell.axis === 'row') {
+      if (cell.level === 0 && cell.hasChild) {
+        // Customize the first row header to display multiple field names from its raw data.        
+        ((currentCellElement as Element).querySelector('.e-cellvalue') as HTMLElement).innerHTML = `<div>${datasource[indexes[0]].jobno_oms}</div><div>${datasource[indexes[0]].Dy_R}</div><div>${datasource[indexes[0]].buyer}</div>`;
+      }
+      if (cell.valueSort) {
+        if (cell.valueSort.axis === 'mainimagepath') {
+          let imgElement = createElement('img', {
+            className: 'e-custom-cell',
+            attrs: {
+              'src': currentCellData.actualText || 'https://via.placeholder.com/50', // fallback
+              'alt': 'No Img',
+              'width': '50',
+              'height': '50'
+            },
+          });
+          if (currentCellElement.firstElementChild) {
+            (currentCellElement.firstElementChild.querySelector('.e-cellvalue') as HTMLElement).textContent = '';
+            currentCellElement.firstElementChild.appendChild(imgElement);
           }
         }
       }
+    } else if (cell.axis === 'value') {
+      if (typeof currentCellData.value === 'number' && currentCellData.actualText === "slno" && !currentCellData.isGrandSum) {
+        let imgElement = createElement('img', {
+          className: 'e-custom-cell',
+          attrs: {
+            'src': (datasource[indexes[0]].mainimagepath as string) || 'https://via.placeholder.com/50', // fallback
+            'alt': 'No Img',
+            'width': '50',
+            'height': '50'
+          },
+        });
+        if (currentCellElement.firstElementChild) {
+          currentCellElement.firstElementChild.textContent = '';
+          currentCellElement.firstElementChild.appendChild(imgElement);
+        }
+      } else if (currentCellData.actualText === "slno" && currentCellData.isGrandSum) {
+        if (currentCellElement.firstElementChild) {
+          currentCellElement.firstElementChild.textContent = '';
+        }
+      }
     }
-  };
-let pivotObj;
+  }
  function onChange(args:any) {
       if(!args.checked)
       {
@@ -225,29 +233,28 @@ let pivotObj;
     }
 
   return (
-    <div className='control-pane'>
-      <div className='control-section' id='pivot-table-section' style={{ overflow: 'initial' }}>
-         <div className="tabular-layout-switch">
+    <div style={{ height: '100vh'}}>
+      <div id='pivot-table-section'>
+        <div className="tabular-layout-switch">
                     <label id="layout-label" htmlFor="layout-switch">Classic Layout</label>
                     <SwitchComponent id="layout-switch" checked={true} cssClass="pivot-layout-switch" change={onChange}></SwitchComponent>
-         </div>
-
+        </div>
+        <div style={{ height:'95vh', overflow: 'hidden' }}>
         <PivotViewComponent
           id='PivotView'
-          ref={(scope) => { pivotObj = scope; }}
+          ref={(scope: any) => { pivotObj = scope; }}
           dataSourceSettings={dataSourceSettings}
           width={'100%'}
-          gridSettings={{layout:'Tabular',columnWidth: 140, rowHeight: 80 }}
-          height={'450'}
+          gridSettings={{layout:'Tabular',columnWidth: 140, rowHeight: 80, queryCellInfo: queryCellInfo }}
+          height={'100%'}
           showFieldList={true}
-          // gridSettings={}
           allowExcelExport={true}
           allowNumberFormatting={true}
           allowConditionalFormatting={true}
           allowPdfExport={true}
           showToolbar={true}
           allowCalculatedField={true}
-          displayOption={{ view: 'Both' }}
+          displayOption={{ view: 'Table' }}
           toolbar={toolbarOptions}
           newReport={newReport}
           renameReport={renameReport}
@@ -257,7 +264,6 @@ let pivotObj;
           saveReport={saveReport}
           toolbarRender={beforeToolbarRender}
           chartSettings={{ title: 'Sales Analysis', load: chartOnLoad }}
-          cellTemplate={cellTemplate}   // ✅ wired in
         >
           <Inject services={[
             FieldList,
@@ -266,15 +272,10 @@ let pivotObj;
             PDFExport,
             ExcelExport,
             ConditionalFormatting,
-            NumberFormatting,
-            LineSeries,
-            ColumnSeries,
-            BarSeries,
-            Category,
-            Legend,
-            Tooltip
+            NumberFormatting
           ]} />
         </PivotViewComponent>
+      </div>
       </div>
     </div>
   );

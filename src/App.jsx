@@ -16,6 +16,10 @@ import Visuva from "./components/syncfushion/order/ord_pagination";
 import GreyRollChecking from "./components/GreyrollChecking/main/App";
 import FabricForm from "./components/syncfushion/fabric/Fabric";
 import Machine_Allocate from "./components/machine_allocate/main"
+import Sticker from "./components/Cutting/sticker production/App"
+import Bitcheck from "./components/Cutting/bit checking/App"
+import BitCheckingUI from "./components/Cutting/bit checking/BitcheckingPly";
+
 function App() {
 
   useEffect(() => {
@@ -152,6 +156,39 @@ function App() {
             <ProtectedRoute>
               <ProtectedLayout>
                 <Machine_Allocate />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/stick-prod/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Sticker />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/bit-checking/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Bitcheck />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/bitchecking_ply/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <BitCheckingUI />
               </ProtectedLayout>
             </ProtectedRoute>
           }

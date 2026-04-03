@@ -264,7 +264,6 @@ function Sample() {
     }
   }  
   const filterSettings: FilterSettingsModel = { type: "Excel" };
-
   const onDataBound = () => updateRowCounts();
   const onActionComplete = () => updateRowCounts();
 

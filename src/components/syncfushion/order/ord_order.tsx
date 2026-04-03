@@ -38,13 +38,14 @@ import {
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent, UploaderComponent } from '@syncfusion/ej2-react-inputs';
-import { DropDownListComponent, MultiSelect } from '@syncfusion/ej2-react-dropdowns';
+import { DropDownListComponent, MultiSelect, CheckBoxSelection} from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import "../../../App.css"
 // import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 import { DatePickerComponent, DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
 import { DateRangePicker } from '@syncfusion/ej2-calendars';
 import { DataUtil } from '@syncfusion/ej2-data';
+MultiSelect.Inject(CheckBoxSelection);
 registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
 interface OrderData {
   slno1?: number; // Added SL No field
@@ -70,6 +71,8 @@ const HeroFashionGrid131: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchKey, setSearchKey] = useState<string>('');
+  const customFilterRef = useRef<boolean>(false);
+  const endDateRef = useRef<Date | null>(null);
   // const [userName, setUserName] = useState("");
   const { username } = useContext(UserContext);
 
@@ -453,18 +456,18 @@ const HeroFashionGrid131: React.FC = () => {
         gridRef.current?.closeEdit();
       },
     });
-    if (gridRef.current && args.requestType === 'beginEdit') {
-      const cols: any = gridRef.current?.columns;
-      for (const col of cols) {
-        if (col.field === "jobno_oms" || col.field === "Print" || col.field === "print_img" || col.field === "prnclr" || col.field === "merch" || col.field === "buyer1"
-          || col.field === "punit_sh" || col.field === "punit_sh" || col.field === "styleno" || col.field === "director_sample_order" || col.field === "director_sample_order" ||
-          col.field === "abc" || col.field === "order_follow_up" || col.field === "styledesc" || col.field === "company_name" || col.field === "quantity" || col.field === "production_type_inside_outside"
-          || col.field === "prnmeaimg" || col.field === "All" || col.field === "fsn" || col.field === "prdty" || col.field === "Others1" || col.field === "Others7" || col.field === "n" || col.field === "slno1" || col.field === "actdaten" || col.field === "u46" || col.field === "date" || col.field === "ourdelvdate" || col.field === "finaldelvdate1" || col.field === "Others2" || col.field === "Others3" || col.field === "Others4" || col.field === "Others5" || col.field === "Others6" || col.field === "Fdt"
-        ) {
-          col.visible = false;
-        }
-      }
-    }
+    // if (gridRef.current && args.requestType === 'beginEdit') {
+    //   const cols: any = gridRef.current?.columns;
+    //   for (const col of cols) {
+    //     if (col.field === "jobno_oms" || col.field === "Print" || col.field === "print_img" || col.field === "prnclr" || col.field === "merch" || col.field === "buyer1"
+    //       || col.field === "punit_sh" || col.field === "punit_sh" || col.field === "styleno" || col.field === "director_sample_order" || col.field === "director_sample_order" ||
+    //       col.field === "abc" || col.field === "order_follow_up" || col.field === "styledesc" || col.field === "company_name" || col.field === "quantity" || col.field === "production_type_inside_outside"
+    //       || col.field === "prnmeaimg" || col.field === "All" || col.field === "fsn" || col.field === "prdty" || col.field === "Others1" || col.field === "Others7" || col.field === "n" || col.field === "slno1" || col.field === "actdaten" || col.field === "u46" || col.field === "date" || col.field === "ourdelvdate" || col.field === "finaldelvdate1" || col.field === "Others2" || col.field === "Others3" || col.field === "Others4" || col.field === "Others5" || col.field === "Others6" || col.field === "Fdt"
+    //     ) {
+    //       col.visible = false;
+    //     }
+    //   }
+    // }
 
     // if (gridRef.current && args.requestType === 'add') {
     //     const cols: any = gridRef.current?.columns;
@@ -474,19 +477,19 @@ const HeroFashionGrid131: React.FC = () => {
     //         }
     //     }
     // }
-    if (gridRef.current && (args.requestType === 'save' || args.requestType === 'cancel')) {
-      const cols: any = gridRef.current?.columns;
-      for (const col of cols) {
-        if (col.field === "jobno_oms" || col.field === "Print" || col.field === "print_img" || col.field === "prnclr" || col.field === "merch" || col.field === "buyer1"
-          || col.field === "punit_sh" || col.field === "punit_sh" || col.field === "styleno" || col.field === "director_sample_order" || col.field === "director_sample_order" ||
-          col.field === "abc" || col.field === "order_follow_up" || col.field === "styledesc" || col.field === "company_name" || col.field === "quantity" || col.field === "production_type_inside_outside"
-          || col.field === "prnmeaimg" || col.field === "All" || col.field === "fsn" || col.field === "prdty" || col.field === "Others1" || col.field === "Others7" || col.field === "n" || col.field === "slno1" || col.field === "actdaten" || col.field === "u46" || col.field === "date" || col.field === "ourdelvdate" || col.field === "finaldelvdate1" || col.field === "Others2" || col.field === "Others3" || col.field === "Others4" || col.field === "Others5" || col.field === "Others6" || col.field === "Fdt"
-        ) {
-          col.visible = true;
-        }
+    // if (gridRef.current && (args.requestType === 'save' || args.requestType === 'cancel')) {
+    //   const cols: any = gridRef.current?.columns;
+    //   for (const col of cols) {
+    //     if (col.field === "jobno_oms" || col.field === "Print" || col.field === "print_img" || col.field === "prnclr" || col.field === "merch" || col.field === "buyer1"
+    //       || col.field === "punit_sh" || col.field === "punit_sh" || col.field === "styleno" || col.field === "director_sample_order" || col.field === "director_sample_order" ||
+    //       col.field === "abc" || col.field === "order_follow_up" || col.field === "styledesc" || col.field === "company_name" || col.field === "quantity" || col.field === "production_type_inside_outside"
+    //       || col.field === "prnmeaimg" || col.field === "All" || col.field === "fsn" || col.field === "prdty" || col.field === "Others1" || col.field === "Others7" || col.field === "n" || col.field === "slno1" || col.field === "actdaten" || col.field === "u46" || col.field === "date" || col.field === "ourdelvdate" || col.field === "finaldelvdate1" || col.field === "Others2" || col.field === "Others3" || col.field === "Others4" || col.field === "Others5" || col.field === "Others6" || col.field === "Fdt"
+    //     ) {
+    //       col.visible = true;
+    //     }
 
-      }
-    }
+    //   }
+    // }
     if (args.requestType === 'save') {
       if ((args as any).action === 'edit') {
         console.log(args)
@@ -499,6 +502,26 @@ const HeroFashionGrid131: React.FC = () => {
           ajax.send();
         }
       }
+    }
+    if (
+      (args as any).action === 'filter' &&
+      (args as any).currentFilteringColumn === 'finaldelvdate1' &&
+      customFilterRef.current
+    ) {
+      customFilterRef.current = false;
+      // Add end date value as additional filter with ‘lessthan’ operator
+      (args as any).columns.push({
+        actualFilterValue: {},
+        actualOperator: {},
+        field: 'finaldelvdate1',
+        ignoreAccent: false,
+        isForeignKey: false,
+        matchCase: false,
+        operator: 'lessThanOrEqual',
+        predicate: 'and',
+        uid: gridRef.current?.getColumnByField((args as any).currentFilteringColumn).uid,
+        value: endDateRef.current,
+      });
     }
   };
 
@@ -1552,15 +1575,19 @@ const HeroFashionGrid131: React.FC = () => {
         placeholder: 'Select date range',
         format: 'dd/MM/yyyy',
         change: (e: any) => {
+          console.log('change', e)
           if (e.startDate && e.endDate && gridRef.current) {
-            // Clear existing filters for this column first
+            // Store endDate in ref for use in actionBegin
+            endDateRef.current = e.endDate;
+            // Set custom filter flag BEFORE calling filterByColumn
+            customFilterRef.current = true;
             gridRef.current.clearFiltering(['finaldelvdate1']);
-
             // Apply date range filter using predicates
-            gridRef.current.filterByColumn('finaldelvdate1', 'greaterthanorequal', e.startDate, 'and');
-            gridRef.current.filterByColumn('finaldelvdate1', 'lessthanorequal', e.endDate, 'and');
+            gridRef.current.filterByColumn('finaldelvdate1', 'greaterThanOrEqual', e.startDate, 'and');
           } else if (!e.startDate && !e.endDate && gridRef.current) {
             // Clear filter if dates are cleared
+            customFilterRef.current = false;
+            endDateRef.current = null;
             gridRef.current.clearFiltering(['finaldelvdate1']);
           }
         }
@@ -1569,6 +1596,38 @@ const HeroFashionGrid131: React.FC = () => {
     }
   };
 
+    const multiSelectFilterTemplate = {
+    create: (args:any) => {
+      console.log(args)
+      const elem = document.createElement('input');
+      elem.setAttribute('id', 'directorMultiSelect');
+      return elem;
+    },
+    read:(args:any)=>
+    {
+
+    },
+    write: (args: any) => {
+
+      let multiSelectData:any=DataUtil.distinct(dataSource,'director_sample_order')
+      const multiSelectObj = new MultiSelect({
+        dataSource: multiSelectData,
+        allowFiltering:false,
+        fields:{text:'director_sample_order',value:'director_sample_order'},
+        // set the type of mode for checkbox to visualized the checkbox added in li element.
+        mode: 'CheckBox',
+        change:(e:any)=>
+        {
+            gridRef.current?.clearFiltering(['director_sample_order']);
+
+            gridRef.current?.filterByColumn('director_sample_order','equal',e.value)
+        }
+
+        
+      });
+      multiSelectObj.appendTo('#directorMultiSelect');
+    }
+  };
 
   const beforeOpen = (args: any) => {
     // Adjust tooltip dimensions based on content type
@@ -1641,7 +1700,7 @@ const HeroFashionGrid131: React.FC = () => {
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
             <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="150" maxWidth="200" filterBarTemplate={multiSelectFilterTemplate} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" filter={{ operator: 'startsWith' }} maxWidth="100" customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="finaldelvdate" type="date" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} />

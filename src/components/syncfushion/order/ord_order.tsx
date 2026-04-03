@@ -1561,8 +1561,6 @@ const HeroFashionGrid131: React.FC = () => {
             {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
             <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} />
             <ColumnDirective field="finaldelvdate" headerText="finaldelvdate" width="100" template={genericHighlighter('finaldelvdate')} />
-
-
             <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
             <ColumnDirective field="Others3" headerText="other10" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others4" headerText="other11" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }} />
@@ -1587,7 +1585,6 @@ const HeroFashionGrid131: React.FC = () => {
             {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
           <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
           <ColumnDirective field='punit_sh' headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> */}
-
             {/* 
           <ColumnDirective field="styleno" headerText="STYLE NO" width="110" template={genericHighlighter('styleno')} />
           <ColumnDirective field="director_sample_order" headerText="DIR S/O" width="100" template={genericHighlighter('director_sample_order')} />
@@ -1595,10 +1592,7 @@ const HeroFashionGrid131: React.FC = () => {
           <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
           <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')} /> */}
             <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
-
             <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
-
-
           </ColumnsDirective>
           <AggregatesDirective>
             <AggregateDirective>

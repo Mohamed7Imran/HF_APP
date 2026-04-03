@@ -33,6 +33,7 @@ export default function LineDetail() {
         try {
             const res = await fetch(
                 `https://hfapi.herofashion.com/qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`
+                // `http://10.1.21.154:7000/qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`
             );
             const data = await res.json();
 

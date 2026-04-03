@@ -1996,4 +1996,5 @@ const HeroFashionGrid131: React.FC = () => {
     </div>
   );
 };
+
 export default HeroFashionGrid131;

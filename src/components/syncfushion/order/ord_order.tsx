@@ -1695,7 +1695,7 @@ const HeroFashionGrid131: React.FC = () => {
         >
           <ColumnsDirective>
             <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="mainimagepath" headerText="IMG" width="104" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="200" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
             <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />

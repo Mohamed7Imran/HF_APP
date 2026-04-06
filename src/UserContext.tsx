@@ -5,4 +5,6 @@ export const UserContext = createContext({
   setUsername: () => {},
   userId: "",
   setUserId: () => {},
+  role: null,
+  setRole: () => {}
 });

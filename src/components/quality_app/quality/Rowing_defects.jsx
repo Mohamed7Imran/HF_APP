@@ -21,7 +21,7 @@ export default function Rowing_defects() {
     machineId,
     operator,
     process,
-    
+     
   } = location.state || {};
 
   const [qcdatas, setQcdatas] = useState([]);
@@ -93,6 +93,11 @@ export default function Rowing_defects() {
   const handleSavePiece = async () => {
     if (inspectedCount >= totalPieces) return;
 
+    if (!userId) {
+      alert("User not logged in! Cannot save piece.");
+      return;
+    }
+
     const defectsArray = Object.entries(counts).map(([id, count]) => {
       const defect = qcdatas.find((item) => item.id === Number(id));
       return {
@@ -127,7 +132,7 @@ export default function Rowing_defects() {
       machineId,
       operator,
       process,
-      userId
+      userId,
     };
 
     try {

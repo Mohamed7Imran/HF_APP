@@ -38,6 +38,7 @@ function Sidebar({ children }) {
   const [searchTerm, setSearchTerm] = useState("");
   
   const { setUsername } = useContext(UserContext);
+  const { setRole } = useContext(UserContext);
   const { setUserId } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
@@ -51,12 +52,13 @@ function Sidebar({ children }) {
         setUserName(res.data.user?.username || "Admin");
         if (setUsername) setUsername(res.data.user?.username || "Admin");
         if (setUserId) setUserId(res.data.user?.id || "");
+        if (setRole) setRole(res.data.user?.role || null);
       } catch (err) {
         console.error("Sidebar API error:", err);
       }
     };
     fetchSidebar();
-  }, [setUsername,setUserId]);
+  }, [setUsername,setUserId,setRole]);
 
   // 2. Logic: Check if active
   const isChildActive = useCallback((item) => {

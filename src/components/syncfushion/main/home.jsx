@@ -23,6 +23,7 @@ import Schedule from "../order/Schedule.tsx"
 import GanttChart from '../order/Gantt Chart/GanttChart.tsx';
 import OrderDetails from '../order/OrderDetails.tsx';
 import PivotTableExporting from '../order/pivot.tsx';
+import MasterDetail from '../order/masterdtls.tsx';
 import Ordloadbalan from '../order/ordloadbalan.tsx';
 import ForeignKeyColumn from '../order/SyncForignkey.tsx';
 import Pivot from '../order/pivot/Pivotview.tsx'; 
@@ -48,7 +49,8 @@ function Home() {
         <Route path="/mulitquality" element={<MultiQuality/>} />
          <Route path="/Schedule" element={<Schedule />} /> 
          <Route path="/PRN" element={<PRN />} /> 
-         <Route path="/Excel" element={<Excel />} /> 
+         <Route path="/Excel" element={<Excel />} />
+         <Route path="/MasterDetail" element={<MasterDetail />} />
          <Route path="/PivotTableExporting" element={<PivotTableExporting />} /> 
          
          <Route path="/TemplateGallery" element={<TemplateGallery />} /> 

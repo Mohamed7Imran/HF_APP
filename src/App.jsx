@@ -183,6 +183,37 @@ function App() {
             </ProtectedRoute>
           }
         />
+          <Route
+          path="/advance/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Sticker />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/advance/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Bitcheck />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/advance/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <BitCheckingUI />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+        
         
 
       </Routes>

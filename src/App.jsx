@@ -16,6 +16,8 @@ import Visuva from "./components/syncfushion/order/ord_pagination";
 import GreyRollChecking from "./components/GreyrollChecking/main/App";
 import FabricForm from "./components/syncfushion/fabric/Fabric";
 import Machine_Allocate from "./components/machine_allocate/main"
+import Home_1 from "./components/reports/main";
+import Ad_login from "./components/advance/auth/ad_login";
 function App() {
 
   useEffect(() => {
@@ -152,6 +154,28 @@ function App() {
             <ProtectedRoute>
               <ProtectedLayout>
                 <Machine_Allocate />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/cutting-report/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Home_1/>
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+
+         <Route
+          path="/advance/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Ad_login/>
               </ProtectedLayout>
             </ProtectedRoute>
           }

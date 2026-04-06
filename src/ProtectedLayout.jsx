@@ -26,9 +26,10 @@ import Sidebar from "./Sidebar/Sidebar";
 
 export default function ProtectedLayout({ children }) {
   const [username, setUsername] = useState(""); // initially empty
+   const [userId, setUserId] = useState("");
 
   return (
-    <UserContext.Provider value={{ username, setUsername }}>
+    <UserContext.Provider value={{ username, setUsername, userId, setUserId }}>
       <div className="flex h-screen">
         <Sidebar /> {/* Sidebar will fetch and update username */}
         <div className="flex-1 flex flex-col overflow-hidden">

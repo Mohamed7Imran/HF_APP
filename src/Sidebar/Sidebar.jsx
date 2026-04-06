@@ -38,6 +38,7 @@ function Sidebar({ children }) {
   const [searchTerm, setSearchTerm] = useState("");
   
   const { setUsername } = useContext(UserContext);
+  const { setUserId } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,12 +50,13 @@ function Sidebar({ children }) {
         setMenus(res.data.menus || []);
         setUserName(res.data.user?.username || "Admin");
         if (setUsername) setUsername(res.data.user?.username || "Admin");
+        if (setUserId) setUserId(res.data.user?.id || "");
       } catch (err) {
         console.error("Sidebar API error:", err);
       }
     };
     fetchSidebar();
-  }, [setUsername]);
+  }, [setUsername,setUserId]);
 
   // 2. Logic: Check if active
   const isChildActive = useCallback((item) => {
@@ -176,7 +178,7 @@ function Sidebar({ children }) {
           {(sidebarOpen || mobileMenuOpen) && (
             <div className="flex items-center gap-2">
                <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center font-black shadow-lg text-white">H</div>
-               <span className="font-black text-xl tracking-tighter uppercase italic">Hero<span className="text-cyan-400">.</span></span>
+               <span className="font-black text-xl tracking-tighter uppercase italic">Hero<span className="text-cyan-400"> ...</span></span>
             </div>
           )}
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:block p-2 hover:bg-white/10 rounded-lg transition-all active:scale-95">

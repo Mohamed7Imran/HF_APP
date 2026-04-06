@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { api } from "../../../auth/auth";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../../../UserContext";
 
 export default function Rowing_defects() {
   const { unit, line } = useParams();
+  const { userId } = useContext(UserContext);
   const location = useLocation();
   const navigate = useNavigate();
   const qc_type = "rowing_qc";
@@ -19,7 +21,7 @@ export default function Rowing_defects() {
     machineId,
     operator,
     process,
-    
+     
   } = location.state || {};
 
   const [qcdatas, setQcdatas] = useState([]);
@@ -91,6 +93,11 @@ export default function Rowing_defects() {
   const handleSavePiece = async () => {
     if (inspectedCount >= totalPieces) return;
 
+    if (!userId) {
+      alert("User not logged in! Cannot save piece.");
+      return;
+    }
+
     const defectsArray = Object.entries(counts).map(([id, count]) => {
       const defect = qcdatas.find((item) => item.id === Number(id));
       return {
@@ -124,7 +131,8 @@ export default function Rowing_defects() {
       remarks: remarks,
       machineId,
       operator,
-      process
+      process,
+      userId,
     };
 
     try {
@@ -153,9 +161,10 @@ export default function Rowing_defects() {
         total_pieces: totalPieces,
         checked_piece: inspectedCount,
         force_save: forceSave,
+        userId
       });
       alert("Bundle Completed Successfully ✅");
-      navigate(-1);
+      navigate(-2);
     } catch (err) {
       alert("Final save failed ❌");
     }

@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext  } from "react";
 import { api } from "../../auth/auth";
+import { UserContext } from "../../UserContext";
 
 function Machine_allocate() {
   const [units, setUnits] = useState([]);
+
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [lines, setLines] = useState([]);
   const [selectedLine, setSelectedLine] = useState(null);
@@ -11,14 +13,35 @@ function Machine_allocate() {
   const [popup, setPopup] = useState({ open: false, machineId: null });
   const [searchEmp, setSearchEmp] = useState("");
   const [selectedEmp, setSelectedEmp] = useState(null);
+  const { role } = useContext(UserContext);
 
-  // --- Load Units ---
+  // // --- Load Units ---
+  // useEffect(() => {
+  //   api.get("/qcapp/api/units/").then((res) => {
+  //     setUnits(res.data);
+  //     if (res.data.length > 0) setSelectedUnit(res.data[0].id);
+  //   });
+  // }, []);
+
   useEffect(() => {
-    api.get("/qcapp/api/units/").then((res) => {
-      setUnits(res.data);
-      if (res.data.length > 0) setSelectedUnit(res.data[0].id);
-    });
-  }, []);
+  api.get("/qcapp/api/units/").then((res) => {
+    setUnits(res.data);
+
+    if (res.data.length > 0) {
+      if (role === "admin") {
+        setSelectedUnit(res.data[0].id);
+      } else {
+        const match = role?.match(/\d+/);
+        const allowedUnit = res.data.find(
+          (u) => u.id.toString() === match?.[0]
+        );
+        if (allowedUnit) {
+          setSelectedUnit(allowedUnit.id);
+        }
+      }
+    }
+  });
+}, [role]);
 
   // --- Load Lines for Unit ---
   useEffect(() => {
@@ -83,6 +106,32 @@ function Machine_allocate() {
 
 
 
+  const filteredUnits = units.filter((unit) => {
+  if (!role) return false;
+
+  if (role === "admin") return true;
+
+  const match = role.match(/\d+/);
+  return match && unit.id.toString() === match[0];
+});
+
+
+
+const sortedMachines = [...allocatedMachines].sort((a, b) => {
+  const getPriority = (item) => {
+    if (!item.employees[0]) return 3;
+    return item.employees[0].status ? 1 : 2;
+  };
+
+  const priorityDiff = getPriority(a) - getPriority(b);
+
+  if (priorityDiff !== 0) return priorityDiff;
+
+  // If same status → sort by latest time
+  return new Date(b.allocated_at) - new Date(a.allocated_at);
+});
+
+
   const toggleStatus = (machineId, empCode) => {
   const allocation = allocatedMachines.find(a => a.machine.id === machineId);
   if (!allocation) return;
@@ -126,15 +175,30 @@ function Machine_allocate() {
     .catch((err) => console.error(err));
 };
 
+if (filteredUnits.length === 0) {
+  return (
+    <div className="h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-10 rounded-xl shadow text-center">
+        <div className="text-5xl mb-4">🚫</div>
+        <h2 className="text-xl font-bold text-red-600">Access Denied</h2>
+        <p className="text-gray-500 mt-2">
+          You do not have permission to view this page.
+        </p>
+        <p className="text-gray-500 text-sm">
+          Please contact your administrator for access.
+        {role}</p>
+      </div>
+    </div>
+  );
+}
+
   return (
     <div className="h-screen overflow-hidden bg-[#F1F5F9] flex flex-col">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 px-4 py-3 flex justify-between items-center shrink-0">
         <div>
           <h1 className="text-lg font-bold text-slate-800 leading-tight">Employee Allocate</h1>
-          {/* <p className="text-[11px] text-slate-400 font-medium uppercase tracking-tighter">
-            Inventory Management
-          </p> */}
+        
         </div>
         <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full border border-green-100">
           <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></div>
@@ -145,9 +209,11 @@ function Machine_allocate() {
       <main className="flex-1 overflow-hidden p-3 md:p-5 flex flex-col gap-4">
         {/* Unit Tabs */}
         <div className="shrink-0">
+          
           <p className="text-[10px] font-bold text-slate-400 uppercase mb-2 ml-1 tracking-widest">Select Unit</p>
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-            {units.map((unit) => (
+            {/* {units.map((unit) => ( */}
+            {filteredUnits.map((unit) => (
               <button
                 key={unit.id}
                 onClick={() => setSelectedUnit(unit.id)}
@@ -212,7 +278,8 @@ function Machine_allocate() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
-                  {allocatedMachines.map((a) => (
+                  {/* {allocatedMachines.map((a) => ( */}
+                  {sortedMachines.map((a) => (
                     <tr key={a.id} className="hover:bg-blue-50/30 transition-colors">
                       <td className="px-4 py-3 text-xs font-bold text-blue-600">#{a.machine.id}</td>
                       <td className="px-4 py-3">

@@ -13,43 +13,37 @@ export default function LineDetail() {
             qc_type: "first_piece"
         },
         {
-            id: 'roving-qc',
+            id: 'rowing-qc',
             title: 'Roving QC Inspection',
             subtitle: 'Quality Assurance Protocol',
             icon: "📋",
-            qc_type: "roving_qc"
+            qc_type: "rowing_qc"
         }
     ];
 
     const handleSelect = async (inspection) => {
-        const { id, qc_type } = inspection;
+    const { id, qc_type } = inspection;
 
-        // 👉 If not first-piece, just navigate
-        if (id !== "first-piece") {
-            navigate(`/qc-admin/qc-entry/${unit}/${line}/${id}`);
-            return;
-        }
-
+    // =========================
+    //  FIRST PIECE LOGIC
+    // =========================
+    if (id === "first-piece") {
         try {
             const res = await fetch(
                 `https://hfapi.herofashion.com/qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`
             );
             const data = await res.json();
 
-            // 👉 No bundle found
             if (!data.bundle_id) {
-                navigate(`/qc-admin/qc-entry/${unit}/${line}/${id}`);
+                navigate(`/qc-admin/qc-entry/${unit}/${line}/first-piece`);
                 return;
             }
 
-            // ✅ COMPLETED → go to scan page
             if (data.is_completed) {
                 navigate(`/qc-admin/qc-entry/${unit}/${line}/first-piece`, {
                     state: { bundle_id: data.bundle_id }
                 });
-            }
-            // 🔄 NOT COMPLETED → resume defects
-            else {
+            } else {
                 navigate(`/qc-admin/defects/${unit}/${line}`, {
                     state: {
                         bundle_id: data.bundle_id,
@@ -63,12 +57,65 @@ export default function LineDetail() {
                     }
                 });
             }
+        } catch (err) {
+            console.error(err);
+            alert("Server error");
+        }
+
+        return;
+    }
+
+    // =========================
+    // 👉 ROVING QC LOGIC
+    // =========================
+    if (id === "rowing-qc") {
+        try {
+            const res = await fetch(
+                `https://hfapi.herofashion.com/qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`
+            );
+            const data = await res.json();
+
+            // 👉 New entry
+            if (!data.bundle_id) {
+                navigate(`/qc-admin/qc-entry/${unit}/${line}/roving-qc`);
+                return;
+            }
+
+            // 👉 Completed
+            if (data.is_completed) {
+                navigate(`/qc-admin/qc-entry/${unit}/${line}/roving-qc`, {
+                    state: { bundle_id: data.bundle_id }
+                });
+            }
+            // 👉 Incomplete → DIFFERENT PAGE
+            else {
+                navigate(`/qc-admin/rowing_defects/${unit}/${line}`, {
+                    state: {
+                        bundle_id: data.bundle_id,
+                        bundleNo: data.bundle_no,
+                        jobNo: data.jobno,
+                        product: data.product,
+                        colour: data.color,
+                        size: data.size,
+                        pieces: data.total_pieces,
+                        inspected: data.piece_no,
+                        machineId: data.machine_id,
+            process: data.operation,
+            userId: data.user_id,
+            rovingMistakes: data.roving_mistakes,
+            operator: data.operator
+                    }
+                });
+            }
 
         } catch (err) {
             console.error(err);
             alert("Server error");
         }
-    };
+
+        return;
+    }
+};
 
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center p-8">

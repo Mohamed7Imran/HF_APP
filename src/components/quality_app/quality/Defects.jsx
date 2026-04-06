@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { api } from "../../../auth/auth";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { UserContext } from "../../../UserContext";
+// import { useEffect, useState, useContext } from "react";
 
 export default function DefectTabs() {
   const { unit, line } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const qc_type = "first_piece";
+  const { userId } = useContext(UserContext);
 
   const {
     bundleNo,
@@ -100,6 +103,10 @@ export default function DefectTabs() {
 
 const handleSavePiece = async () => {
   if (inspectedCount >= totalPieces) return;
+  if (!userId) {
+      alert("User not logged in! Cannot save piece.");
+      return;
+    }
 
   // Prepare defects array
   const defectsArray = Object.entries(counts).map(([id, count]) => {
@@ -139,6 +146,7 @@ const handleSavePiece = async () => {
     total_mistake: totalMistakes,
     mistake_percentage: mistakePercentage,
     defects: defectsArray,
+    userId,
   };
 
   try {
@@ -151,6 +159,10 @@ const handleSavePiece = async () => {
     alert("Failed to save piece ❌");
   }
 };
+
+useEffect(() => {
+  console.log("Current userId:", userId);
+}, [userId]);
 
   const handleFinalSubmit = async () => {
   try {
@@ -168,6 +180,7 @@ const handleSavePiece = async () => {
     total_pieces: totalPieces,
     checked_piece: inspectedCount,
     force_save: forceSave,
+    userId,
   });
 
     alert("Saved Successfully ✅");
@@ -210,6 +223,9 @@ const handleSavePiece = async () => {
           </div>
           <p className="text-blue-600 font-bold">
             Unit - {unit} / Line - {line}
+          </p>
+          <p className="text-sm text-gray-500">
+            User ID: {userId}
           </p>
         </div>
 

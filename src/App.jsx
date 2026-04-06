@@ -18,6 +18,10 @@ import FabricForm from "./components/syncfushion/fabric/Fabric";
 import Machine_Allocate from "./components/machine_allocate/main"
 import Home_1 from "./components/reports/main";
 import Ad_login from "./components/advance/auth/ad_login";
+import Sticker from "./components/Cutting/sticker production/App"
+import Bitcheck from "./components/Cutting/bit checking/App"
+import BitCheckingUI from "./components/Cutting/bit checking/BitcheckingPly";
+
 function App() {
 
   useEffect(() => {
@@ -158,13 +162,12 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/cutting-report/*"
           element={
             <ProtectedRoute>
               <ProtectedLayout>
-                <Home_1/>
+                <Home_1 />
               </ProtectedLayout>
             </ProtectedRoute>
           }
@@ -175,11 +178,12 @@ function App() {
           element={
             <ProtectedRoute>
               <ProtectedLayout>
-                <Ad_login/>
+                <Ad_login />
               </ProtectedLayout>
             </ProtectedRoute>
           }
         />
+        
 
       </Routes>
     </HashRouter>

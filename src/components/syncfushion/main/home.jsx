@@ -23,8 +23,9 @@ import Schedule from "../order/Schedule.tsx"
 import GanttChart from '../order/Gantt Chart/GanttChart.tsx';
 import OrderDetails from '../order/OrderDetails.tsx';
 import PivotTableExporting from '../order/pivot.tsx';
+import Ordloadbalan from '../order/ordloadbalan.tsx';
 import ForeignKeyColumn from '../order/SyncForignkey.tsx';
-import Pivot from '../order/pivot/Pivotview.tsx';
+import Pivot from '../order/pivot/Pivotview.tsx'; 
 import Adaptive from '../order/AdaptiveCardSync.tsx';
 import Kanban from '../order/Kanban/Kanban.jsx';
 // import Overview from "../order/chart.tsx"
@@ -61,6 +62,7 @@ function Home() {
         <Route path='/PivotTableExporting' element={<PivotTableExporting />} />
         <Route path='/forign' element={<ForeignKeyColumn />} />
         <Route path='/pivot' element={<Pivot />} />
+        <Route path='/ordloadbalan' element={<Ordloadbalan />} />
         <Route path='/adaptive' element={<Adaptive />} />
         <Route path='/kanban' element={<Kanban />} />
     </Routes>

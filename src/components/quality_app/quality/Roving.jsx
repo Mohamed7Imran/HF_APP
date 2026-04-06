@@ -22,38 +22,6 @@ export default function Roving() {
   const canContinue = jobNo && product && pieces;
 
 
-// const fillBundleData = async (bundle) => {
-//   if (!bundle) return;
-
-//   try {
-//     const response = await fetch(
-//       // `https://hfapi.herofashion.com/qcapp/get_bundle_data/?bundle_id=${bundle}`
-//       `http://127.0.0.1:8000/qcapp/get_bundle_data/?bundle_id=${bundle}`
-//     );
-
-//     const data = await response.json();
-
-//     if (!data || data.length === 0) {
-//       alert("Bundle Not Found");
-//       return;
-//     }
-
-//     const item = data[0];
-
-//     // Correct case-sensitive mapping
-//     setJobNo(item.JobNo || "");
-//     setProduct(item.TopBottom_des || "");
-//     setColour(item.comboclr || "");
-//     setSize(item.sizename || "");
-//     setPieces(item.pc || "");
-//     setBundleNo(item.Bdl || "");
-//     setBundleid(item.bundid || "");
-
-//   } catch (error) {
-//     console.error("API Error:", error);
-//     alert("Server error");
-//   }
-// };
 
 
 const fillBundleData = async (bundle) => {

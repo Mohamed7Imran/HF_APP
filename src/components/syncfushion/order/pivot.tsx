@@ -24,36 +24,34 @@ let pivotObj: PivotViewComponent;;
 
 const dataSourceSettings = {
   enableSorting: true,
-  columns: [{ name: 'buyer1' }, { name: 'insdatenew' }],
+  columns: [{ name: 'buyer' }],
   valueSortSettings: { headerDelimiter: ' - ' },
   values: [{ name: 'slno', caption: 'Units Sold' }, { name: 'merch' }],
-  rows: [{ name: 'jobno_oms', expandAll: true }, { name: 'mainimagepath' }],
-  formatSettings: [{ name: 'Amount', format: 'C0' }],
-  //expandAll: true,
+  rows: [{ name: 'jobno', expandAll: true }, { name: 'ordimg' }, { name: 'hex' }],
+  formatSettings: [],
+  expandAll: true,
   filters: [{ name: 'production_unit' }],
   showRowSubTotals: false 
 };
 
 function PivotTableExporting() {
-  React.useEffect(()=>
-  {
-    fetch('https://app.herofashion.com/order_panda/')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok ' + response.statusText);
-    }
-    return response.json();
-  })
-  .then(data => {
-    console.log('Fetched data:', data);
-    if (pivotObj) {
-      pivotObj.dataSourceSettings.dataSource = data;
-    }
-  })
-  .catch(error => {
-    console.error('There was a problem with the fetch operation:', error);
-  });
-  },[])
+  React.useEffect(
+    () => {
+      fetch('https://app.herofashion.com/ord_prn/').then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+      }).then(data => {
+        console.log('Fetched data:', data);
+        if (pivotObj) {
+          pivotObj.dataSourceSettings.dataSource = data;
+        }
+      }).catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+      });
+    }, []
+  )
 
   const toolbarOptions: ToolbarItems[] = [
     'New', 'Save', 'SaveAs', 'Rename', 'Remove', 'Load',
@@ -179,12 +177,12 @@ function PivotTableExporting() {
     if (cell.axis === 'row') {
       if (cell.level === 0 && cell.hasChild) {
         // Customize the first row header to display multiple field names from its raw data.        
-        ((currentCellElement as Element).querySelector('.e-cellvalue') as HTMLElement).innerHTML = `<div>${datasource[indexes[0]].jobno_oms}</div><div>${datasource[indexes[0]].Dy_R}</div><div>${datasource[indexes[0]].buyer}</div>`;
+        ((currentCellElement as Element).querySelector('.e-cellvalue') as HTMLElement).innerHTML = `<div>${datasource[indexes[0]].jobno}</div><div>${datasource[indexes[0]].clrcomb}</div><div>${datasource[indexes[0]].buyer}</div>`;
       }
       if (cell.valueSort) {
-        if (cell.valueSort.axis === 'mainimagepath') {
+        if (cell.valueSort.axis === 'ordimg') {
           let imgElement = createElement('img', {
-            className: 'e-custom-cell',
+            className: 'ecustom-cell',
             attrs: {
               'src': currentCellData.actualText || 'https://via.placeholder.com/50', // fallback
               'alt': 'No Img',
@@ -196,14 +194,17 @@ function PivotTableExporting() {
             (currentCellElement.firstElementChild.querySelector('.e-cellvalue') as HTMLElement).textContent = '';
             currentCellElement.firstElementChild.appendChild(imgElement);
           }
+        } else if (cell.valueSort.axis === 'hex') {
+          let color = (currentCellElement.querySelector('.e-cellvalue') as HTMLElement).textContent;
+          currentCellElement.style.background = color;
         }
       }
     } else if (cell.axis === 'value') {
       if (typeof currentCellData.value === 'number' && currentCellData.actualText === "slno" && !currentCellData.isGrandSum) {
         let imgElement = createElement('img', {
-          className: 'e-custom-cell',
+          className: 'ecustom-cell',
           attrs: {
-            'src': (datasource[indexes[0]].mainimagepath as string) || 'https://via.placeholder.com/50', // fallback
+            'src': (datasource[indexes[0]].ordimg as string) || 'https://via.placeholder.com/50', // fallback
             'alt': 'No Img',
             'width': '50',
             'height': '50'

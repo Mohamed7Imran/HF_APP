@@ -60,7 +60,7 @@ interface OrderData {
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string; Print: string; Others1: string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string; clr?: string; print_img?: string; Fab_R: string;
   ITS_R: string; Order_R: string; Dy_R: string; Sample_R: string; Week_R: string; FMonth_yr: string; Emb_R: string; Week_R1: string; year: string; wk: string;
-  prnmeaimg?: string; mpic?: string;
+  prnmeaimg?: string; mpic?: string;wk113:string;
   Others2: string; Others3: string; Others4: string; Others5: string; Others6: string; Others7: string,
 }
 
@@ -633,12 +633,17 @@ const HeroFashionGrid131: React.FC = () => {
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
       {/* <b>Week_R:</b> {highlightText(p.Week_R)}<br /> */}
+      
+       <b>Year-</b> {highlightText(p.wk)}<br />
       <b>Month-</b> {highlightText(p.FMonth_yr)}<br />
       <b>Week-</b> {highlightText(p.Week_R)}<br />
-      <b>Year-</b> {highlightText(p.wk)}<br />
-      {/* <b>ST:</b> {highlightText(p.styleno)}<br /> */}
-      <b>Uom-</b> {highlightText(p.uom)}<br />
       <b>abc-</b> {highlightText(p.abc)}<br />
+      <b></b> {highlightText(p.wk113)}<br />
+
+
+      {/* <b>ST:</b> {highlightText(p.styleno)}<br /> */}
+      
+      {/* <b>abc-</b> {highlightText(p.abc)}<br /> */}
 
     </div>
   );
@@ -1696,11 +1701,11 @@ const HeroFashionGrid131: React.FC = () => {
           <ColumnsDirective>
             <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="200" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="203" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
-            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="director_sample_order" headerText="dir" width="150" maxWidth="200" filterBarTemplate={multiSelectFilterTemplate} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="200" maxWidth="200" filterBarTemplate={multiSelectFilterTemplate} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" filter={{ operator: 'startsWith' }} maxWidth="100" customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="finaldelvdate" type="date" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} />

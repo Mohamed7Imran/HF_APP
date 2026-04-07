@@ -29,6 +29,7 @@ import ForeignKeyColumn from '../order/SyncForignkey.tsx';
 import Pivot from '../order/pivot/Pivotview.tsx'; 
 import Adaptive from '../order/AdaptiveCardSync.tsx';
 import Kanban from '../order/Kanban/Kanban.jsx';
+import Quary from '../order/sync_quarybuilder.tsx';
 // import Overview from "../order/chart.tsx"
 
 function Home() {
@@ -67,6 +68,7 @@ function Home() {
         <Route path='/ordloadbalan' element={<Ordloadbalan />} />
         <Route path='/adaptive' element={<Adaptive />} />
         <Route path='/kanban' element={<Kanban />} />
+        <Route path='/quary' element={<Quary />} />
     </Routes>
   );
 }

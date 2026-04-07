@@ -16,6 +16,8 @@ import Visuva from "./components/syncfushion/order/ord_pagination";
 import GreyRollChecking from "./components/GreyrollChecking/main/App";
 import FabricForm from "./components/syncfushion/fabric/Fabric";
 import Machine_Allocate from "./components/machine_allocate/main"
+import Home_1 from "./components/reports/main";
+import Ad_login from "./components/advance/auth/ad_login";
 import Sticker from "./components/Cutting/sticker production/App"
 import Bitcheck from "./components/Cutting/bit checking/App"
 import BitCheckingUI from "./components/Cutting/bit checking/BitcheckingPly";
@@ -160,9 +162,29 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
-          path="/stick-prod/*"
+          path="/cutting-report/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Home_1 />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+
+         <Route
+          path="/advance/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Ad_login />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+          <Route
+          path="/advance/*"
           element={
             <ProtectedRoute>
               <ProtectedLayout>
@@ -171,9 +193,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
-          path="/bit-checking/*"
+          path="/advance/*"
           element={
             <ProtectedRoute>
               <ProtectedLayout>
@@ -182,9 +203,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
-          path="/bitchecking_ply/*"
+          path="/advance/*"
           element={
             <ProtectedRoute>
               <ProtectedLayout>
@@ -193,6 +213,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        
         
 
       </Routes>

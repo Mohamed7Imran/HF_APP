@@ -39,7 +39,7 @@ import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent, UploaderComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect, CheckBoxSelection } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
-// import "../../../App.css";
+import "../../../App.css";
 // import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 import { DatePickerComponent, DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
 import { DateRangePicker } from '@syncfusion/ej2-calendars';
@@ -165,17 +165,20 @@ const HeroFashionGrid131: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true); setError(null);
-        const [orderResponse] = await Promise.all([
+        const [orderResponse, printResponse, qcResponse] = await Promise.all([
           fetch('https://app.herofashion.com/order_panda'),
           // fetch('https://app.herofashion.com/PrintRgb/'),
-          // fetch('https://app.herofashion.com/ord_prn/'),
-          // fetch('https://app.herofashion.com/get_quality_controllers/')
+          fetch('https://app.herofashion.com/ord_prn/'),
+          fetch('https://app.herofashion.com/get_quality_controllers/')
         ]);
-        if (!orderResponse.ok ) throw new Error("Failed to fetch data from APIs");
+        if (!orderResponse.ok || !printResponse.ok || !qcResponse.ok) throw new Error("Failed to fetch data from APIs");
 
         const orderData: OrderData[] = await orderResponse.json();
+        const printData: any[] = await printResponse.json();
+        const qcData: any[] = await qcResponse.json();
 
         const printMap: Record<string, any> = {};
+        printData.forEach(item => { if (item.jobno) printMap[item.jobno] = item; });
 
         const mergedData = orderData.map((order) => {
           const matchingPrintData = printMap[order.jobno_oms] || {};
@@ -251,6 +254,7 @@ const HeroFashionGrid131: React.FC = () => {
         setDataSource(gridData);
         setTotalCount(processedData.length);
         setShowingCount(processedData.length);
+        setQualityControllers(qcData.slice(0, 10));
       } catch (err: any) {
         console.error("Fetch error:", err); setError(err.message);
       } finally { setLoading(false); }
@@ -581,23 +585,12 @@ const HeroFashionGrid131: React.FC = () => {
 
   const orderSummaryTemplate = (p: OrderData) => {
     return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4', width: '90px' }}>
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
         <b>OR-</b> {highlightText(p.jobno_oms)}<br />
         <b>Buy-</b> {highlightText(p.buyer1)}<br />
         <b>Mer-</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ? p.merch.split("Murthy-h ")[1] : p.merch) : ""}<br />
         <b>Unit-</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
         <b>Qty-</b> {highlightText(p.quantity)}
-      </div>
-    );
-  }
-  const orderSummaryHeaderTemplate = (p: OrderData) => {
-    return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>OR</b><br/>
-        <b>Buy</b> <br/>
-        <b>Mer</b> <br/>
-        <b>Unit</b><br/>
-        <b>Qty</b><br/>
       </div>
     );
   }
@@ -863,7 +856,7 @@ const HeroFashionGrid131: React.FC = () => {
     if(initialRender)
     {
       initialRender=false;
-      // gridRef.current?.autoFitColumns();
+      gridRef.current?.autoFitColumns();
     }
     if (gridRef.current) {
       if (gridRef.current.searchSettings.key && gridRef.current.searchSettings.key.length > 0) {
@@ -1227,7 +1220,6 @@ const HeroFashionGrid131: React.FC = () => {
       case 'clearAll':
         gridRef.current.setProperties({
           filterSettings:{columns:{}},
-          sortSettings:{columns:[]},
           searchSettings:{key:""},
           query:new Query()
         },true)
@@ -1751,7 +1743,6 @@ const HeroFashionGrid131: React.FC = () => {
           enableVirtualization={true}
           allowSorting={true}
           allowFiltering={false}
-          resizeSettings={{ mode: 'Auto' }}
           allowMultiSorting={true}
           filterSettings={{ showFilterBarOperator: true, mode: 'Immediate' }}
           statelessTemplates={['directiveTemplates']}
@@ -1780,18 +1771,18 @@ const HeroFashionGrid131: React.FC = () => {
           load={load}
         >
           <ColumnsDirective>
-            <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerTemplate={orderSummaryHeaderTemplate} width="90" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="203" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
             <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            {/* <ColumnDirective field="director_sample_order" headerText="dir" width="200" maxWidth="200" filterBarTemplate={multiSelectFilterTemplate} customAttributes={{ class: 'editCss' }} /> */}
-            {/* <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" filter={{ operator: 'startsWith' }} maxWidth="100" customAttributes={{ class: 'editCss' }} /> */}
+            <ColumnDirective field="director_sample_order" headerText="dir" width="200" maxWidth="200" filterBarTemplate={multiSelectFilterTemplate} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" filter={{ operator: 'startsWith' }} maxWidth="100" customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
-            {/* <ColumnDirective field="finaldelvdate" type="date" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} /> */}
-            {/* <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150" template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }} /> */}
-            {/* <ColumnDirective
+            <ColumnDirective field="finaldelvdate" type="date" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} />
+            <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150" template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective
               field="finaldelvdate1"
               headerText="Final Delivery Date"
               width="120"
@@ -1799,36 +1790,37 @@ const HeroFashionGrid131: React.FC = () => {
               type="date"
               editTemplate={dateEditor}
               filterBarTemplate={dateRangeFilterTemplate}
-            /> */}
+            />
             <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
             {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
-            {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
+            <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
             <ColumnDirective field="merch" headerText="merch" width="90" template={genericHighlighter('merch')} />
             <ColumnDirective field="buyer1" headerText="buyer1" width="100" template={genericHighlighter('buyer1')} />
             <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} />
             <ColumnDirective field="u8" headerText="8 FAB" width="100" allowEditing={false} template={genericHighlighter('u8')} visible={false} />
-            <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
+            <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
             {/* <ColumnDirective field="production_type_inside_outside" headerText="pty,dir,com,ordfol" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="styleno" headerText="sty,stydes,qcon" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="All" headerText='Fdt,Odt,dt' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
-            {/* <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} /> */}
-            {/* <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }} /> */}
-            {/* <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} /> */}
+            <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
+            <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
-            {/* <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }} /> */}
-            {/* <ColumnDirective field="Fab_R" headerText="Fab_R" width="100" template={genericHighlighter('Fab_R')} /> */}
-            {/* <ColumnDirective field="Week_R1" headerText="Week_R1" width="100" template={genericHighlighter('Week_R1')} /> */}
+            <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Fab_R" headerText="Fab_R" width="100" template={genericHighlighter('Fab_R')} />
+            <ColumnDirective field="Week_R1" headerText="Week_R1" width="100" template={genericHighlighter('Week_R1')} />
             {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
             {/* <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="prdty" headerText="prdty" width="180" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="styleno" headerText="qualy" width="240" template={qualy} customAttributes={{ class: 'editCss' }}/>
           <ColumnDirective field="All"headerText='All ' width="200" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
-            {/* <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} /> */}
-            {/* <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} /> */}
+            <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
+            <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
             {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
             {/* <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} /> */}
             {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
@@ -1844,8 +1836,8 @@ const HeroFashionGrid131: React.FC = () => {
           <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
           <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
             {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
-            {/* <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} /> */}
-            {/* <ColumnDirective field="u14" headerText="46 EMPTY" width="100" template={genericHighlighter('u14')} /> */}
+            <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} />
+            <ColumnDirective field="u14" headerText="46 EMPTY" width="100" template={genericHighlighter('u14')} />
             {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
             {/* <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} /> */}
             {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} /> */}
@@ -1853,7 +1845,7 @@ const HeroFashionGrid131: React.FC = () => {
             {/* <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} /> */}
             {/* <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} /> */}
             {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
-            {/* <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} /> */}
+            <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
             {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
             {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} /> */}
             {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
@@ -1865,7 +1857,7 @@ const HeroFashionGrid131: React.FC = () => {
           <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="100" template={genericHighlighter('order_follow_up')} />
           <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
           <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')} /> */}
-            {/* <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" /> */}
+            <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
             <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
           </ColumnsDirective>
           <AggregatesDirective>

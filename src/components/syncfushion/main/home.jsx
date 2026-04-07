@@ -23,11 +23,13 @@ import Schedule from "../order/Schedule.tsx"
 import GanttChart from '../order/Gantt Chart/GanttChart.tsx';
 import OrderDetails from '../order/OrderDetails.tsx';
 import PivotTableExporting from '../order/pivot.tsx';
+import MasterDetail from '../order/masterdtls.tsx';
 import Ordloadbalan from '../order/ordloadbalan.tsx';
 import ForeignKeyColumn from '../order/SyncForignkey.tsx';
 import Pivot from '../order/pivot/Pivotview.tsx'; 
 import Adaptive from '../order/AdaptiveCardSync.tsx';
 import Kanban from '../order/Kanban/Kanban.jsx';
+import Quary from '../order/sync_quarybuilder.tsx';
 // import Overview from "../order/chart.tsx"
 
 function Home() {
@@ -48,7 +50,8 @@ function Home() {
         <Route path="/mulitquality" element={<MultiQuality/>} />
          <Route path="/Schedule" element={<Schedule />} /> 
          <Route path="/PRN" element={<PRN />} /> 
-         <Route path="/Excel" element={<Excel />} /> 
+         <Route path="/Excel" element={<Excel />} />
+         <Route path="/MasterDetail" element={<MasterDetail />} />
          <Route path="/PivotTableExporting" element={<PivotTableExporting />} /> 
          
          <Route path="/TemplateGallery" element={<TemplateGallery />} /> 
@@ -65,6 +68,7 @@ function Home() {
         <Route path='/ordloadbalan' element={<Ordloadbalan />} />
         <Route path='/adaptive' element={<Adaptive />} />
         <Route path='/kanban' element={<Kanban />} />
+        <Route path='/quary' element={<Quary />} />
     </Routes>
   );
 }

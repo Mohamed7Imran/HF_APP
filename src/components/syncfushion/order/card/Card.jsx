@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
   Typography, 
@@ -77,8 +76,6 @@ function FiveColumnDataTable() {
   const [embFilter, setEmbFilter] = useState('ALL');
   const [printFilter, setPrintFilter] = useState('ALL');
   
-  const navigate = useNavigate()
-
   const toNumber = (val) => {
     const n = Number(val);
     return isNaN(n) ? 0 : n;
@@ -241,7 +238,11 @@ function FiveColumnDataTable() {
   if (error) return <Box p={2}><Alert severity="error">{error}</Alert></Box>;
 
   return (
-    <Box>
+    <Box
+      sx={{
+        mt: { xs: 4.5, md: 0 } 
+      }}
+    >
       <Box 
         sx={{ 
           position: 'sticky', top: 0, zIndex: 10, bgcolor: 'background.paper',
@@ -255,7 +256,6 @@ function FiveColumnDataTable() {
             gap: 1,
             alignItems: 'center', 
           }}
-          display={{xs:''}}
         >
           <TextField
             size="small" label="Global Search" value={searchTerm}
@@ -267,7 +267,7 @@ function FiveColumnDataTable() {
             variant="outlined" size="small" 
             onClick={() => setShowFiltersMobile(!showFiltersMobile)}
             sx={{ 
-              gridColumn: 'span 4', height: '40px', minWidth: 0, fontSize: '0.7rem',
+              gridColumn: 'span 3', height: '40px', minWidth: 0, fontSize: '0.7rem',
               display: { xs: 'block', md: 'none' } 
             }}
           >
@@ -361,6 +361,7 @@ function FiveColumnDataTable() {
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="O">O </MenuItem>
               <MenuItem value="R">R</MenuItem>
+              <MenuItem value="N/A">N/A</MenuItem>
             </TextField>
 
           <TextField
@@ -378,6 +379,7 @@ function FiveColumnDataTable() {
               <MenuItem value="O">O </MenuItem>
               <MenuItem value="N">N </MenuItem>
               <MenuItem value="R">R</MenuItem>
+              <MenuItem value="N/A">N/A</MenuItem>
             </TextField>
 
           <TextField
@@ -394,6 +396,7 @@ function FiveColumnDataTable() {
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="N">N </MenuItem>
               <MenuItem value="R">R</MenuItem>
+              <MenuItem value="N/A">N/A</MenuItem>
             </TextField>
 
           <TextField
@@ -409,6 +412,7 @@ function FiveColumnDataTable() {
             >
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="R">R</MenuItem>
+              <MenuItem value="N/A">N/A</MenuItem>
             </TextField>
 
           <TextField
@@ -425,6 +429,7 @@ function FiveColumnDataTable() {
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="R">R</MenuItem>
               <MenuItem value="O">O</MenuItem>
+              <MenuItem value="N/A">N/A</MenuItem>
             </TextField>
             
           <TextField
@@ -442,6 +447,7 @@ function FiveColumnDataTable() {
               <MenuItem value="R">R</MenuItem>
               <MenuItem value="O">O</MenuItem>
               <MenuItem value="N">N</MenuItem>
+              <MenuItem value="N/A">N/A</MenuItem>
             </TextField>
 
           <TextField
@@ -458,6 +464,7 @@ function FiveColumnDataTable() {
               <MenuItem value="ALL">All</MenuItem>
               <MenuItem value="R">R</MenuItem>
               <MenuItem value="N">N</MenuItem>
+              <MenuItem value="N/A">N/A</MenuItem>
             </TextField>
 
             <TextField
@@ -491,6 +498,7 @@ function FiveColumnDataTable() {
             <MenuItem value="ALL">All</MenuItem>
             <MenuItem value="WITH">With</MenuItem>
             <MenuItem value="WITHOUT">W/O</MenuItem>
+            <MenuItem value="N/A">N/A</MenuItem>
           </TextField>
 
           <TextField
@@ -514,17 +522,6 @@ function FiveColumnDataTable() {
               ml: 0, '& .MuiFormControlLabel-label': { fontSize: {xs: '0.65rem', md: '1rem' }}
             }}
           />
-            <Button 
-              variant="contained" 
-              size="small"
-              onClick={() => navigate('/')}
-              sx={{ 
-                gridColumn: { xs: 'span 2', md: 'auto' }, 
-                height: '40px'
-              }}
-            >
-              Back
-            </Button>
         </Box>
       </Box>
 

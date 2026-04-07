@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { KanbanComponent, ColumnsDirective, ColumnDirective } from "@syncfusion/ej2-react-kanban";
-
+ 
 function App() {
     const [data, setData] = useState([]);
 
     useEffect(() => {
-        fetch("https://app.herofashion.com/diwasg/")   // 🔴 replace with your API
+        fetch("https://app.herofashion.com/diwasg/")  
         .then(res => res.json())
         .then(result => {
-            setData(result);   // ✅ set API data
+            setData(result);
         })
         .catch(err => console.log(err));
     }, []);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useContext } from "react";
 import { UserContext } from "../../../UserContext";
 import {
@@ -10,7 +10,6 @@ import {
   Resize,
   Filter,
   Group,
-  // GroupSettingsModel,
   Reorder,
   Search,
   VirtualScroll,
@@ -32,21 +31,20 @@ import {
   AggregateDirective,
   AggregatesDirective,
   PdfExport, DetailRow,
-  // ExcelExport,
-  // recordClick
+
 } from '@syncfusion/ej2-react-grids';
-import { TooltipComponent } from '@syncfusion/ej2-react-popups';
+import { ColumnsModel, QueryBuilderComponent } from '@syncfusion/ej2-react-querybuilder';
+import { TooltipComponent, DialogComponent } from '@syncfusion/ej2-react-popups';
 import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent, UploaderComponent } from '@syncfusion/ej2-react-inputs';
-import { DropDownListComponent, MultiSelect, CheckBoxSelection} from '@syncfusion/ej2-react-dropdowns';
+import { DropDownListComponent, MultiSelect, CheckBoxSelection } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import "../../../App.css";
 // import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 import { DatePickerComponent, DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
 import { DateRangePicker } from '@syncfusion/ej2-calendars';
-import { DataUtil } from '@syncfusion/ej2-data';
+import { DataUtil, DataManager, Query } from '@syncfusion/ej2-data';
 MultiSelect.Inject(CheckBoxSelection);
-registerLicense('Ngo9BigBOggjGyl/VkV+XU9AclRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3hTdUdlWX1feXZXQWVaVE91XA==');
 interface OrderData {
   slno1?: number; // Added SL No field
   jobno_oms: string; company_name: string; buyer1: string; stylename: string; uom: string;
@@ -70,6 +68,7 @@ const HeroFashionGrid131: React.FC = () => {
   const [showingCount, setShowingCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const [searchKey, setSearchKey] = useState<string>('');
   const customFilterRef = useRef<boolean>(false);
   const endDateRef = useRef<Date | null>(null);
@@ -92,21 +91,17 @@ const HeroFashionGrid131: React.FC = () => {
 
   const [selectedSetting, setSelectedSetting] = useState<string>('');
   const [qualityControllers, setQualityControllers] = useState<any[]>([]);
+  const [showQueryBuilderDialog, setShowQueryBuilderDialog] = useState<boolean>(false);
+  const [tempPredicate, setTempPredicate] = useState<any>(null);
 
   const settingNameRef = useRef<TextBoxComponent>(null);
   const dropdownRef = useRef<DropDownListComponent>(null);
   const tooltipRef = useRef<TooltipComponent>(null);
-  const previousCellRef = useRef<HTMLElement | null>(null);
   const gridRef = useRef<GridComponent>(null);
-  const searchTimeout = useRef<any>(null);
+  const qryBldrObj = useRef<QueryBuilderComponent>(null);
+  const dialogRef = useRef<DialogComponent>(null);
 
-  // const searchableFields = [
-  //   'jobno_oms', 'company_name', 'buyer1', 'stylename', 'merch',
-  //   'punit_sh', 'styleno', 'quantity', 'director_sample_order',
-  //   'printing_R', 'Emb', 'abc', 'u46', 'uom', 'final_delivery_date',
-  //   'production_type_inside_outside', 'prnclr'
-  // ];
-  const searchableFields = [
+  const searchableFields = useMemo(() => [
     'slno1', 'jobno_oms', 'company_name', 'buyer1', 'stylename', 'uom',
     'final_delivery_date', 'merch', 'punit_sh', 'styleno',
     'production_type_inside_outside', 'quantity', 'director_sample_order',
@@ -120,7 +115,15 @@ const HeroFashionGrid131: React.FC = () => {
     'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img', 'FMonth_yr', 'wk',
     'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R', 'year',
     'prnmeaimg', 'mpic', 'Others2', 'Others3', 'Others4', 'Others5', 'Others6', 'Others7'
-  ];
+  ], []);
+
+  // Memoized search settings for better performance
+  const searchSettings = useMemo(() => ({
+    fields: searchableFields,
+    operator: 'contains' as any,
+    ignoreCase: true
+  }), [searchableFields]);
+
   //  const groupOptions = {
   //     columns: ["abc"], // Group by "Category" column
   //     showDropArea: true,
@@ -394,44 +397,117 @@ const HeroFashionGrid131: React.FC = () => {
     }
   };
 
-  // --- Search & Highlight Logic ---
-    const highlightText = (text: any) => {
-      // Handle null/undefined
-      if (text === undefined || text === null) return text;
-      
-      // Convert Date objects to readable string format
-      let stringText: string;
-      if (text instanceof Date) {
-        // Format date as dd/MM/yyyy
-        const day = String(text.getDate()).padStart(2, '0');
-        const month = String(text.getMonth() + 1).padStart(2, '0');
-        const year = text.getFullYear();
-        stringText = `${day}/${month}/${year}`;
-      } else {
-        stringText = String(text);
-      }
-      
-      // If no search key, return the formatted string
-      if (!searchKey) return stringText;
-      
-      // Apply highlighting
-      const escapedKey = searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const parts = stringText.split(new RegExp(`(${escapedKey})`, 'gi'));
-      return (
-        <span>
-          {parts.map((part, i) =>
-            part.toLowerCase() === searchKey.toLowerCase() ?
-              <span key={i} className="custom-highlight">{part}</span> : part
-          )}
-        </span>
-      );
-    };
+  // --- QueryBuilder Configuration (Memoized for performance) ---
+  const queryBuilderColumns: ColumnsModel[] = useMemo(() => [
+    { field: 'jobno_oms', label: 'Job No', type: 'string' },
+    { field: 'company_name', label: 'Company', type: 'string' },
+    { field: 'buyer1', label: 'Buyer', type: 'string' },
+    { field: 'stylename', label: 'Style Name', type: 'string' },
+    { field: 'styleno', label: 'Style No', type: 'string' },
+    { field: 'quantity', label: 'Quantity', type: 'number' },
+    { field: 'director_sample_order', label: 'Director Sample/Order', type: 'string' },
+    { field: 'production_type_inside_outside', label: 'Production Type', type: 'string' },
+    { field: 'merch', label: 'Merch', type: 'string' },
+    { field: 'punit_sh', label: 'Unit', type: 'string' },
+    { field: 'finaldelvdate1', label: 'Final Delivery Date', type: 'date', format: 'dd/MM/yyyy' },
+    { field: 'Fdt', label: 'Fdt', type: 'string' },
+    { field: 'printing_R', label: 'Printing', type: 'string' },
+    { field: 'Emb_R', label: 'Embroidery', type: 'string' },
+    { field: 'Fab_R', label: 'Fabric', type: 'string' },
+    { field: 'ITS_R', label: 'ITS', type: 'string' },
+    { field: 'Order_R', label: 'Order', type: 'string' },
+    { field: 'quality_controller', label: 'Quality Controller', type: 'string' },
+    { field: 'uom', label: 'UOM', type: 'string' },
+    { field: 'abc', label: 'ABC', type: 'string' }
+  ], []);
 
-  const created = () => {
+  const updateResult = useCallback((args: any) => {
+    if (!qryBldrObj.current) return;
+
+    try {
+      // Get the predicate from QueryBuilder and store it temporarily
+      const predicate = qryBldrObj.current.getPredicate(args.rule);
+      setTempPredicate(predicate);
+    } catch (error) {
+      console.error('Error building predicate:', error);
+      setTempPredicate(null);
+    }
+  }, []);
+
+  const applyQueryToGrid = useCallback(() => {
+    try {
+      if (tempPredicate && dataSource.length > 0) {
+        // Filter the data using the predicate with Syncfusion DataManager
+        const dataManager = new DataManager(dataSource as any);
+        const query = new Query().where(tempPredicate);
+        const filteredRecords = dataManager.executeLocal(query);
+
+        // Update grid with filtered data
+        if (gridRef.current) {
+          gridRef.current.query = query;
+          setShowingCount(filteredRecords.length);
+        }
+      } else {
+        if (gridRef.current) {
+          const query = new Query();
+          const dataManager = new DataManager(dataSource as any);
+          const filteredRecords = dataManager.executeLocal(query);
+          gridRef.current.query = query;
+          setShowingCount(filteredRecords.length);
+        }
+      }
+      // Close dialog after applying
+      setShowQueryBuilderDialog(false);
+    } catch (error) {
+      console.error('Error filtering data:', error);
+      if (gridRef.current) {
+        gridRef.current.query = new Query();
+      }
+    }
+  }, [tempPredicate, dataSource]);
+
+  const toggleQueryBuilder = useCallback(() => {
+    setShowQueryBuilderDialog((prevState) => !prevState);
+  }, []);
+
+  // --- Search & Highlight Logic ---
+  const highlightText = (text: any) => {
+    // Handle null/undefined
+    if (text === undefined || text === null) return text;
+
+    // Convert Date objects to readable string format
+    let stringText: string;
+    if (text instanceof Date) {
+      // Format date as dd/MM/yyyy
+      const day = String(text.getDate()).padStart(2, '0');
+      const month = String(text.getMonth() + 1).padStart(2, '0');
+      const year = text.getFullYear();
+      stringText = `${day}/${month}/${year}`;
+    } else {
+      stringText = String(text);
+    }
+
+    // If no search key, return the formatted string
+    if (!searchKey) return stringText;
+
+    // Apply highlighting
+    const escapedKey = searchKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const parts = stringText.split(new RegExp(`(${escapedKey})`, 'gi'));
+    return (
+      <span>
+        {parts.map((part, i) =>
+          part.toLowerCase() === searchKey.toLowerCase() ?
+            <span key={i} className="custom-highlight">{part}</span> : part
+        )}
+      </span>
+    );
+  };
+
+  const created = useCallback(() => {
     document.getElementById(gridRef.current?.element.id + "_searchbar")?.addEventListener('keyup', (event: any) => {
       gridRef.current?.search(event.target?.value);
     });
-  };
+  }, []);
 
   const genericHighlighter = (field: keyof OrderData) => (props: OrderData) => (
     <>{highlightText(props[field])}</>
@@ -445,7 +521,7 @@ const HeroFashionGrid131: React.FC = () => {
 
   let serverUpdated = false;
   let newPrimaryKey: number | null = null;
-  const actionBegin = (args: AddEventArgs | SaveEventArgs | EditEventArgs | DeleteEventArgs | ActionEventArgs) => {
+  const actionBegin = useCallback((args: AddEventArgs | SaveEventArgs | EditEventArgs | DeleteEventArgs | ActionEventArgs) => {
     const ajax = new Ajax({
       onSuccess: function (response: string) {
         serverUpdated = true;
@@ -456,40 +532,6 @@ const HeroFashionGrid131: React.FC = () => {
         gridRef.current?.closeEdit();
       },
     });
-    // if (gridRef.current && args.requestType === 'beginEdit') {
-    //   const cols: any = gridRef.current?.columns;
-    //   for (const col of cols) {
-    //     if (col.field === "jobno_oms" || col.field === "Print" || col.field === "print_img" || col.field === "prnclr" || col.field === "merch" || col.field === "buyer1"
-    //       || col.field === "punit_sh" || col.field === "punit_sh" || col.field === "styleno" || col.field === "director_sample_order" || col.field === "director_sample_order" ||
-    //       col.field === "abc" || col.field === "order_follow_up" || col.field === "styledesc" || col.field === "company_name" || col.field === "quantity" || col.field === "production_type_inside_outside"
-    //       || col.field === "prnmeaimg" || col.field === "All" || col.field === "fsn" || col.field === "prdty" || col.field === "Others1" || col.field === "Others7" || col.field === "n" || col.field === "slno1" || col.field === "actdaten" || col.field === "u46" || col.field === "date" || col.field === "ourdelvdate" || col.field === "finaldelvdate1" || col.field === "Others2" || col.field === "Others3" || col.field === "Others4" || col.field === "Others5" || col.field === "Others6" || col.field === "Fdt"
-    //     ) {
-    //       col.visible = false;
-    //     }
-    //   }
-    // }
-
-    // if (gridRef.current && args.requestType === 'add') {
-    //     const cols: any = gridRef.current?.columns;
-    //     for (const col of cols) {
-    //         if (col.field === "jobno_oms" || col.field === "mainimagepath") {
-    //             col.visible = true;
-    //         }
-    //     }
-    // }
-    // if (gridRef.current && (args.requestType === 'save' || args.requestType === 'cancel')) {
-    //   const cols: any = gridRef.current?.columns;
-    //   for (const col of cols) {
-    //     if (col.field === "jobno_oms" || col.field === "Print" || col.field === "print_img" || col.field === "prnclr" || col.field === "merch" || col.field === "buyer1"
-    //       || col.field === "punit_sh" || col.field === "punit_sh" || col.field === "styleno" || col.field === "director_sample_order" || col.field === "director_sample_order" ||
-    //       col.field === "abc" || col.field === "order_follow_up" || col.field === "styledesc" || col.field === "company_name" || col.field === "quantity" || col.field === "production_type_inside_outside"
-    //       || col.field === "prnmeaimg" || col.field === "All" || col.field === "fsn" || col.field === "prdty" || col.field === "Others1" || col.field === "Others7" || col.field === "n" || col.field === "slno1" || col.field === "actdaten" || col.field === "u46" || col.field === "date" || col.field === "ourdelvdate" || col.field === "finaldelvdate1" || col.field === "Others2" || col.field === "Others3" || col.field === "Others4" || col.field === "Others5" || col.field === "Others6" || col.field === "Fdt"
-    //     ) {
-    //       col.visible = true;
-    //     }
-
-    //   }
-    // }
     if (args.requestType === 'save') {
       if ((args as any).action === 'edit') {
         console.log(args)
@@ -523,9 +565,9 @@ const HeroFashionGrid131: React.FC = () => {
         value: endDateRef.current,
       });
     }
-  };
+  }, []);
 
-  const actionComplete = (args: AddEventArgs | SaveEventArgs | EditEventArgs | DeleteEventArgs | ActionEventArgs) => {
+  const actionComplete = useCallback((args: AddEventArgs | SaveEventArgs | EditEventArgs | DeleteEventArgs | ActionEventArgs) => {
     if (args.requestType === 'beginEdit') {
       // buyerIdVal = args.rowData['buyerid_id'];
     }
@@ -534,7 +576,12 @@ const HeroFashionGrid131: React.FC = () => {
       serverUpdated = false;
       newPrimaryKey = null;
     }
-  };
+    if(args.requestType==='searching')
+    {
+      const records = gridRef.current?.getFilteredRecords();
+      setShowingCount(records ? (records as object[]).length : 0);
+    }
+  }, []);
 
   const orderSummaryTemplate = (p: OrderData) => {
     return (
@@ -618,7 +665,6 @@ const HeroFashionGrid131: React.FC = () => {
     </div>
   );
 
-
   const deliveryInfoTemplate = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br />
@@ -633,8 +679,8 @@ const HeroFashionGrid131: React.FC = () => {
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
       {/* <b>Week_R:</b> {highlightText(p.Week_R)}<br /> */}
-      <b>Week-</b> {highlightText(p.Week_R)}<br />
       <b>Month-</b> {highlightText(p.FMonth_yr)}<br />
+      <b>Week-</b> {highlightText(p.Week_R)}<br />
       <b>Year-</b> {highlightText(p.wk)}<br />
       {/* <b>ST:</b> {highlightText(p.styleno)}<br /> */}
       <b>Uom-</b> {highlightText(p.uom)}<br />
@@ -681,7 +727,9 @@ const HeroFashionGrid131: React.FC = () => {
     'Update',
     'Cancel',
     { type: 'Separator' },
-    // { text: '', prefixIcon: 'sf-icon-expand-collapse', id: 'expand_icon', tooltipText: 'Expand/Collapse' },
+    { text: '', prefixIcon: 'e-filter', id: 'query_builder_toggle', tooltipText: 'Toggle Query Builder' },
+    { text: 'FilterToggle', id: 'filterToggle', tooltipText: 'filterToggle' },
+    { text: 'Clear All', id: 'clearAll', tooltipText: 'Clear All' },
     { text: '', prefixIcon: 'sf-icon-clear-sorting', id: 'clearsorting_icon', tooltipText: 'Clear Sorting' },
     { text: '', prefixIcon: 'e-filter-clear icon', id: 'clearfilter_icon', tooltipText: 'Clear Filtering' },
     { type: 'Separator' },
@@ -792,7 +840,7 @@ const HeroFashionGrid131: React.FC = () => {
     try {
       return String(val);
     } catch {
-      return "–";
+      return "-";
     }
   };
 
@@ -802,20 +850,22 @@ const HeroFashionGrid131: React.FC = () => {
     CSS.highlights.delete('search');
 
   };
-
-  const dataBound = () => {
+  let initialRender=true;
+  const dataBound= useCallback((args: any) => {
+    console.log('dataBound')
+    if(initialRender)
+    {
+      initialRender=false;
+      gridRef.current?.autoFitColumns();
+    }
     if (gridRef.current) {
-      const records = gridRef.current.getFilteredRecords();
-      gridRef.current.autoFitColumns();
-      setShowingCount(records ? (records as object[]).length : 0);
       if (gridRef.current.searchSettings.key && gridRef.current.searchSettings.key.length > 0) {
         searchHighlightText(gridRef.current?.searchSettings?.key, gridRef.current?.element);
       }
     }
-  };
+},[]);
   // Dialog Form Component
   const DialogFormTemplate = (props: OrderData) => {
-    console.log(props)
     const jobnoRef = React.useRef<HTMLInputElement>(null);
     const buyerRef = React.useRef<HTMLInputElement>(null);
     const uploaderRef = React.useRef<UploaderComponent>(null);
@@ -890,146 +940,157 @@ const HeroFashionGrid131: React.FC = () => {
             </div>
           )}
         </div>
-        
-      
-   
+
+
+
         {/* Row 1 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-      
-          
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>Emb_R</label>
-              <input id="Emb_R" name="Emb_R" type="text" value={data.Emb_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
-          
-
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
-              <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
-
-          
-        </div>
-      
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u8</label>
-              <input id="Fab_R" name="Fab_R" type="text" value={data.Fab_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
 
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u14</label>
-              <input id="u14" name="u14" type="text" value={data.u14 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>Emb_R</label>
+            <input id="Emb_R" name="Emb_R" type="text" value={data.Emb_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
 
-          
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
+            <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+
         </div>
 
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
- 
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u8</label>
+            <input id="Fab_R" name="Fab_R" type="text" value={data.Fab_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u14</label>
+            <input id="u14" name="u14" type="text" value={data.u14 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+
+        </div>
+
+
+
         {/* Row 1 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-      
-
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u25</label>
-              <input id="Week_R1" name="Week_R1" type="text" value={data.Week_R1 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
 
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
-              <input id="u31" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u25</label>
+            <input id="Week_R1" name="Week_R1" type="text" value={data.Week_R1 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
+            <input id="u31" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
 
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-      
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
-              <input id="u36" name="u36" type="text" value={data.u36 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
-              <input id="ITS_R" name="ITS_R" type="text" value={data.ITS_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+            <input id="u36" name="u36" type="text" value={data.u36 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
 
-          
-        </div>
-       
-         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
-              <input id="Order_R" name="Order_R" type="text" value={data.Order_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+            <input id="ITS_R" name="ITS_R" type="text" value={data.ITS_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
-              <input id="u46" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
 
         </div>
-         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
-              <input id="u141" name="u141" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>141</label>
-              <input id="Sample_R" name="u31" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
 
-          
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+            <input id="Order_R" name="Order_R" type="text" value={data.Order_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
+            <input id="u46" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+            <input id="u141" name="u141" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>141</label>
+            <input id="Sample_R" name="u31" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+
         </div>
 
 
-         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-     
-            <div>
-              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
-              <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
-      </div>
+
+          <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
+            <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
+
+        </div>
 
         {/* Row 2 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
+          {isFieldInGrid('quantity') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>quantity</label>
               <input id="quantity" name="quantity" type="text" value={data.quantity || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-
+          )}
+          {isFieldInGrid('u45') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
               <input id="u45" name="u45" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
+          )}
 
+          {isFieldInGrid('u46') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
               <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-
+          )}
         </div>
 
         {/* Row 3 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
+          {isFieldInGrid('u141') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u141</label>
               <input id="u141" name="u141" type="text" value={data.u141 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-
+          )}
         </div>
 
+        {/* Row 4 - Full width image uploader */}
         {isFieldInGrid('mainimagepath') && (
           <div style={{ textAlign: 'center', paddingTop: '15px', borderTop: '1px solid #eee' }}>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '15px', fontWeight: 'bold' }}>mainimagepath</label>
@@ -1069,8 +1130,8 @@ const HeroFashionGrid131: React.FC = () => {
   };
 
   // Dialog Template Wrapper
-  const dialogTemplate = (props: OrderData) => <DialogFormTemplate {...props} />;
-  const toolbarClick = (args: any) => {
+  const dialogTemplate = useCallback((props: OrderData) => <DialogFormTemplate {...props} />, []);
+  const toolbarClick = useCallback((args: any) => {
     if (!gridRef.current) return;
 
     const itemId = args.item?.id;
@@ -1079,6 +1140,10 @@ const HeroFashionGrid131: React.FC = () => {
       case 'add_icon':
         console.log('Add Records clicked');
         gridRef.current.addRecord();
+        break;
+
+      case 'query_builder_toggle':
+        toggleQueryBuilder();
         break;
 
       case 'pagination_grid': {
@@ -1146,12 +1211,27 @@ const HeroFashionGrid131: React.FC = () => {
         console.log('Export PDF clicked');
         gridRef.current.pdfExport();
         break;
-
+      case 'filterToggle':
+        gridRef.current.setProperties({
+          allowFiltering:!gridRef.current.allowFiltering
+        },true)
+        gridRef.current.freezeRefresh();
+        break;
+      case 'clearAll':
+        gridRef.current.setProperties({
+          filterSettings:{columns:{}},
+          searchSettings:{key:""},
+          query:new Query()
+        },true)
+        gridRef.current.freezeRefresh();
+        qryBldrObj.current?.reset();
+        setShowingCount(0);
+        break;
       default:
         console.log('Toolbar item clicked:', itemId);
         break;
     }
-  };
+  },[]);
 
   const rollnoTemplate = (props: any) => {
     let rollno = props.index
@@ -1529,7 +1609,7 @@ const HeroFashionGrid131: React.FC = () => {
     }
   }
 
-  const load = (args: any) => {
+  const load = useCallback((args:any) => {
     args.enableSeamlessScrolling = true;
     const gridContainer = document.querySelector('.grid-container') as HTMLElement | null;
     if (!gridContainer) return;
@@ -1537,8 +1617,8 @@ const HeroFashionGrid131: React.FC = () => {
     const topPosition = rect?.top ?? 0;
     const calculatedHeight = window.innerHeight - topPosition - 10; // 10px buffer
     gridContainer.style.height = `${calculatedHeight}px`;
+  },[])
 
-  }
   const dateEditor = (props: any) => {
     return (
       <div>
@@ -1582,34 +1662,32 @@ const HeroFashionGrid131: React.FC = () => {
     }
   };
 
-    const multiSelectFilterTemplate = {
-    create: (args:any) => {
+  const multiSelectFilterTemplate = {
+    create: (args: any) => {
       console.log(args)
       const elem = document.createElement('input');
       elem.setAttribute('id', 'directorMultiSelect');
       return elem;
     },
-    read:(args:any)=>
-    {
+    read: (args: any) => {
 
     },
     write: (args: any) => {
 
-      let multiSelectData:any=DataUtil.distinct(dataSource,'director_sample_order')
+      let multiSelectData: any = DataUtil.distinct(dataSource, 'director_sample_order')
       const multiSelectObj = new MultiSelect({
         dataSource: multiSelectData,
-        allowFiltering:false,
-        fields:{text:'director_sample_order',value:'director_sample_order'},
+        allowFiltering: false,
+        fields: { text: 'director_sample_order', value: 'director_sample_order' },
         // set the type of mode for checkbox to visualized the checkbox added in li element.
         mode: 'CheckBox',
-        change:(e:any)=>
-        {
-            gridRef.current?.clearFiltering(['director_sample_order']);
+        change: (e: any) => {
+          gridRef.current?.clearFiltering(['director_sample_order']);
 
-            gridRef.current?.filterByColumn('director_sample_order','equal',e.value)
+          gridRef.current?.filterByColumn('director_sample_order', 'equal', e.value)
         }
 
-        
+
       });
       multiSelectObj.appendTo('#directorMultiSelect');
     }
@@ -1624,6 +1702,27 @@ const HeroFashionGrid131: React.FC = () => {
       args.element.style.width = 'auto';
     }
   };
+  const editSettings = useMemo(() =>
+  (
+    {
+      allowDeleting: true,
+      allowEditing: true,
+      allowEditOnDblClick: false,
+      allowAdding: true,
+      mode: "Dialog",
+      template: dialogTemplate
+    }
+  ),[])
+
+  const sortSettings = useMemo(() => ({
+    columns: [
+      { field: 'director_sample_order', direction: 'Descending' as any },
+      { field: 'Fdt', direction: 'Ascending' as any }
+    ]
+  }), []);
+  const pageSettings=useMemo(()=>(
+    { pageSize: 20 }
+  ),[])
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
     <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
@@ -1638,11 +1737,10 @@ const HeroFashionGrid131: React.FC = () => {
           ref={gridRef}
           dataSource={dataSource}
           dataBound={dataBound}
-          pageSettings={{ pageSize: 15 }}
+          pageSettings={pageSettings}
           height="100%"
           rowHeight={100}
           enableVirtualization={true}
-          // allowPaging={true}
           allowSorting={true}
           allowFiltering={true}
           allowMultiSorting={true}
@@ -1659,18 +1757,11 @@ const HeroFashionGrid131: React.FC = () => {
           allowTextWrap={true}
           textWrapSettings={{ wrapMode: 'Both' }}
           autoFit={true}
-          sortSettings={{ columns: [{ field: 'director_sample_order', direction: 'Descending' }, { field: 'Fdt', direction: 'Ascending' }] }}
+          sortSettings={sortSettings}
           gridLines="Both"
-          searchSettings={{ fields: searchableFields, operator: 'contains', ignoreCase: true }}
+          searchSettings={searchSettings}
           toolbar={toolbarOptions}
-          editSettings={{
-            allowDeleting: true,
-            allowEditing: true,
-            allowEditOnDblClick: false,
-            allowAdding: true,
-            mode: "Dialog",
-            template: dialogTemplate
-          }}
+          editSettings={editSettings}
           actionBegin={actionBegin}
           actionComplete={actionComplete}
           created={created}
@@ -1682,11 +1773,11 @@ const HeroFashionGrid131: React.FC = () => {
           <ColumnsDirective>
             <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="200" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="203" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
-            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cu" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="director_sample_order" headerText="dir" width="150" maxWidth="200" filterBarTemplate={multiSelectFilterTemplate} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="200" maxWidth="200" filterBarTemplate={multiSelectFilterTemplate} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" filter={{ operator: 'startsWith' }} maxWidth="100" customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="finaldelvdate" type="date" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} />
@@ -2028,6 +2119,46 @@ const HeroFashionGrid131: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Query Builder Dialog */}
+      <DialogComponent
+        ref={dialogRef}
+        header="Query Builder"
+        visible={showQueryBuilderDialog}
+        showCloseIcon={true}
+        width="80%"
+        height="auto"
+        isModal={true}
+        target="body"
+        close={() => setShowQueryBuilderDialog(false)}
+        buttons={[
+          {
+            click: applyQueryToGrid,
+            buttonModel: {
+              content: 'OK',
+              cssClass: 'e-primary',
+              isPrimary: true
+            }
+          },
+          {
+            click: () => setShowQueryBuilderDialog(false),
+            buttonModel: {
+              content: 'Cancel',
+              cssClass: 'e-flat'
+            }
+          }
+        ]}
+      >
+        <div style={{ padding: '20px' }}>
+          <QueryBuilderComponent
+            ref={qryBldrObj}
+            columns={queryBuilderColumns}
+            ruleChange={updateResult}
+            dataSource={dataSource}
+            width="100%"
+          />
+        </div>
+      </DialogComponent>
 
       {/* Grid Container */}
       <div style={{ flex: 1, overflow: 'auto' }}>

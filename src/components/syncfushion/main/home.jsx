@@ -31,6 +31,7 @@ import Adaptive from '../order/AdaptiveCardSync.tsx';
 import Kanban from '../order/Kanban/Kanban.jsx';
 import Quary from '../order/sync_quarybuilder.tsx';
 // import Overview from "../order/chart.tsx"
+import Form from "../order/Form/Form.tsx";
 
 function Home() {
   return (
@@ -69,6 +70,7 @@ function Home() {
         <Route path='/adaptive' element={<Adaptive />} />
         <Route path='/kanban' element={<Kanban />} />
         <Route path='/quary' element={<Quary />} />
+        <Route path='/form' element={<Form />} />
     </Routes>
   );
 }

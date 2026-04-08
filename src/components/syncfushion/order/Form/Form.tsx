@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as React from "react";
+
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
 import { FormValidator } from '@syncfusion/ej2-inputs';
 import { TextBoxComponent } from '@syncfusion/ej2-react-inputs';
@@ -13,9 +14,7 @@ import {
   Inject,
   Page,
   Sort,
-  Filter,
-  Toolbar,
-  Edit
+  Filter
 } from '@syncfusion/ej2-react-grids';
 
 import './style.css';
@@ -23,27 +22,27 @@ import './style.css';
 let formObject: FormValidator;
 
 function Form() {
-  const buyerRef = useRef<any>(null);
-  const [dateOfBirth, setDateOfBirth] = useState<any>(null);
 
-  // API data
+  const buyerRef = useRef<any>(null);
+
   const [buyerData, setBuyerData] = useState<any[]>([]);
   const [gridData, setGridData] = useState<any[]>([]);
-  const [orderno, setOrderno] = useState('');
 
-  // selected buyer
+  const [orderno, setOrderno] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState<any>(null);
+
   const [selectedBuyer, setSelectedBuyer] = useState<any>({
     buyerid: '',
     buyername: ''
   });
 
-  // ================= API LOAD =================
+  // ================= LOAD API =================
   useEffect(() => {
     fetch("https://app.herofashion.com/web_socket/")
       .then((res) => res.json())
       .then((data) => {
         setBuyerData(data);
-        setGridData(data); // load grid initially
+        setGridData(data);
       })
       .catch((err) => console.error(err));
   }, []);
@@ -56,22 +55,18 @@ function Form() {
           required: [true, '* Please select buyer id'],
         },
         orderno: {
-          required: [true, '* Please enter order number'],
+          required: [true, '* Please enter order no'],
         },
         date: {
           required: [true, '* Please select date'],
-        },
-      },
+        }
+      }
     };
 
     formObject = new FormValidator('#form1', options);
   }, []);
 
-  // ================= HANDLERS =================
-  const dateChangeHandler = (event: any) => {
-    setDateOfBirth(event.value);
-  };
-
+  // ================= BUYER SELECT =================
   const onBuyerSelect = (e: any) => {
     const item = e.itemData;
 
@@ -83,139 +78,175 @@ function Form() {
     }
   };
 
-  const onSubmit = () => {
+  // ================= DATE CHANGE =================
+  const dateChangeHandler = (e: any) => {
+    setDateOfBirth(e.value);
+  };
+
+  // ================= SUBMIT =================
+  const onSubmit = async () => {
+
     if (formObject.validate()) {
-      const newRecord = {
-        buyerid: selectedBuyer.buyerid,
-        buyername: selectedBuyer.buyername,
-        orderno: orderno,
-        date: dateOfBirth
-          ? new Date(dateOfBirth).toLocaleDateString()
-          : '',
-        refresh: 'Pending'
+
+      const payload = {
+        planno: Number(selectedBuyer.buyerid),
+        ordid: Number(orderno),
+        shipreqd: dateOfBirth
+          ? `${new Date(dateOfBirth).toISOString().split('T')[0]} 00:00:00.000`
+          : null
       };
 
-      setGridData([...gridData, newRecord]);
+      try {
 
-      // reset
-      (formObject as any).element.reset();
-      setDateOfBirth(null);
-      setOrderno('');
-      setSelectedBuyer({ buyerid: '', buyername: '' });
+        const response = await fetch(
+          "https://app.herofashion.com/order_ship_plan/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+          }
+        );
+
+        const result = await response.json();
+
+        console.log("Saved:", result);
+
+        // update grid
+        setGridData([
+          ...gridData,
+          {
+            buyerid: selectedBuyer.buyerid,
+            orderno: orderno,
+            date: payload.shipreqd,
+            refresh: "Saved"
+          }
+        ]);
+
+        alert("Saved Successfully!");
+
+        // Reset Form
+        (formObject as any).element.reset();
+
+        setDateOfBirth(null);
+        setOrderno('');
+
+        setSelectedBuyer({
+          buyerid: '',
+          buyername: ''
+        });
+
+      } catch (error) {
+        console.error(error);
+        alert("API Error");
+      }
     }
   };
 
-    const toolbarOptions: any[] = [
-      "Search",
-      'Add',
-      'Edit',
-      'Delete'
-    ];
-
   // ================= UI =================
   return (
-  <div className="page-container">
+    <div className="page-container">
 
-    {/* ===== CARD ===== */}
-    <div className="form-card">
+      {/* FORM CARD */}
+      <div className="form-card">
 
-      <h2 className="form-title">Syncfusion Buyer Basic Form</h2>
+        <h2 className="form-title">
+          Order Ship Plan Form
+        </h2>
 
-      {/* ===== FORM ===== */}
-      <form id="form1" className="form-grid">
+        <form id="form1" className="form-grid">
 
-        {/* Buyer ID */}
-        <div className="form-group">
-          <AutoCompleteComponent
-            ref={buyerRef}
-            name="buyerid"
-            dataSource={buyerData}
-            fields={{ value: 'buyerid' }}
-            placeholder="Select Buyer ID"
-            change={onBuyerSelect}
-            filterType="Contains"
-            floatLabelType="Auto"
-            data-msg-containerid="errorBuyer"
-          />
-          <div id="errorBuyer" />
+          {/* Buyer ID */}
+          <div className="form-group">
+            <AutoCompleteComponent
+              ref={buyerRef}
+              name="buyerid"
+              dataSource={buyerData}
+              fields={{ value: 'buyerid' }}
+              placeholder="Buyer ID"
+              change={onBuyerSelect}
+              filterType="Contains"
+              floatLabelType="Auto"
+              data-msg-containerid="errorBuyer"
+            />
+            <div id="errorBuyer" />
+          </div>
+
+          {/* Buyer Name */}
+          <div className="form-group">
+            <TextBoxComponent
+              value={selectedBuyer.buyername}
+              placeholder="Buyer Name"
+              readonly={true}
+              floatLabelType="Auto"
+            />
+          </div>
+
+          {/* Order No */}
+          <div className="form-group">
+            <TextBoxComponent
+              name="orderno"
+              value={orderno}
+              change={(e: any) => setOrderno(e.value)}
+              placeholder="Order No"
+              floatLabelType="Auto"
+              data-msg-containerid="errorOrder"
+            />
+            <div id="errorOrder" />
+          </div>
+
+          {/* Date */}
+          <div className="form-group">
+            <DatePickerComponent
+              name="date"
+              value={dateOfBirth}
+              change={dateChangeHandler}
+              placeholder="Ship Required Date"
+              floatLabelType="Auto"
+              data-msg-containerid="errorDate"
+            />
+            <div id="errorDate" />
+          </div>
+
+        </form>
+
+        {/* Submit */}
+        <div className="form-actions">
+          <ButtonComponent
+            cssClass="e-primary"
+            onClick={onSubmit}
+          >
+            Submit
+          </ButtonComponent>
         </div>
 
-        {/* Buyer Name */}
-        <div className="form-group">
-          <TextBoxComponent
-            value={selectedBuyer.buyername}
-            placeholder="Buyer Name"
-            floatLabelType="Auto"
-            readonly={true}
-          />
-        </div>
-
-        {/* Order No */}
-        <div className="form-group">
-          <TextBoxComponent
-            name="orderno"
-            value={orderno}
-            change={(e: any) => setOrderno(e.value)}
-            placeholder="Order No"
-            floatLabelType="Auto"
-            data-msg-containerid="errorOrder"
-          />
-          <div id="errorOrder" />
-        </div>
-
-        {/* Date */}
-        <div className="form-group">
-          <DatePickerComponent
-            name="date"
-            value={dateOfBirth}
-            change={dateChangeHandler}
-            placeholder="Select Date"
-            floatLabelType="Auto"
-            data-msg-containerid="errorDate"
-          />
-          <div id="errorDate" />
-        </div>
-
-      </form>
-
-      {/* ===== BUTTON ===== */}
-      <div className="form-actions">
-        <ButtonComponent cssClass="e-primary" onClick={onSubmit}>
-          Submit
-        </ButtonComponent>
       </div>
-    </div>
 
-    {/* ===== GRID ===== */}
-    <div className="grid-card">
-      <GridComponent
-        dataSource={gridData}
-        allowPaging={true}
-        allowSorting={true}
-        height={350}
-        editSettings={{
-          allowAdding: true,
-          allowDeleting: true,
-          allowEditing: true,
-          allowDoubleClick: true,
-          mode: "Dialog"
-         }
-        }
-        toolbar={toolbarOptions}
-      >
-        <ColumnsDirective>
-          <ColumnDirective field="buyerid" headerText="Buyer ID" width="150" />
-          <ColumnDirective field="buyername" headerText="Buyer Name" width="200" />
-          <ColumnDirective field="orderno" headerText="Order No" width="150" />
-          <ColumnDirective field="date" headerText="Date" width="150" />
-          <ColumnDirective field="refresh" headerText="Status" width="150" />
-        </ColumnsDirective>
-        <Inject services={[Page, Sort, Filter, Toolbar, Edit]} />
-      </GridComponent>
-    </div>
+      {/* GRID */}
+      <div className="grid-card">
 
-  </div>
-);
+        <GridComponent
+          dataSource={gridData}
+          allowPaging={true}
+          allowSorting={true}
+          height={350}
+        >
+          <ColumnsDirective>
+            <ColumnDirective field="buyerid" headerText="Buyer ID" width="150" />
+            <ColumnDirective field="buyername" headerText="Buyer Name" width="200" />
+            <ColumnDirective field="orderno" headerText="Order No" width="150" />
+            <ColumnDirective field="date" headerText="Ship Date" width="180" />
+            <ColumnDirective field="refresh" headerText="Status" width="150" />
+          </ColumnsDirective>
+
+          <Inject services={[Page, Sort, Filter]} />
+        </GridComponent>
+
+      </div>
+
+    </div>
+  );
 }
 
 export default Form;

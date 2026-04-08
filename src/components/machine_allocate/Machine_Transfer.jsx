@@ -11,6 +11,7 @@ function MachineEditPopup({ allocation, onClose, onSaved }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [editAlloc, setEditAlloc] = useState(null);
 
   useEffect(() => {
     const fetchUnits = async () => {
@@ -80,6 +81,16 @@ function MachineEditPopup({ allocation, onClose, onSaved }) {
     setLoading(false);
   }
 };
+
+<AnimatePresence>
+  {editAlloc && (
+    <MachineEditPopup
+      allocation={editAlloc}
+      onClose={() => setEditAlloc(null)}
+      onSaved={fetchData}
+    />
+  )}
+</AnimatePresence>
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -291,6 +302,16 @@ function MachineAllocation() {
                 )}
               </tbody>
             </table>
+            {/* ✅ IMPORTANT FIX: POPUP RENDER */}
+      <AnimatePresence>
+        {editAlloc && (
+          <MachineEditPopup
+            allocation={editAlloc}
+            onClose={() => setEditAlloc(null)}
+            onSaved={fetchData}
+          />
+        )}
+      </AnimatePresence>
           </div>
         </div>
       </div>

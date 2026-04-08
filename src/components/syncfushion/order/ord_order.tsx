@@ -685,6 +685,7 @@ const HeroFashionGrid131: React.FC = () => {
       </div>
     );
   }
+
   const orderSummaryHeaderTemplate = (p: OrderData) => {
     return (
       <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -692,10 +693,78 @@ const HeroFashionGrid131: React.FC = () => {
         <b>Buy</b> <br/>
         <b>Mer</b> <br/>
         <b>Unit</b><br/>
+      </div>
+    );
+  }
+
+  const ordHeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>Fdt</b><br/>
+        <b>Dir</b> <br/>
+        <b>ST</b> <br/>
+        <b>UOM</b><br/>
+        <b>Type</b><br/>
+        
+      </div>
+    );
+  }
+
+
+
+   const qualyHeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>styleno</b><br/>
+        <b>styledesc</b> <br/>
+        <b>qcont</b> <br/>
+      </div>
+    );
+  }
+
+
+    const prdtyHeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>ptype</b><br/>
+        <b>dir_sam_ord</b> <br/>
+        <b>comp</b> <br/>
+        <b>order_follow_up</b><br/>
         <b>Qty</b><br/>
       </div>
     );
   }
+
+const udf4HeaderTemplate = (p: OrderData) => {
+  return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>MO</b><br/>
+        <b>wk</b> <br/>
+        <b>yr</b> <br/>
+        <b>uom</b> <br/>
+        <b>abc</b> <br/>
+        {/* <b>order_follow_up</b><br/>
+        <b>Qty</b><br/> */}
+      </div>
+    );
+  }
+
+
+const udf2HeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>31-ITS</b><br/>
+        <b>36-CT</b> <br/>
+        <b>45-Ord</b> <br/>
+        <b>46-Empty</b><br/>
+        <b>141-Sam</b><br/>
+      </div>
+    );
+  }
+
+
+
+
 
    const udfheaderTemplate = (p: OrderData) => {
     return (
@@ -709,6 +778,8 @@ const HeroFashionGrid131: React.FC = () => {
     );
   }
   
+
+
 
   const udf = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -1876,7 +1947,8 @@ const HeroFashionGrid131: React.FC = () => {
           allowTextWrap={true}
           textWrapSettings={{ wrapMode: 'Both' }}
           autoFit={true}
-          sortSettings={sortSettings}
+          // sortSettings={sortSettings}
+          sortSettings={{ columns: [{ field: 'director_sample_order', direction: 'Descending' }, { field: 'Fdt', direction: 'Ascending' }] }}
           gridLines="Both"
           searchSettings={searchSettings}
           toolbar={toolbarOptions}
@@ -1892,11 +1964,13 @@ const HeroFashionGrid131: React.FC = () => {
           <ColumnsDirective>
             <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerTemplate={orderSummaryHeaderTemplate} width="90" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" headerTemplate= {ordHeaderTemplate} template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
+
             <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate= {udf2HeaderTemplate} width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" headerTemplate= {udf4HeaderTemplate} template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />

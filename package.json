@@ -14,6 +14,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.9",
     "@syncfusion/ej2-base": "*",
+    "@syncfusion/ej2-querybuilder": "^33.1.46",
     "@syncfusion/ej2-react-blockeditor": "^33.1.44",
     "@syncfusion/ej2-react-buttons": "*",
     "@syncfusion/ej2-react-calendars": "*",

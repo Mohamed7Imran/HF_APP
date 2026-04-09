@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Ajax } from '@syncfusion/ej2-base';
 function App() {
  const [kanbanData, setKanbanData] = useState([]);
-  const ajaxUrl = 'https://app.herofashion.com/udf7_update/';
+  const ajaxUrl = 'https://app.herofashion.com/diwasg/';
 
   // Load initial data
   useEffect(() => {
@@ -49,15 +49,16 @@ function App() {
         ajax.send();
       });
     } 
-    else if (args.requestType === 'cardChanged' && args.changedRecords) {
+        else if (args.requestType === 'cardChanged' && args.changedRecords) {
       // Handle Update
+      let updateUrl=ajaxUrl + args.changedRecords[0]['asgby_name']+ "/";
       args.changedRecords.forEach((card: any) => {
         const ajax = new Ajax({
-          url: "ajaxUrl",
-          type: 'POST',
+          url: updateUrl,
+          type: 'PUT',
           mode: true,
           contentType: 'application/json',
-          data: JSON.stringify({ action: 'update', data: card }),
+          data: JSON.stringify(args.changedRecords[0]),
           onSuccess: (result: any) => {
             console.log('Card updated successfully');
           },
@@ -67,7 +68,8 @@ function App() {
         });
         ajax.send();
       });
-    } 
+    }
+ 
     else if (args.requestType === 'cardRemoved' && args.deletedRecords) {
       // Handle Delete
       args.deletedRecords.forEach((card: any) => {
@@ -100,6 +102,7 @@ function App() {
           contentField: "wrkcat",
           headerField: "entryno", 
         }}
+        swimlaneSettings={{ keyField: "asgby_code" }}
       >
         <ColumnsDirective>
           <ColumnDirective headerText="To Do" keyField="Ordinary" showAddButton={true}/>

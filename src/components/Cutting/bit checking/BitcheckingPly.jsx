@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export default function BitCheckingUI() {
 
@@ -10,7 +10,8 @@ export default function BitCheckingUI() {
 
   const [isExisting, setIsExisting] = useState(false);
   const [totalPcs, setTotalPcs] = useState(100); // default
-  const columns = 21 ;
+  const columns = 22 ;
+  const qrInputRef = useRef();
 
   const [empValue, setEmpValue] = useState("");
   const [empData, setEmpData] = useState([]);
@@ -54,10 +55,6 @@ export default function BitCheckingUI() {
       .then(data => setBitData(data));
   }, []);
 
-  // 🔹 Convert det_part → tabs
-  const getTabsFromDetPart = (detPart) => {
-    if (!detPart) return ["front", "back"];
-  };
 
   // 🔹 QR Scan Logic
 const handleQrScan = async (qr) => {
@@ -144,20 +141,31 @@ const handleQrScan = async (qr) => {
   }
 };
   const handleSave = async () => {
+
+    if(!empValue){
+      alert("Please Select Employee ID");
+      return
+    }
+
+    if(!qrValue){
+      alert("Please Scan QR ID");
+      return
+    }
+
+    if (!totalPcs) {
+      alert("Total PCS Missing");
+      return;
+    }
+
     try {
       for (let tab of tabs) {
-
         const values = selected[tab] || [];
-
         if (values.length === 0) continue; // skip empty
-
         const payload = {
           emp_id: empValue,
           qr_id: qrValue,
           total_pcs: totalPcs,
-
           category: `${tab} - ${values.join(",")}`,
-
           result: unique.join(","), 
           final_tpcs: unique.length
         };
@@ -185,6 +193,11 @@ const handleQrScan = async (qr) => {
     setTotalPcs(0);
     setTabs([]);
     setActiveTab("");
+    setEmpName("");
+    setEmpValue("");
+    if(qrInputRef.current){
+      qrInputRef.current.value=''
+    }
   };
 
   // 🔹 Generate grid
@@ -234,11 +247,11 @@ const handleQrScan = async (qr) => {
     <div className="p-4 bg-gray-100 min-h-screen">
 
       {/* 🔹 QR INPUT (no UI change style, simple add) */}
-      <div className="mb-4">
+      <div className="mb-4 bg-white rounded-xl">
         <input
           type="text"
           placeholder="Scan QR"
-          defaultValue=""
+          ref={qrInputRef}
           onKeyUp={(e) => {
             if (e.key === "Enter") {
               handleQrScan(e.target.value);
@@ -319,7 +332,7 @@ const handleQrScan = async (qr) => {
               <div
                 key={num}
                 onClick={() => toggleSelect(num)}
-                className={`w-10 h-10 md:w-15 md:h-15 lg:w-20 lg:h-20 flex items-center justify-center border-none rounded cursor-pointer text-sm
+                className={`w-10 h-10 md:w-15 md:h-15 lg:w-20 lg:h-20 flex items-center justify-center border rounded cursor-pointer text-sm border-none
                   ${
                     selected[activeTab]?.includes(num)
                       ? "bg-yellow-400"
@@ -335,13 +348,20 @@ const handleQrScan = async (qr) => {
 
       {/* SUMMARY */}
       <div className="mt-4 grid grid-cols-2 gap-4">
-
-        {tabs.map(tab => (
-          <div key={tab} className="bg-white p-3 rounded-2xl shadow">
-            <p className="text-gray-500 text-sm capitalize">{tab} : <span className="font-semibold text-black">{selected[tab]?.join(", ")}</span> </p>
-          </div>
-        ))}
-
+        {tabs.map(tab => {
+          const currentValues = selected[tab] || [];
+          const outValues = unique.filter(
+            num => !currentValues.includes(num)
+          );
+          return (
+            <div key={tab} className="bg-white p-3 rounded-2xl shadow ">
+              <p className="text-gray-500 text-sm capitalize">{tab} :<span className="font-semibold text-black">{" "}{currentValues.join(", ")}</span>
+              <span className="font-semibold text-grey float-right">Mistake pcs : {currentValues.length}</span></p><br />
+              <p className="text-gray-500 text-sm capitalize">Out {tab} :<span className="font-semibold text-black">{" "}{outValues.join(", ")}</span>
+              <span className="font-semibold text-grey float-right">Ok Pcs : {outValues.length}</span></p>
+            </div>
+          );
+        })}
       </div>
 
       {/* RESULT */}

@@ -171,12 +171,12 @@
   color: blue;
 }
 
-.e-grid.e-grid td.e-focused {
+.e-grid td.e-focused {
   background-color:yellow ;
 }
 
 .e-grid.e-gridhover tr.e-row:not(.e-disable-gridhover):not(.e-detailrow) td.e-focused.e-rowcell:not(.e-updatedtd), 
-.e-grid.e-gridhover tr.e-row:not(.e-disable-gridhover):not(.e-detailrow):hover td.e-active.e-focused.e-rowcell:not(.e-updatedtd),
+.e-grid.e-gridhover:not(.e-rowdrag) .e-row:not(.e-disable-gridhover):not(.e-editedrow):not(.e-detailrow):hover .e-rowcell.e-focused:not(.e-updatedtd):not(.e-indentcell),
 .e-grid.e-gridhover:not(.e-rowdrag) .e-row:not(.e-disable-gridhover):not(.e-editedrow):not(.e-detailrow):hover .e-rowcell.e-focused:not(.e-cellselectionbackground):not(.e-active):not(.e-columnselection):not(.e-updatedtd):not(.e-indentcell)
 {
   background-color:yellow ;

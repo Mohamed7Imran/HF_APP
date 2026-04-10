@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
 import { api } from "../../../auth/auth";
-import { useParams, useNavigate } from "react-router-dom";
+// import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../../../UserContext";
 
 export default function DefectTabs() {
   const { unit, line } = useParams();
   const navigate = useNavigate();
   const qc_type = "first_piece";
+  const location = useLocation(); // ✅ IMPORTANT
+  const passedData = location.state; // ✅ data from previous page
   const { userId } = useContext(UserContext);
 
   // Bundle info fetched from API
@@ -18,6 +21,22 @@ export default function DefectTabs() {
   const [forceSave, setForceSave] = useState(false);
 
   const totalPieces = Number(bundleData.total_pieces) || 0;
+
+  useEffect(() => {
+    if (passedData) {
+      setBundleData({
+        bundle_no: passedData.bundleNo,
+        bundle_id: passedData.bundle_id,
+        jobno: passedData.jobNo,
+        product: passedData.product,
+        color: passedData.colour,
+        size: passedData.size,
+        total_pieces: Number(passedData.pieces),
+      });
+      setInspectedCount(0);
+    }
+  }, [passedData]);
+
 
   // 🔹 Fetch QC data (defects)
   useEffect(() => {
@@ -150,6 +169,7 @@ export default function DefectTabs() {
         checked_piece: inspectedCount,
         force_save: forceSave,
         userId,
+        seq:"first_piece"
       });
 
       alert("Saved Successfully ✅");
@@ -159,7 +179,8 @@ export default function DefectTabs() {
       alert("Save failed ❌");
     }
   };
-
+console.log("Bundle Data:", bundleData);
+console.log("Total Pieces:", totalPieces);
   const tabs = [
     { id: "minor", label: "Minor" },
     { id: "major", label: "Major" },
@@ -190,6 +211,7 @@ export default function DefectTabs() {
           <p className="text-blue-600 font-bold">
             Unit - {unit} / Line - {line}
           </p>
+          {/* <p>{jobno}</p> */}
           <p className="text-sm text-gray-500">User ID: {userId}</p>
         </div>
 

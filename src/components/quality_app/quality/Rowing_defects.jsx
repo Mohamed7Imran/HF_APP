@@ -161,7 +161,8 @@ export default function Rowing_defects() {
         total_pieces: totalPieces,
         checked_piece: inspectedCount,
         force_save: forceSave,
-        userId
+        userId,
+        seq:process
       });
       alert("Bundle Completed Successfully ✅");
       navigate(-2);

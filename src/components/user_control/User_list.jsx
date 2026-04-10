@@ -53,7 +53,7 @@ const User_list = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await fetch("https://hfapi.herofashion.com/qcapp/api/employees/");
+      const res = await fetch("https://hfapi.herofashion.com/qcapp/api/employees_and_staff/");
       const data = await res.json();
       setEmployees(data);
     } catch (err) {
@@ -374,9 +374,18 @@ const User_list = () => {
                 </span>
               </div>
             </div>
+
+            <div className="flex gap-2">
+              <div className="h-7 w-7 rounded-full bg-slate-50 flex items-right justify-right group-hover:bg-indigo-500 transition-all">
+                <div className="items-right justify-right">
+                  <img src={emp.photo} alt="" />
+                </div>
+              </div>
+
             
-            <div className="h-7 w-7 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-indigo-500 transition-all">
-              <ChevronRight size={14} className="text-slate-400 group-hover:text-white" />
+              <div className="h-7 w-7 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-indigo-500 transition-all">
+                <ChevronRight size={14} className="text-slate-400 group-hover:text-white" />
+              </div>
             </div>
           </div>
         ))}

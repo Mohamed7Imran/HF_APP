@@ -31,7 +31,7 @@ export default function Rowing_defects() {
   const [forceSave, setForceSave] = useState(false);
   
   // State for Checkboxes and Remarks
-  const [shadeVariation, setShadeVariation] = useState(true);
+  const [shadeVariation, setShadeVariation] = useState(false);
   const [numberSticker, setNumberSticker] = useState(true);
   const [remarks, setRemarks] = useState("");
 

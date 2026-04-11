@@ -27,7 +27,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const res = await axios.get('http://10.1.21.13:8600/login/');
+      const res = await axios.get('http://10.1.21.13:8200/advance/login/');
       const users = res.data;
 
       const validUser = users.find(
@@ -141,7 +141,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl font-semibold text-sm bg-indigo-600 text-white"
+                className="w-full py-3 rounded-xl font-semibold text-sm bg-indigo-600 text-white cursor-pointer"
               >
                 {loading ? 'Signing in...' : 'Sign In →'}
               </button>

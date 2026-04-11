@@ -32,6 +32,7 @@ import Quary from '../order/sync_quarybuilder.tsx';
 // import Overview from "../order/chart.tsx"
 import Form from "../order/Form/Form.tsx";
 import Websocket from "../order/websocket.jsx"
+import Weborder from "../order/web_order.tsx"
 
 function Home() {
   return (
@@ -67,6 +68,7 @@ function Home() {
         <Route path='/kanban' element={<Kanban />} />
         <Route path='/quary' element={<Quary />} />
         <Route path='/websocket' element={<Websocket />} />
+        <Route path='/Weborder' element={<Weborder />} />
         <Route path='/form' element={<Form />} />
     </Routes>
   );

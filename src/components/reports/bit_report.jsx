@@ -7,6 +7,7 @@ import {
 import { Activity, Target, AlertCircle, TrendingUp, RefreshCcw, FileText, ArrowLeft } from "lucide-react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import { useNavigate } from "react-router-dom";
 
 // Vibrant color palette for employees
 const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6', '#f43f5e', '#84cc16'];
@@ -18,8 +19,10 @@ const Bit_report = () => {
   const [endDate, setEndDate] = useState("");
   const [selectedEmp, setSelectedEmp] = useState(null);
   const chartsRef = useRef(null);
+  const navigate = useNavigate();
 
   const SALARY = 500;
+
 
   const getEmpColor = useCallback((empName) => {
     if (!empName) return "#6366f1";
@@ -28,6 +31,9 @@ const Bit_report = () => {
     return COLORS[index % COLORS.length] || COLORS[0];
   }, [data]);
 
+  const handelNavi = () => {
+    navigate(-1);
+  }
   const handleReset = () => {
     setFilter("today");
     setStartDate("");
@@ -226,10 +232,10 @@ const Bit_report = () => {
               <RefreshCcw size={16} />
               <span>Reset</span>
             </button>
-            <a href="/cutting-report" className="p-2 px-4 flex-1 sm:flex-none justify-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg flex items-center gap-1 text-sm font-medium transition-colors">
+            <buttton onClick={(handelNavi) => navigate(-1)} className="p-2 px-4 flex-1 sm:flex-none justify-center cursor-pointer bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg flex items-center gap-1 text-sm font-medium transition-colors">
               <ArrowLeft size={16} />
               Back
-            </a>
+            </buttton>
           </div>
         </div>
       </div>

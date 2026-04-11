@@ -29,7 +29,7 @@ const fillBundleData = async (bundle) => {
   try {
     const response = await fetch(
       `https://hfapi.herofashion.com/qcapp/get_bundle_data/?bundle_id=${bundle}`
-      // `http://10.1.21.154:7000/qcapp/get_bundle_data/?bundle_id=${bundle}`
+      // `http://10.1.21.110:7003/qcapp/get_bundle_data/?bundle_id=${bundle}`
     );
 
     const data = await response.json();
@@ -113,6 +113,7 @@ const fillBundleData = async (bundle) => {
       bundle_id: bundleid,
     },
   });
+
   };
 
   return (

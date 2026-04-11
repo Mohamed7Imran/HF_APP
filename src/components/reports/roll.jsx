@@ -4,6 +4,9 @@ import {
   AreaChart, Area, LabelList 
 } from 'recharts';
 
+import { useNavigate } from "react-router-dom";
+
+
 // --- Enhanced UI Components ---
 const StatCard = ({ label, value, iconColor }) => (
   <div className="relative overflow-hidden bg-white border border-slate-200 p-5 rounded-3xl shadow-sm transition-all hover:shadow-md group">
@@ -24,6 +27,8 @@ const Roll = () => {
   const [endDate, setEndDate] = useState('');
   const [selectedJob, setSelectedJob] = useState('');
   const [selectedRoll, setSelectedRoll] = useState('');
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +54,9 @@ const Roll = () => {
     return dateStr;
   };
 
+  const handelNavi = () => {
+    navigate(-1);
+  }
   const applyTimeframe = (rawData, timeframe) => {
     setView(timeframe);
     let startTime = new Date();

@@ -12,11 +12,15 @@ import {
 // Import PDF libraries
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { useNavigate } from "react-router-dom";
+
 
 const COLORS = [
   '#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6',
   '#06b6d4', '#ec4899', '#14b8a6', '#f43f5e', '#84cc16'
 ];
+
+
 
 const KpiCard = ({ title, value, icon, color }) => {
   const palette = {
@@ -37,6 +41,8 @@ const KpiCard = ({ title, value, icon, color }) => {
   );
 };
 
+
+
 const Sticker_r = () => {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState("today");
@@ -46,6 +52,8 @@ const Sticker_r = () => {
   const [jobFilter, setJobFilter] = useState("all"); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
 
   const getEmpColor = useCallback((empName) => {
     const names = [...new Set(data.map(d => d.empname))];
@@ -92,6 +100,10 @@ const Sticker_r = () => {
     () => [...new Set(data.map(d => d.jobno).filter(Boolean))].sort(),
     [data]
   );
+
+  const handelNavi = () => {
+    navigate(-1);
+  }
 
   const jobFiltered = useMemo(
     () => (jobFilter === "all" ? data : data.filter(d => String(d.jobno) === jobFilter)),
@@ -247,9 +259,9 @@ const Sticker_r = () => {
               <RefreshCcw size={15} className={loading ? "animate-spin" : ""} />
               <span className="inline">Reset</span>
             </button>
-            <a href="/r_home" className="p-2 flex-1 sm:flex-none justify-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg flex items-center gap-1 text-sm font-medium transition-colors">
+            <button onClick={(handelNavi) => navigate(-1)} className="p-2 flex-1 sm:flex-none justify-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg flex items-center gap-1 text-sm font-medium transition-colors">
               Back
-            </a>
+            </button>
           </div>
         </div>
       </div>

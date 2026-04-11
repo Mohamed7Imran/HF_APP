@@ -14,7 +14,7 @@ const Statement = () => {
     setLoading(true);
     try {
       const query = new URLSearchParams(filters).toString();
-      const res = await fetch(`http://10.1.21.13:8600/state/?${query}`);
+      const res = await fetch(`https://hfapi.herofashion.com/advance/state/?${query}`);
       const result = await res.json();
       setData(result);
       setEmpList([...new Set(result.map(item => item.empid))]);

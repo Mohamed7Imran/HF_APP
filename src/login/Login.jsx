@@ -1,4 +1,3 @@
-// Login.jsx
 import { useState } from "react";
 import { loginUser } from "../auth/auth";
 import { useNavigate } from "react-router-dom";
@@ -7,58 +6,91 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Added loading state
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-try {
-    const data = await loginUser(username, password);
-    console.log("Login success:", data);
-    console.log("Access token in localStorage:", localStorage.getItem("access_token"));
-    // ✅ Navigate to user's default_path if exists, otherwise fallback
-    const path = data.user?.default_path || "/dashboard";
-    // navigate("/dashboard"); 
-    navigate(path); 
-} catch (err) {
-    setError("Invalid username or password");
-}
-};
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Prevent page refresh if using form tags
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await loginUser(username, password);
+      const path = data.user?.default_path || "/dashboard";
+      navigate(path);
+    } catch (err) {
+      setError("Invalid credentials. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-sm p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] p-4 font-sans">
+      {/* Background Decorative Circles */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-50 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-50 blur-[120px]" />
+      </div>
 
+      <div className="relative z-10 w-full max-w-md bg-white border border-gray-100 p-10 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.05)]">
+        {/* Header */}
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome back</h2>
+          <p className="text-gray-500 mt-2">Enter your credentials to access your account</p>
+        </div>
+
+        {/* Error Message */}
         {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-center">
+          <div className="mb-6 flex items-center gap-3 bg-red-50 text-red-600 px-4 py-3 rounded-xl border border-red-100 text-sm animate-shake">
+            <span className="font-bold">!</span>
             {error}
           </div>
         )}
 
-        <input
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+        <form onSubmit={handleLogin} className="space-y-5">
+          {/* Username Field */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1.5 ml-1">Username</label>
+            <input
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
 
-        <input
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          {/* Password Field */}
+          <div>
+            <div className="flex justify-between items-center mb-1.5 ml-1">
+              <label className="text-sm font-semibold text-gray-700">Password</label>
+             
+            </div>
+            <input
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white"
+              type="password"
+              placeholder="••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        <button
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded transition duration-200"
-          onClick={handleLogin}
-        >
-          Login
-        </button>
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gray-900 hover:bg-black cursor-pointer text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-gray-200 disabled:opacity-70 disabled:cursor-not-allowed mt-4"
+          >
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+        </form>
+
+        
       </div>
     </div>
   );
 }
 
 export default Login;
-

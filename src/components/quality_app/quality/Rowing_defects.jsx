@@ -57,7 +57,7 @@ export default function Rowing_defects() {
     const fetchLastBundle = async () => {
       if (!bundle_id) return;
       try {
-        const res = await api.get(`qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`);
+        const res = await api.get(`qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}&seq=${process}`);
         const last = res.data;
 
         // CRITICAL FIX: Ensure bundle_id match regardless of string/number type
@@ -133,6 +133,7 @@ export default function Rowing_defects() {
       operator,
       process,
       userId,
+      seq:process
     };
 
     try {
@@ -162,7 +163,8 @@ export default function Rowing_defects() {
         checked_piece: inspectedCount,
         force_save: forceSave,
         userId,
-        seq:process
+        seq:process,
+        machineId
       });
       alert("Bundle Completed Successfully ✅");
       navigate(-2);

@@ -3,6 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, LabelList
 } from 'recharts';
+import { useNavigate } from "react-router-dom";
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const ONE_HOUR_SALARY = 50; 
@@ -18,6 +19,8 @@ const Lay = () => {
   const [error, setError] = useState(null);
   const [view, setView] = useState('Today');
   const [selectedTable, setSelectedTable] = useState(null);
+
+  const navigate = useNavigate();
   
   
   // New State for Date Range
@@ -48,6 +51,10 @@ const Lay = () => {
       const itemDate = new Date(item.date);
       return itemDate >= startTime && itemDate <= endTime;
     });
+
+  const handelNavi = () => {
+    navigate(-1);
+  }
 
     setFilteredData(filtered);
     setSelectedTable(null);
@@ -227,7 +234,9 @@ const Lay = () => {
               ))}
             </div>
             <button onClick={handleClear} className="px-3 py-1.5 bg-white text-red-500 rounded-xl text-xs font-bold border border-red-100 hover:bg-red-50 transition-colors">Reset</button>
-            <a href='/r_home' className="px-3 py-1.5 bg-white text-blue-500 rounded-xl text-xs font-bold border border-blue-100 hover:bg-blue-50 transition-colors">Back</a>
+              <button onClick={(handelNavi) => navigate(-1)} className="p-2 flex-1 sm:flex-none justify-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-lg flex items-center gap-1 text-sm font-medium transition-colors">
+              Back
+            </button>
           </div>
         </div>
       </header>

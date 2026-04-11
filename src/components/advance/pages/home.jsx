@@ -9,7 +9,7 @@ import {
   ClipboardList
 } from "lucide-react"; // npm install lucide-react
 
-const Home = () => {
+const Ad_Home = () => {
   const [cards, setCards] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -115,4 +115,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Ad_Home;

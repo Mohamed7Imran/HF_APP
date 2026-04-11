@@ -184,7 +184,7 @@ function App() {
           }
         />
           <Route
-          path="/advance/*"
+          path="/stick-prod/*"
           element={
             <ProtectedRoute>
               <ProtectedLayout>
@@ -194,7 +194,7 @@ function App() {
           }
         />
         <Route
-          path="/advance/*"
+          path="/bit-checking/*"
           element={
             <ProtectedRoute>
               <ProtectedLayout>
@@ -204,7 +204,7 @@ function App() {
           }
         />
         <Route
-          path="/advance/*"
+          path="/bitchecking_ply/*"
           element={
             <ProtectedRoute>
               <ProtectedLayout>

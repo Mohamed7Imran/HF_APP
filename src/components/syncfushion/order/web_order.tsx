@@ -161,102 +161,220 @@ const HeroFashionGrid131: React.FC = () => {
   };
 
   // --- Data Fetching ---
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true); setError(null);
-        const [orderResponse] = await Promise.all([
-          fetch('https://app.herofashion.com/order_panda'),
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         setLoading(true); setError(null);
+//         const [orderResponse] = await Promise.all([
+//           fetch('https://app.herofashion.com/order_panda'),
           
-        ]);
-        if (!orderResponse.ok ) throw new Error("Failed to fetch data from APIs");
+//         ]);
+//         if (!orderResponse.ok ) throw new Error("Failed to fetch data from APIs");
 
-        const orderData: OrderData[] = await orderResponse.json();
+//         const orderData: OrderData[] = await orderResponse.json();
 
-        const printMap: Record<string, any> = {};
+//         const printMap: Record<string, any> = {};
 
-        const mergedData = orderData.map((order) => {
-          const matchingPrintData = printMap[order.jobno_oms] || {};
-          return {
-            ...order,
-            clr: matchingPrintData.clr || null,
-            print_img: matchingPrintData.print_img || '',
-            prnmeaimg: matchingPrintData.prnmeaimg || '',
-            mpic: matchingPrintData.mpic || '',
-            // img_fpath: matchingPrintData.img_fpath || ''
-          };
-        });
+//         const mergedData = orderData.map((order) => {
+//           const matchingPrintData = printMap[order.jobno_oms] || {};
+//           return {
+//             ...order,
+//             clr: matchingPrintData.clr || null,
+//             print_img: matchingPrintData.print_img || '',
+//             prnmeaimg: matchingPrintData.prnmeaimg || '',
+//             mpic: matchingPrintData.mpic || '',
+//             // img_fpath: matchingPrintData.img_fpath || ''
+//           };
+//         });
 
-        const processedData = mergedData
-          .filter((item) => {
-            const dateStr = item.finaldelvdate || item.final_delivery_date;
-            if (!dateStr) return true;
-            const dateParts = dateStr.split(/[-/]/); let year = 0;
-            if (dateParts.length === 3) {
-              const p0 = parseInt(dateParts[0]); const p2 = parseInt(dateParts[2]);
-              year = p0 > 1000 ? p0 : (p2 < 100 ? 2000 + p2 : p2);
-            }
-            return year <= 2127;
-          })
-          .sort((a, b) => {
-            const typeA = (a.director_sample_order || '').toLowerCase();
-            const typeB = (b.director_sample_order || '').toLowerCase();
-            if (typeA !== typeB) {
-              if (typeA === 'Sam D') return -1; if (typeB === 'Sam D') return 1;
-              return typeA.localeCompare(typeB);
-            }
-            const dateA = new Date(a.finaldelvdate || a.final_delivery_date || 0).getTime();
-            const dateB = new Date(b.finaldelvdate || b.final_delivery_date || 0).getTime();
-            return dateA - dateB;
-          })
+//         const processedData = mergedData
+//           .filter((item) => {
+//             const dateStr = item.finaldelvdate || item.final_delivery_date;
+//             if (!dateStr) return true;
+//             const dateParts = dateStr.split(/[-/]/); let year = 0;
+//             if (dateParts.length === 3) {
+//               const p0 = parseInt(dateParts[0]); const p2 = parseInt(dateParts[2]);
+//               year = p0 > 1000 ? p0 : (p2 < 100 ? 2000 + p2 : p2);
+//             }
+//             return year <= 2127;
+//           })
+//           .sort((a, b) => {
+//             const typeA = (a.director_sample_order || '').toLowerCase();
+//             const typeB = (b.director_sample_order || '').toLowerCase();
+//             if (typeA !== typeB) {
+//               if (typeA === 'Sam D') return -1; if (typeB === 'Sam D') return 1;
+//               return typeA.localeCompare(typeB);
+//             }
+//             const dateA = new Date(a.finaldelvdate || a.final_delivery_date || 0).getTime();
+//             const dateB = new Date(b.finaldelvdate || b.final_delivery_date || 0).getTime();
+//             return dateA - dateB;
+//           })
 
-          .sort((a, b) => {
-            // Priority: Sample=0, Order=1, Others=2
-            const getPriority = (val: string) => {
-              const type = (val || '').toLowerCase().trim();
-              if (type === 'Sam D') return 0;
-              if (type === 'Ord D') return 1;
-              return 2;
+//           .sort((a, b) => {
+//             // Priority: Sample=0, Order=1, Others=2
+//             const getPriority = (val: string) => {
+//               const type = (val || '').toLowerCase().trim();
+//               if (type === 'Sam D') return 0;
+//               if (type === 'Ord D') return 1;
+//               return 2;
+//             };
+
+//             const priorityA = getPriority(a.director_sample_order);
+//             const priorityB = getPriority(b.director_sample_order);
+
+//             // Sort by priority: Sample first, Order second, Others last
+//             if (priorityA !== priorityB) {
+//               return priorityA - priorityB;
+//             }
+
+//             // Within same priority, sort by finaldelvdate ascending
+//             const dateA = parseDate(a.finaldelvdate);
+//             const dateB = parseDate(b.finaldelvdate);
+
+//             // Handle null/invalid dates — push them to the end
+//             if (!dateA && !dateB) return 0;
+//             if (!dateA) return 1;
+//             if (!dateB) return -1;
+
+//             return dateA.getTime() - dateB.getTime();
+//           })
+
+//           // --- FRONTEND SLNO GENERATION ---
+//           .map((item, index) => ({
+//             ...item,
+//             slno1: index + 1
+//           }));
+//         // Convert UTC date strings to Date objects for proper grid date handling
+//         const gridData = (DataUtil as any).parse.parseJson(JSON.stringify(processedData));
+//         setDataSource(gridData);
+//         setTotalCount(processedData.length);
+//         setShowingCount(processedData.length);
+//       } catch (err: any) {
+//         console.error("Fetch error:", err); setError(err.message);
+//       } finally { setLoading(false); }
+//     };
+//     fetchData();
+
+//     fetchSavedSettings();
+//   }, []);
+
+
+useEffect(() => {
+  let socket: WebSocket;
+
+  const connectWebSocket = () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      socket = new WebSocket("wss://app.herofashion.com/ws/orders/");
+
+      socket.onopen = () => {
+        console.log("WebSocket connected");
+      };
+
+      socket.onmessage = (event) => {
+        try {
+          const orderData: OrderData[] = JSON.parse(event.data);
+
+          const printMap: Record<string, any> = {};
+
+          const mergedData = orderData.map((order) => {
+            const matchingPrintData = printMap[order.jobno_oms] || {};
+            return {
+              ...order,
+              clr: matchingPrintData.clr || null,
+              print_img: matchingPrintData.print_img || "",
+              prnmeaimg: matchingPrintData.prnmeaimg || "",
+              mpic: matchingPrintData.mpic || "",
             };
+          });
 
-            const priorityA = getPriority(a.director_sample_order);
-            const priorityB = getPriority(b.director_sample_order);
+          const processedData = mergedData
+            .filter((item) => {
+              const dateStr = item.finaldelvdate || item.final_delivery_date;
+              if (!dateStr) return true;
 
-            // Sort by priority: Sample first, Order second, Others last
-            if (priorityA !== priorityB) {
-              return priorityA - priorityB;
-            }
+              const dateParts = dateStr.split(/[-/]/);
+              let year = 0;
 
-            // Within same priority, sort by finaldelvdate ascending
-            const dateA = parseDate(a.finaldelvdate);
-            const dateB = parseDate(b.finaldelvdate);
+              if (dateParts.length === 3) {
+                const p0 = parseInt(dateParts[0]);
+                const p2 = parseInt(dateParts[2]);
+                year = p0 > 1000 ? p0 : p2 < 100 ? 2000 + p2 : p2;
+              }
 
-            // Handle null/invalid dates — push them to the end
-            if (!dateA && !dateB) return 0;
-            if (!dateA) return 1;
-            if (!dateB) return -1;
+              return year <= 2127;
+            })
+            .sort((a, b) => {
+              const getPriority = (val: string) => {
+                const type = (val || "").toLowerCase().trim();
+                if (type === "sam d") return 0;
+                if (type === "ord d") return 1;
+                return 2;
+              };
 
-            return dateA.getTime() - dateB.getTime();
-          })
+              const priorityA = getPriority(a.director_sample_order);
+              const priorityB = getPriority(b.director_sample_order);
 
-          // --- FRONTEND SLNO GENERATION ---
-          .map((item, index) => ({
-            ...item,
-            slno1: index + 1
-          }));
-        // Convert UTC date strings to Date objects for proper grid date handling
-        const gridData = (DataUtil as any).parse.parseJson(JSON.stringify(processedData));
-        setDataSource(gridData);
-        setTotalCount(processedData.length);
-        setShowingCount(processedData.length);
-      } catch (err: any) {
-        console.error("Fetch error:", err); setError(err.message);
-      } finally { setLoading(false); }
-    };
-    fetchData();
+              if (priorityA !== priorityB) {
+                return priorityA - priorityB;
+              }
 
-    fetchSavedSettings();
-  }, []);
+              const dateA = parseDate(a.finaldelvdate);
+              const dateB = parseDate(b.finaldelvdate);
+
+              if (!dateA && !dateB) return 0;
+              if (!dateA) return 1;
+              if (!dateB) return -1;
+
+              return dateA.getTime() - dateB.getTime();
+            })
+            .map((item, index) => ({
+              ...item,
+              slno1: index + 1,
+            }));
+
+          const gridData = (DataUtil as any).parse.parseJson(
+            JSON.stringify(processedData)
+          );
+
+          setDataSource(gridData);
+          setTotalCount(processedData.length);
+          setShowingCount(processedData.length);
+          setLoading(false);
+        } catch (err: any) {
+          console.error("Message parse error:", err);
+          setError("Invalid data format");
+          setLoading(false);
+        }
+      };
+
+      socket.onerror = (err) => {
+        console.error("WebSocket error:", err);
+        setError("WebSocket error");
+        setLoading(false);
+      };
+
+      socket.onclose = () => {
+        console.warn("WebSocket disconnected. Reconnecting...");
+        setTimeout(connectWebSocket, 3000); // auto-reconnect
+      };
+    } catch (err: any) {
+      console.error("Connection error:", err);
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  connectWebSocket();
+  fetchSavedSettings();
+
+  return () => {
+    if (socket) socket.close();
+  };
+}, []);
+
 
   const STORAGE_KEY = 'MainSettings';
 
@@ -391,28 +509,7 @@ const HeroFashionGrid131: React.FC = () => {
     }
   };
 
-  // --- QueryBuilder Configuration (Memoized for performance) ---
   const queryBuilderColumns: ColumnsModel[] = useMemo(() => [
-    // { field: 'jobno_oms', label: 'Job No', type: 'string' },
-    // { field: 'company_name', label: 'Company', type: 'string' },
-    // { field: 'buyer1', label: 'Buyer', type: 'string' },
-    // { field: 'stylename', label: 'Style Name', type: 'string' },
-    // { field: 'styleno', label: 'Style No', type: 'string' },
-    // { field: 'quantity', label: 'Quantity', type: 'number' },
-    // { field: 'director_sample_order', label: 'Director Sample/Order', type: 'string' },
-    // { field: 'production_type_inside_outside', label: 'Production Type', type: 'string' },
-    // { field: 'merch', label: 'Merch', type: 'string' },
-    // { field: 'punit_sh', label: 'Unit', type: 'string' },
-    // { field: 'finaldelvdate1', label: 'Final Delivery Date', type: 'date', format: 'dd/MM/yyyy' },
-    // { field: 'Fdt', label: 'Fdt', type: 'string' },
-    // { field: 'printing_R', label: 'Printing', type: 'string' },
-    // { field: 'Emb_R', label: 'Embroidery', type: 'string' },
-    // { field: 'Fab_R', label: 'Fabric', type: 'string' },
-    // { field: 'ITS_R', label: 'ITS', type: 'string' },
-    // { field: 'Order_R', label: 'Order', type: 'string' },
-    // { field: 'quality_controller', label: 'Quality Controller', type: 'string' },
-    // { field: 'uom', label: 'UOM', type: 'string' },
-    // { field: 'abc', label: 'ABC', type: 'string' }
     
     { field: 'fdt', label: 'FDT ISO', type: 'date' },
     { field: 'slno', label: 'Serial No', type: 'number' },
@@ -602,55 +699,11 @@ const HeroFashionGrid131: React.FC = () => {
     <>{highlightText(props[field])}</>
   );
 
-  // Double-tap detection for mobile
-  const lastTapTimeRef = useRef<number>(0);
-  const lastTapTargetRef = useRef<EventTarget | null>(null);
-  
-  const imageDoubleTapHandler = useCallback((e: React.MouseEvent<HTMLImageElement> | React.TouchEvent<HTMLImageElement>) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTapTimeRef.current;
-    const target = e.currentTarget;
-    
-    // Double tap detected (within 300ms and on same element)
-    if (tapLength < 300 && tapLength > 0 && lastTapTargetRef.current === target) {
-      console.log('Double tap detected on mobile!');
-      e.preventDefault(); // Prevent zoom on mobile
-      
-      if (target.getAttribute("data-tooltip-id")) {
-        tooltipRef.current?.close();
-      } else {
-        tooltipRef.current?.open(target);
-      }
-      
-      // Reset
-      lastTapTimeRef.current = 0;
-      lastTapTargetRef.current = null;
-    } else {
-      // First tap
-      lastTapTimeRef.current = currentTime;
-      lastTapTargetRef.current = target;
-    }
-  }, []);
-
   // --- Templates ---
-  const imageFieldTemplate = useCallback((field: 'mainimagepath' | 'Print' | 'print_img' | 'prnmeaimg' | 'img_fpath' | 'Emb' | 'Others1' | 'Others2' | 'Others3' | 'Others4' | 'Others5' | 'Others6' | 'Others7') => (p: OrderData) => {
+  const imageFieldTemplate = (field: 'mainimagepath' | 'Print' | 'print_img' | 'prnmeaimg' | 'img_fpath' | 'Emb' | 'Others1' | 'Others2' | 'Others3' | 'Others4' | 'Others5' | 'Others6' | 'Others7') => (p: OrderData) => {
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
-    
-    return (
-      <img 
-        src={p[field]} 
-        alt="img" 
-        onClick={Browser.isDevice ? imageDoubleTapHandler : undefined}
-        style={{ 
-          width: '70px', 
-          height: '70px', 
-          objectFit: 'contain', 
-          border: '1px solid #eee',
-          touchAction: Browser.isDevice ? 'manipulation' : 'auto' // Prevents zoom on double-tap
-        }} 
-      />
-    );
-  }, [imageDoubleTapHandler]);
+    return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
+  };
 
   let serverUpdated = false;
   let newPrimaryKey: number | null = null;
@@ -727,6 +780,7 @@ const HeroFashionGrid131: React.FC = () => {
       </div>
     );
   }
+
   const orderSummaryHeaderTemplate = (p: OrderData) => {
     return (
       <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -734,10 +788,77 @@ const HeroFashionGrid131: React.FC = () => {
         <b>Buy</b> <br/>
         <b>Mer</b> <br/>
         <b>Unit</b><br/>
+      </div>
+    );
+  }
+
+  const ordHeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>Fdt</b><br/>
+        <b>Dir</b> <br/>
+        <b>ST</b> <br/>
+        <b>UOM</b><br/>
+        <b>Type</b><br/>
+        
+      </div>
+    );
+  }
+
+
+
+   const qualyHeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>styleno</b><br/>
+        <b>styledesc</b> <br/>
+        <b>qcont</b> <br/>
+      </div>
+    );
+  }
+
+
+    const prdtyHeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>ptype</b><br/>
+        <b>dir_sam_ord</b> <br/>
+        <b>comp</b> <br/>
+        <b>order_follow_up</b><br/>
         <b>Qty</b><br/>
       </div>
     );
   }
+
+const udf4HeaderTemplate = (p: OrderData) => {
+  return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>MO</b><br/>
+        <b>wk</b> <br/>
+        <b>yr</b> <br/>
+        <b>uom</b> <br/>
+        <b>abc</b> <br/>
+        
+      </div>
+    );
+  }
+
+
+const udf2HeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>31-ITS</b><br/>
+        <b>36-CT</b> <br/>
+        <b>45-Ord</b> <br/>
+        <b>46-Empty</b><br/>
+        <b>141-Sam</b><br/>
+      </div>
+    );
+  }
+
+
+
+
 
    const udfheaderTemplate = (p: OrderData) => {
     return (
@@ -752,6 +873,8 @@ const HeroFashionGrid131: React.FC = () => {
   }
   
 
+
+
   const udf = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
       <b className='no-highlight'>1-Print-</b> {highlightText(p.printing_R)}<br />
@@ -759,9 +882,7 @@ const HeroFashionGrid131: React.FC = () => {
       <b className='no-highlight'>8-Fab-</b> {highlightText(p.Fab_R)}<br />
       <b className='no-highlight'>14-dye-</b> {highlightText(p.Dy_R)}<br />
       <b className='no-highlight'>7-cust</b> {highlightText(p.u7)}<br />
-      {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
-      {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
-      <b>Qty:</b> {highlightText(p.quantity)} */}
+      
     </div>
   );
 
@@ -772,13 +893,7 @@ const HeroFashionGrid131: React.FC = () => {
       <b>45-Ord</b> {highlightText(p.Order_R)}<br />
       <b>46-Empty</b> {highlightText(p.u46)}<br />
       <b>141-Sam</b> {highlightText(p.Sample_R)}<br />
-      {/* <b>3-Emb:</b> {highlightText(p.number_03_emb)}<br />
-      <b>8-Fab:</b> {highlightText(p.u8)}<br />
-      <b>14-Fabdy:</b> {highlightText(p.u14)}<br /> */}
-      {/* <b>31:</b> {highlightText(p.u31)}<br /> */}
-      {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
-      {/* <b>Unit:</b> <span style={getPunitStyle(p.punit_sh)}>{highlightText(p.punit_sh)}</span><br />
-      <b>Qty:</b> {highlightText(p.quantity)} */}
+      
     </div>
   );
 
@@ -805,9 +920,6 @@ const HeroFashionGrid131: React.FC = () => {
       <b>comp:</b> {highlightText(p.company_name)}<br />
       {/* <b>25-week:</b> {highlightText(p.Week_R)}<br /> */}
       <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br />
-      {/* <b>ref:</b> {highlightText(p.reference)}<br /> */}
-      {/* <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br /> */}
-      {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
     </div>
   );
 
@@ -817,10 +929,7 @@ const HeroFashionGrid131: React.FC = () => {
       <b>finaldelvdate:</b> {highlightText(p.finaldelvdate)}<br />
       <b>ourdelvdate:</b> {highlightText(p.ourdelvdate)}<br />
       <b>date:</b> {highlightText(p.date)}<br />
-      {/* <b>date:</b> {highlightText(p.date)}<br />
-      <b>actdate:</b> {highlightText(p.actdate)}<br /> */}
-      {/* <b>order_follow_up:</b> {highlightText(p.order_follow_up)}<br /> */}
-      {/* <b>36-ITS:</b> {highlightText(p.u36)}<br /> */}
+      
     </div>
   );
 
@@ -836,12 +945,10 @@ const HeroFashionGrid131: React.FC = () => {
 
   const udf4 = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-      {/* <b>Fdt:</b> <span style={getDateStyle(p.Fdt || p.final_delivery_date)}>{highlightText(p.Fdt || p.final_delivery_date)}</span><br /> */}
-      {/* <b>Week_R:</b> {highlightText(p.Week_R)}<br /> */}
+      
       <b>Month-</b> {highlightText(p.FMonth_yr)}<br />
       <b>Week-</b> {highlightText(p.Week_R)}<br />
       <b>Year-</b> {highlightText(p.wk)}<br />
-      {/* <b>ST:</b> {highlightText(p.styleno)}<br /> */}
       <b>Uom-</b> {highlightText(p.uom)}<br />
       <b>abc-</b> {highlightText(p.abc)}<br />
 
@@ -885,19 +992,19 @@ const HeroFashionGrid131: React.FC = () => {
     'Delete',
     'Update',
     'Cancel',
-    // { type: 'Separator' },
+    { type: 'Separator' },
     { text: '', prefixIcon: 'e-filter', id: 'query_builder_toggle', tooltipText: 'Toggle Query Builder' },
     { text: 'FilterToggle', id: 'filterToggle', tooltipText: 'filterToggle' },
     { text: 'Clear All', id: 'clearAll', tooltipText: 'Clear All' },
     { text: '', prefixIcon: 'sf-icon-clear-sorting', id: 'clearsorting_icon', tooltipText: 'Clear Sorting' },
     { text: '', prefixIcon: 'e-filter-clear icon', id: 'clearfilter_icon', tooltipText: 'Clear Filtering' },
-    // { type: 'Separator' },
+    { type: 'Separator' },
     { text: '', prefixIcon: 'sf-icon-clear-selection', id: 'clear_selection', tooltipText: 'Clear Selection' },
     { text: '', prefixIcon: 'sf-icon-row-clear', id: 'clear_row_selection', tooltipText: 'Clear Row Selection' },
     { text: '', prefixIcon: 'sf-icon-column-clear', id: 'clear_column_selection', tooltipText: 'Clear Column Selection' },
     { text: '', prefixIcon: 'sf-icon-clear-cell', id: 'clear_cell_selection', tooltipText: 'Clear Cell Selection' },
-    // { type: 'Separator' },
-    // { type: 'Separator' },
+    { type: 'Separator' },
+    { type: 'Separator' },
     { text: '', prefixIcon: 'e-csvexport', id: 'export_csv', tooltipText: 'Export CSV' },
     { text: '', prefixIcon: 'e-excelexport', id: 'export_excel', tooltipText: 'Export Excel' },
     { text: '', prefixIcon: 'e-pdfexport', id: 'export_pdf', tooltipText: 'Export PDF' },
@@ -1876,6 +1983,7 @@ const HeroFashionGrid131: React.FC = () => {
 
   const sortSettings = useMemo(() => ({
     columns: [
+      { field: 'director_sample_order', direction: 'Descending' as any },
       { field: 'Fdt', direction: 'Ascending' as any }
     ]
   }), []);
@@ -1884,8 +1992,8 @@ const HeroFashionGrid131: React.FC = () => {
   ),[])
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
-    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" opensOn={!Browser.isDevice ? "Hover" :"Custom"} beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
-      <div className='grid-container e-bigger'
+    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
+      <div className='grid-container'
         style={{
           overflow: 'hidden',
           minHeight: 0
@@ -1917,7 +2025,8 @@ const HeroFashionGrid131: React.FC = () => {
           allowTextWrap={true}
           textWrapSettings={{ wrapMode: 'Both' }}
           autoFit={true}
-          sortSettings={sortSettings}
+          // sortSettings={sortSettings}
+          sortSettings={{ columns: [{ field: 'director_sample_order', direction: 'Descending' }, { field: 'Fdt', direction: 'Ascending' }] }}
           gridLines="Both"
           searchSettings={searchSettings}
           toolbar={toolbarOptions}
@@ -1933,11 +2042,13 @@ const HeroFashionGrid131: React.FC = () => {
           <ColumnsDirective>
             <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerTemplate={orderSummaryHeaderTemplate} width="90" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" headerTemplate= {ordHeaderTemplate} template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
+
             <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate= {udf2HeaderTemplate} width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" headerTemplate= {udf4HeaderTemplate} template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
@@ -2148,23 +2259,6 @@ const HeroFashionGrid131: React.FC = () => {
           </ButtonComponent>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            {/* <DropDownListComponent
-              ref={dropdownRef}
-              id="settings-dropdown"
-              dataSource={savedSettings
-                .filter(
-                  s =>
-                    s.user?.toLowerCase() === username?.toLowerCase() // normalize for comparison
-                )
-                .map(s => ({ text: s.name, value: s.id }))}
-              fields={{ text: 'text', value: 'value' }}
-              placeholder="Select setting"
-              style={{ width: '70px' }}
-              change={() => {setSelectedSetting(dropdownRef.current?.value as string);applySetting()}}
-            />
-              change={() => setSelectedSetting(dropdownRef.current?.value as string)}
-            /> */}
-
             <DropDownListComponent
               ref={dropdownRef}
               id="settings-dropdown"
@@ -2178,14 +2272,6 @@ const HeroFashionGrid131: React.FC = () => {
               change={() => { setSelectedSetting(dropdownRef.current?.value as string); applySetting() }}
             />
           </div>
-
-          {/* <ButtonComponent
-              onClick={applySetting}
-              cssClass="e-outline"
-              style={{ padding: '3px 6px', fontSize: '15px' }}
-            >
-            ✔
-            </ButtonComponent> */}
 
           <ButtonComponent
             onClick={deleteSetting}

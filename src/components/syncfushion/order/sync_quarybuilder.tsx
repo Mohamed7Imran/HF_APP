@@ -39,7 +39,7 @@ import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent, UploaderComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect, CheckBoxSelection } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
-// import "../../../App.css";
+import "../../../App.css";
 // import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 import { DatePickerComponent, DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
 import { DateRangePicker } from '@syncfusion/ej2-calendars';
@@ -165,15 +165,20 @@ const HeroFashionGrid131: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true); setError(null);
-        const [orderResponse] = await Promise.all([
+        const [orderResponse, printResponse, qcResponse] = await Promise.all([
           fetch('https://app.herofashion.com/order_panda'),
-          
+          // fetch('https://app.herofashion.com/PrintRgb/'),
+          fetch('https://app.herofashion.com/ord_prn/'),
+          fetch('https://app.herofashion.com/get_quality_controllers/')
         ]);
-        if (!orderResponse.ok ) throw new Error("Failed to fetch data from APIs");
+        if (!orderResponse.ok || !printResponse.ok || !qcResponse.ok) throw new Error("Failed to fetch data from APIs");
 
         const orderData: OrderData[] = await orderResponse.json();
+        const printData: any[] = await printResponse.json();
+        const qcData: any[] = await qcResponse.json();
 
         const printMap: Record<string, any> = {};
+        printData.forEach(item => { if (item.jobno) printMap[item.jobno] = item; });
 
         const mergedData = orderData.map((order) => {
           const matchingPrintData = printMap[order.jobno_oms] || {};
@@ -249,6 +254,7 @@ const HeroFashionGrid131: React.FC = () => {
         setDataSource(gridData);
         setTotalCount(processedData.length);
         setShowingCount(processedData.length);
+        setQualityControllers(qcData.slice(0, 10));
       } catch (err: any) {
         console.error("Fetch error:", err); setError(err.message);
       } finally { setLoading(false); }
@@ -393,121 +399,26 @@ const HeroFashionGrid131: React.FC = () => {
 
   // --- QueryBuilder Configuration (Memoized for performance) ---
   const queryBuilderColumns: ColumnsModel[] = useMemo(() => [
-    // { field: 'jobno_oms', label: 'Job No', type: 'string' },
-    // { field: 'company_name', label: 'Company', type: 'string' },
-    // { field: 'buyer1', label: 'Buyer', type: 'string' },
-    // { field: 'stylename', label: 'Style Name', type: 'string' },
-    // { field: 'styleno', label: 'Style No', type: 'string' },
-    // { field: 'quantity', label: 'Quantity', type: 'number' },
-    // { field: 'director_sample_order', label: 'Director Sample/Order', type: 'string' },
-    // { field: 'production_type_inside_outside', label: 'Production Type', type: 'string' },
-    // { field: 'merch', label: 'Merch', type: 'string' },
-    // { field: 'punit_sh', label: 'Unit', type: 'string' },
-    // { field: 'finaldelvdate1', label: 'Final Delivery Date', type: 'date', format: 'dd/MM/yyyy' },
-    // { field: 'Fdt', label: 'Fdt', type: 'string' },
-    // { field: 'printing_R', label: 'Printing', type: 'string' },
-    // { field: 'Emb_R', label: 'Embroidery', type: 'string' },
-    // { field: 'Fab_R', label: 'Fabric', type: 'string' },
-    // { field: 'ITS_R', label: 'ITS', type: 'string' },
-    // { field: 'Order_R', label: 'Order', type: 'string' },
-    // { field: 'quality_controller', label: 'Quality Controller', type: 'string' },
-    // { field: 'uom', label: 'UOM', type: 'string' },
-    // { field: 'abc', label: 'ABC', type: 'string' }
-    
-    { field: 'fdt', label: 'FDT ISO', type: 'date' },
-    { field: 'slno', label: 'Serial No', type: 'number' },
-    { field: 'insdatenew', label: 'Ins Date New', type: 'string' },
-    { field: 'jobno_oms', label: 'Job No OMS', type: 'string' },
-    { field: 'printing_R', label: 'Printing Status', type: 'string' },
-    { field: 'buyerid', label: 'Buyer ID', type: 'number' },
-    { field: 'mpyear', label: 'MP Year', type: 'number' },
-    { field: 'number_01_printing', label: 'Printing No', type: 'number' },
-    { field: 'number_03_emb', label: 'Embroidery No', type: 'number' },
-    { field: 'mpdate', label: 'MP Date', type: 'date' },
-    { field: 'refno', label: 'Ref No', type: 'string' },
+    { field: 'jobno_oms', label: 'Job No', type: 'string' },
+    { field: 'company_name', label: 'Company', type: 'string' },
+    { field: 'buyer1', label: 'Buyer', type: 'string' },
     { field: 'stylename', label: 'Style Name', type: 'string' },
-    { field: 'styledesc', label: 'Style Description', type: 'string' },
-    { field: 'season', label: 'Season', type: 'string' },
-    { field: 'jobnoomsnew', label: 'Job No New', type: 'string' },
-    { field: 'Print', label: 'Print Detail', type: 'string' },
-    { field: 'Others1', label: 'Image Link 1', type: 'string' },
-    { field: 'Others2', label: 'Image Link 2', type: 'string' },
-    { field: 'Others3', label: 'Image Link 3', type: 'string' },
-    { field: 'Others4', label: 'Image Link 4', type: 'string' },
-    { field: 'Others5', label: 'Image Link 5', type: 'string' },
-    { field: 'Others6', label: 'Image Link 6', type: 'string' },
-    { field: 'Others7', label: 'Image Link 7', type: 'string' },
-    { field: 'Emb', label: 'Embroidery Detail', type: 'string' },
-    { field: 'mainimagepath', label: 'Main Image Path', type: 'string' },
-    { field: 'ordimg1_pen', label: 'Order Image Pending', type: 'string' },
-    { field: 'seasonyear', label: 'Season Year', type: 'number' },
-    { field: 'styleid', label: 'Style ID', type: 'number' },
-    { field: 'final_delivery_date', label: 'Final Delivery Date', type: 'string' },
-    { field: 'finaldelvdate1', label: 'Final Delv Date ISO', type: 'date' },
-    { field: 'year', label: 'Year', type: 'string' },
-    { field: 'final_year_delivery', label: 'Final Year Delv', type: 'string' },
-    { field: 'final_year_delivery1', label: 'Final Year Delv ISO', type: 'string' },
-    { field: 'ddays', label: 'Delivery Days', type: 'number' },
-    { field: 'fdays', label: 'Final Days', type: 'number' },
-    { field: 'insdays', label: 'Inspection Days', type: 'number' },
-    { field: 'finaldelvdate', label: 'Final Delv Date Str', type: 'string' },
-    { field: 'ourdeldate', label: 'Our Delivery Date', type: 'string' },
-    { field: 'date', label: 'Entry Date', type: 'string' },
-    { field: 'ourdelvdate', label: 'Our Delv Date Short', type: 'string' },
-    { field: 'podate', label: 'PO Date', type: 'string' },
-    { field: 'vessel_dt', label: 'Vessel Date', type: 'date' },
-    { field: 'vessel_yr', label: 'Vessel Year', type: 'string' },
-    { field: 'pono', label: 'PO No', type: 'string' },
-    { field: 'shipmentcompleted', label: 'Shipment Completed', type: 'number' },
-    { field: 'reference', label: 'Production Remarks', type: 'string' },
-    { field: 'no', label: 'Job No Short', type: 'string' },
-    { field: 'company_name', label: 'Company Name', type: 'string' },
-    { field: 'mer_un', label: 'Merchandiser Unit', type: 'string' },
-    { field: 'image_order', label: 'Order Image URL', type: 'string' },
-    { field: 'abc', label: 'ABC Status', type: 'string' },
-    { field: 'order_follow_up', label: 'Order Follow-up', type: 'string' },
-    { field: 'quality_controller', label: 'QC Person', type: 'string' },
-    { field: 'buyer_sh', label: 'Buyer Short', type: 'string' },
-    { field: 'buyer1', label: 'Buyer Code', type: 'string' },
-    { field: 'punit_sh', label: 'Production Unit Short', type: 'string' },
-    { field: 'insdateyear', label: 'Inspection Year', type: 'string' },
-    { field: 'insdate', label: 'Inspection Date', type: 'date' },
-    { field: 'FMonth_yr', label: 'Month Year Ref', type: 'string' },
-    { field: 'quantity', label: 'Total Quantity', type: 'number' },
-    { field: 'production_unit1', label: 'Prod Unit Code', type: 'string' },
     { field: 'styleno', label: 'Style No', type: 'string' },
-    { field: 'buyer', label: 'Buyer Full Name', type: 'string' },
-    { field: 'merch', label: 'Merchandiser', type: 'string' },
-    { field: 'u46', label: 'U46 Status', type: 'string' },
-    { field: 'u7', label: 'U7 Status', type: 'string' },
-    { field: 'u141', label: 'U141 Status', type: 'string' },
-    { field: 'u45', label: 'U45 Status', type: 'string' },
-    { field: 'u36', label: 'U36 Status', type: 'string' },
-    { field: 'u31', label: 'U31 Status', type: 'string' },
-    { field: 'u5', label: 'U5 Status', type: 'string' },
-    { field: 'u14', label: 'U14 Status', type: 'string' },
-    { field: 'u8', label: 'U8 Status', type: 'string' },
-    { field: 'u37', label: 'U37 Status', type: 'string' },
-    { field: 'u25', label: 'U25 Status', type: 'string' },
-    { field: 'Emb_R', label: 'Embroidery Readiness', type: 'string' },
-    { field: 'Week_R1', label: 'Week Ref Full', type: 'string' },
-    { field: 'wk', label: 'Week Year', type: 'string' },
-    { field: 'wk113', label: 'Week Detailed', type: 'string' },
-    { field: 'Fab_R', label: 'Fabric Readiness', type: 'string' },
-    { field: 'ITS_R', label: 'ITS Readiness', type: 'string' },
-    { field: 'Order_R', label: 'Order Readiness', type: 'string' },
-    { field: 'Dy_R', label: 'Dyeing Readiness', type: 'string' },
-    { field: 'Sample_R', label: 'Sample Readiness', type: 'string' },
-    { field: 'Week_R', label: 'Week Ref Short', type: 'string' },
-    { field: 'actdaten', label: 'Actual Date ISO', type: 'date' },
-    { field: 'actdate', label: 'Actual Date Str', type: 'string' },
-    { field: 'actyeardate', label: 'Actual Year Date', type: 'string' },
-    { field: 'con_actdate', label: 'Combined Act Date', type: 'string' },
-    { field: 'uom', label: 'Unit of Measure', type: 'string' },
-    { field: 'production_unit', label: 'Production Unit Name', type: 'string' },
-    { field: 'director_sample_order', label: 'Director Status', type: 'string' }
-
-
+    { field: 'quantity', label: 'Quantity', type: 'number' },
+    { field: 'director_sample_order', label: 'Director Sample/Order', type: 'string' },
+    { field: 'production_type_inside_outside', label: 'Production Type', type: 'string' },
+    { field: 'merch', label: 'Merch', type: 'string' },
+    { field: 'punit_sh', label: 'Unit', type: 'string' },
+    { field: 'finaldelvdate1', label: 'Final Delivery Date', type: 'date', format: 'dd/MM/yyyy' },
+    { field: 'Fdt', label: 'Fdt', type: 'string' },
+    { field: 'printing_R', label: 'Printing', type: 'string' },
+    { field: 'Emb_R', label: 'Embroidery', type: 'string' },
+    { field: 'Fab_R', label: 'Fabric', type: 'string' },
+    { field: 'ITS_R', label: 'ITS', type: 'string' },
+    { field: 'Order_R', label: 'Order', type: 'string' },
+    { field: 'quality_controller', label: 'Quality Controller', type: 'string' },
+    { field: 'uom', label: 'UOM', type: 'string' },
+    { field: 'abc', label: 'ABC', type: 'string' }
   ], []);
 
   const updateResult = useCallback((args: any) => {
@@ -602,55 +513,11 @@ const HeroFashionGrid131: React.FC = () => {
     <>{highlightText(props[field])}</>
   );
 
-  // Double-tap detection for mobile
-  const lastTapTimeRef = useRef<number>(0);
-  const lastTapTargetRef = useRef<EventTarget | null>(null);
-  
-  const imageDoubleTapHandler = useCallback((e: React.MouseEvent<HTMLImageElement> | React.TouchEvent<HTMLImageElement>) => {
-    const currentTime = new Date().getTime();
-    const tapLength = currentTime - lastTapTimeRef.current;
-    const target = e.currentTarget;
-    
-    // Double tap detected (within 300ms and on same element)
-    if (tapLength < 300 && tapLength > 0 && lastTapTargetRef.current === target) {
-      console.log('Double tap detected on mobile!');
-      e.preventDefault(); // Prevent zoom on mobile
-      
-      if (target.getAttribute("data-tooltip-id")) {
-        tooltipRef.current?.close();
-      } else {
-        tooltipRef.current?.open(target);
-      }
-      
-      // Reset
-      lastTapTimeRef.current = 0;
-      lastTapTargetRef.current = null;
-    } else {
-      // First tap
-      lastTapTimeRef.current = currentTime;
-      lastTapTargetRef.current = target;
-    }
-  }, []);
-
   // --- Templates ---
-  const imageFieldTemplate = useCallback((field: 'mainimagepath' | 'Print' | 'print_img' | 'prnmeaimg' | 'img_fpath' | 'Emb' | 'Others1' | 'Others2' | 'Others3' | 'Others4' | 'Others5' | 'Others6' | 'Others7') => (p: OrderData) => {
+  const imageFieldTemplate = (field: 'mainimagepath' | 'Print' | 'print_img' | 'prnmeaimg' | 'img_fpath' | 'Emb' | 'Others1' | 'Others2' | 'Others3' | 'Others4' | 'Others5' | 'Others6' | 'Others7') => (p: OrderData) => {
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
-    
-    return (
-      <img 
-        src={p[field]} 
-        alt="img" 
-        onClick={Browser.isDevice ? imageDoubleTapHandler : undefined}
-        style={{ 
-          width: '70px', 
-          height: '70px', 
-          objectFit: 'contain', 
-          border: '1px solid #eee',
-          touchAction: Browser.isDevice ? 'manipulation' : 'auto' // Prevents zoom on double-tap
-        }} 
-      />
-    );
-  }, [imageDoubleTapHandler]);
+    return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
+  };
 
   let serverUpdated = false;
   let newPrimaryKey: number | null = null;
@@ -718,7 +585,7 @@ const HeroFashionGrid131: React.FC = () => {
 
   const orderSummaryTemplate = (p: OrderData) => {
     return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4', width: '90px' }}>
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
         <b>OR-</b> {highlightText(p.jobno_oms)}<br />
         <b>Buy-</b> {highlightText(p.buyer1)}<br />
         <b>Mer-</b> {p.merch ? highlightText(p.merch.includes("Murthy-") ? p.merch.split("Murthy-h ")[1] : p.merch) : ""}<br />
@@ -727,30 +594,6 @@ const HeroFashionGrid131: React.FC = () => {
       </div>
     );
   }
-  const orderSummaryHeaderTemplate = (p: OrderData) => {
-    return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>OR</b><br/>
-        <b>Buy</b> <br/>
-        <b>Mer</b> <br/>
-        <b>Unit</b><br/>
-        <b>Qty</b><br/>
-      </div>
-    );
-  }
-
-   const udfheaderTemplate = (p: OrderData) => {
-    return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>1-Print</b><br/>
-        <b>3-Emb</b> <br/>
-        <b>8-Fab</b> <br/>
-        <b>14-dye</b><br/>
-        <b>7-cust</b><br/>
-      </div>
-    );
-  }
-  
 
   const udf = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -781,8 +624,6 @@ const HeroFashionGrid131: React.FC = () => {
       <b>Qty:</b> {highlightText(p.quantity)} */}
     </div>
   );
-
-
 
 
 
@@ -885,19 +726,19 @@ const HeroFashionGrid131: React.FC = () => {
     'Delete',
     'Update',
     'Cancel',
-    // { type: 'Separator' },
+    { type: 'Separator' },
     { text: '', prefixIcon: 'e-filter', id: 'query_builder_toggle', tooltipText: 'Toggle Query Builder' },
     { text: 'FilterToggle', id: 'filterToggle', tooltipText: 'filterToggle' },
     { text: 'Clear All', id: 'clearAll', tooltipText: 'Clear All' },
     { text: '', prefixIcon: 'sf-icon-clear-sorting', id: 'clearsorting_icon', tooltipText: 'Clear Sorting' },
     { text: '', prefixIcon: 'e-filter-clear icon', id: 'clearfilter_icon', tooltipText: 'Clear Filtering' },
-    // { type: 'Separator' },
+    { type: 'Separator' },
     { text: '', prefixIcon: 'sf-icon-clear-selection', id: 'clear_selection', tooltipText: 'Clear Selection' },
     { text: '', prefixIcon: 'sf-icon-row-clear', id: 'clear_row_selection', tooltipText: 'Clear Row Selection' },
     { text: '', prefixIcon: 'sf-icon-column-clear', id: 'clear_column_selection', tooltipText: 'Clear Column Selection' },
     { text: '', prefixIcon: 'sf-icon-clear-cell', id: 'clear_cell_selection', tooltipText: 'Clear Cell Selection' },
-    // { type: 'Separator' },
-    // { type: 'Separator' },
+    { type: 'Separator' },
+    { type: 'Separator' },
     { text: '', prefixIcon: 'e-csvexport', id: 'export_csv', tooltipText: 'Export CSV' },
     { text: '', prefixIcon: 'e-excelexport', id: 'export_excel', tooltipText: 'Export Excel' },
     { text: '', prefixIcon: 'e-pdfexport', id: 'export_pdf', tooltipText: 'Export PDF' },
@@ -1015,7 +856,7 @@ const HeroFashionGrid131: React.FC = () => {
     if(initialRender)
     {
       initialRender=false;
-      // gridRef.current?.autoFitColumns();
+      gridRef.current?.autoFitColumns();
     }
     if (gridRef.current) {
       if (gridRef.current.searchSettings.key && gridRef.current.searchSettings.key.length > 0) {
@@ -1379,7 +1220,6 @@ const HeroFashionGrid131: React.FC = () => {
       case 'clearAll':
         gridRef.current.setProperties({
           filterSettings:{columns:{}},
-          sortSettings:{columns:[]},
           searchSettings:{key:""},
           query:new Query()
         },true)
@@ -1876,6 +1716,7 @@ const HeroFashionGrid131: React.FC = () => {
 
   const sortSettings = useMemo(() => ({
     columns: [
+      { field: 'director_sample_order', direction: 'Descending' as any },
       { field: 'Fdt', direction: 'Ascending' as any }
     ]
   }), []);
@@ -1884,8 +1725,8 @@ const HeroFashionGrid131: React.FC = () => {
   ),[])
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
-    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" opensOn={!Browser.isDevice ? "Hover" :"Custom"} beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
-      <div className='grid-container e-bigger'
+    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
+      <div className='grid-container'
         style={{
           overflow: 'hidden',
           minHeight: 0
@@ -1902,7 +1743,6 @@ const HeroFashionGrid131: React.FC = () => {
           enableVirtualization={true}
           allowSorting={true}
           allowFiltering={false}
-          resizeSettings={{ mode: 'Auto' }}
           allowMultiSorting={true}
           filterSettings={{ showFilterBarOperator: true, mode: 'Immediate' }}
           statelessTemplates={['directiveTemplates']}
@@ -1931,22 +1771,99 @@ const HeroFashionGrid131: React.FC = () => {
           load={load}
         >
           <ColumnsDirective>
-            <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerTemplate={orderSummaryHeaderTemplate} width="90" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerText="Or,Buy,Mer,Unit,Qty" width="120" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="203" maxWidth="150" template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
-            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="200" maxWidth="200" filterBarTemplate={multiSelectFilterTemplate} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="production_type_inside_outside" headerText="pty" width="70" filter={{ operator: 'startsWith' }} maxWidth="100" customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="finaldelvdate" type="date" headerText="finaldelvdate" width="90" template={genericHighlighter('finaldelvdate')} />
+            <ColumnDirective field="year" headerText="Year" width="150" maxWidth="150" template={genericHighlighter('year')} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective
+              field="finaldelvdate1"
+              headerText="Final Delivery Date"
+              width="120"
+              format={'dd/MM/yyyy'}
+              type="date"
+              editTemplate={dateEditor}
+              filterBarTemplate={dateRangeFilterTemplate}
+            />
             <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others2" headerText="imgs2" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
+            <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} />
+            <ColumnDirective field="merch" headerText="merch" width="90" template={genericHighlighter('merch')} />
+            <ColumnDirective field="buyer1" headerText="buyer1" width="100" template={genericHighlighter('buyer1')} />
+            <ColumnDirective field="punit_sh" headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} />
+            <ColumnDirective field="u8" headerText="8 FAB" width="100" allowEditing={false} template={genericHighlighter('u8')} visible={false} />
+            <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} />
+            {/* <ColumnDirective field="production_type_inside_outside" headerText="pty,dir,com,ordfol" width="150" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="styleno" headerText="sty,stydes,qcon" width="150" maxWidth="150" template={qualy} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="All" headerText='Fdt,Odt,dt' width="150" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
+            <ColumnDirective headerText='n' width="30" textAlign="Left" allowFiltering={false} template={rollnoTemplate} allowEditing={false} />
+            <ColumnDirective field="Print" headerText="Print img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others1" headerText="PLT-7 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others7" headerText="FUS-14 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others7')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Fab_R" headerText="Fab_R" width="100" template={genericHighlighter('Fab_R')} />
+            <ColumnDirective field="Week_R1" headerText="Week_R1" width="100" template={genericHighlighter('Week_R1')} />
+            {/* <ColumnDirective field="Fdt" headerText="DELIVERY INFO" width="150" maxWidth="150" template={deliveryInfoTemplate} /> */}
+            {/* <ColumnDirective field="styleno" headerText="udf2" width="150" maxWidth="150" template={udf2} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="udf4" headerText="udf4" width="150" maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="prdty" headerText="prdty" width="180" maxWidth="250" template={prdty} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="styleno" headerText="qualy" width="240" template={qualy} customAttributes={{ class: 'editCss' }}/>
+          <ColumnDirective field="All"headerText='All ' width="200" textAlign="Center" allowFiltering={true} template={Alldate} allowEditing={false} /> */}
+            <ColumnDirective field="print_img" headerText="PRN IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('print_img')} />
+            <ColumnDirective field="prnmeaimg" headerText="MEAS IMG" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('prnmeaimg')} />
+            {/* <ColumnDirective field="img_fpath" headerText="AOP" width="120" maxWidth="120" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('img_fpath')} /> */}
+            {/* <ColumnDirective field="prnclr" headerText="PRN COL" width="100" template={genericHighlighter('prnclr')} /> */}
+            {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100"     template={genericHighlighter('printing_R')} /> */}
+            {/* <ColumnDirective field="jobno_oms" headerText="jobno_oms" width="100" template={genericHighlighter('jobno_oms')} /> */}
+            {/* <ColumnDirective field="finaldelvdate" headerText="finaldelvdate" width="100" template={genericHighlighter('finaldelvdate')} /> */}
+            {/* <ColumnDirective field="date" headerText="date" width="100" template={genericHighlighter('finaldelvdate1')} />
+            <ColumnDirective field="Others3" headerText="other10" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others3')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others4" headerText="other11" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others4')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others5" headerText="other12" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others5')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            <ColumnDirective field="Others6" headerText="other13" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others6')} allowEditing={false} customAttributes={{ class: 'img' }} />
+            {/* <ColumnDirective field="qltycontroller" headerText="QC-ms" width="100" template={genericHighlighter('qltycontroller')} edit={qualityControllerEdit} allowEditing={true} /> */}
+          {/* <ColumnDirective field="ourdelvdate" headerText="ourdelvdate" width="100" template={genericHighlighter('ourdelvdate')} />
+          <ColumnDirective field="actdaten" headerText="actdaten" width="100" template={genericHighlighter('actdaten')} />
+          <ColumnDirective field="u25" headerText="25 WEEK" width="100" template={genericHighlighter('u25')} /> */}
+            {/* <ColumnDirective field="abc" type="string" headerText="ABC" width="100" template={genericHighlighter('abc')} /> */}
+            <ColumnDirective field="u46" headerText="46 EMPTY" width="100" template={genericHighlighter('u46')} />
+            <ColumnDirective field="u14" headerText="46 EMPTY" width="100" template={genericHighlighter('u14')} />
+            {/* <ColumnDirective field="production_type_inside_outside" headerText="PRD TYPE" width="100" template={genericHighlighter('production_type_inside_outside')} /> */}
+            {/* <ColumnDirective field="u37" headerText="37 AOP" width="100" template={genericHighlighter('u37')} /> */}
+            {/* <ColumnDirective field="printing_R" headerText="1 PRINT" width="100" template={genericHighlighter('printing_R')} /> */}
+            {/* <ColumnDirective field="u8" headerText="8 FAB" width="100" allowEditing={false} template={genericHighlighter('u8')} visible={false} /> */}
+            {/* <ColumnDirective field="u36" headerText="36 FABIN" width="90" template={genericHighlighter('u36')} /> */}
+            {/* <ColumnDirective field="u15" headerText="15" width="90" template={genericHighlighter('u15')} /> */}
+            {/* <ColumnDirective field="u45" headerText="45 ORDER" width="90" template={genericHighlighter('u45')} /> */}
+            <ColumnDirective field="u31" headerText="31 ITS" width="90" template={genericHighlighter('u31')} />
+            {/* <ColumnDirective field="u141" headerText="141 SAMPLE" width="100" template={genericHighlighter('u141')} /> */}
+            {/* <ColumnDirective field="Emb_R" headerText="3 EMB" width="90" template={genericHighlighter('Emb_R')} /> */}
+            {/* <ColumnDirective field="buyer1" headerText="BUYER" width="100" template={genericHighlighter('buyer1')} />
+          <ColumnDirective field="merch" headerText="MERCH" width="100" template={genericHighlighter('merch')} />
+          <ColumnDirective field='punit_sh' headerText="punit_sh" width="100" template={genericHighlighter('punit_sh')} /> */}
+            {/* 
+          <ColumnDirective field="styleno" headerText="STYLE NO" width="110" template={genericHighlighter('styleno')} />
+          <ColumnDirective field="director_sample_order" headerText="DIR S/O" width="100" template={genericHighlighter('director_sample_order')} />
+          <ColumnDirective field="order_follow_up" headerText="ORD FOLLOW UP" width="100" template={genericHighlighter('order_follow_up')} />
+          <ColumnDirective field="u7" headerText="U7" width="100" template={genericHighlighter('u7')} />
+          <ColumnDirective field="quality_controller" headerText="QC" width="100" template={genericHighlighter('quality_controller')} /> */}
+            <ColumnDirective field="slno1" headerText="No" width="90" textAlign="Center" />
             <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
           </ColumnsDirective>
           <AggregatesDirective>
             <AggregateDirective>
               <AggregateColumnsDirective>
+                <AggregateColumnDirective field='slno1' type='Count' footerTemplate={footerCount} format='N'> </AggregateColumnDirective>
                 <AggregateColumnDirective field='quantity' type='Sum' footerTemplate={footerSum} format='N'> </AggregateColumnDirective>
               </AggregateColumnsDirective>
             </AggregateDirective>

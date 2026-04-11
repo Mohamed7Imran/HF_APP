@@ -1,59 +1,68 @@
 import React, { useState, useEffect, useContext } from "react";
 import { api } from "../../../auth/auth";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+// import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { UserContext } from "../../../UserContext";
-// import { useEffect, useState, useContext } from "react";
 
 export default function DefectTabs() {
   const { unit, line } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   const qc_type = "first_piece";
+  const location = useLocation(); // ✅ IMPORTANT
+  const passedData = location.state; // ✅ data from previous page
   const { userId } = useContext(UserContext);
 
-  const {
-    bundleNo,
-    jobNo,
-    product,
-    colour,
-    size,
-    pieces,
-    bundle_id
-  } = location.state || {};
-
-  const [activeTab, setActiveTab] = useState("minor");
+  // Bundle info fetched from API
+  const [bundleData, setBundleData] = useState({});
   const [qcdatas, setQcdatas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [counts, setCounts] = useState({});
   const [inspectedCount, setInspectedCount] = useState(0);
   const [forceSave, setForceSave] = useState(false);
 
-  const totalPieces = Number(pieces) || 0;
+  const totalPieces = Number(bundleData.total_pieces) || 0;
 
   useEffect(() => {
-    const fetch_qcdata = async () => {
+    if (passedData) {
+      setBundleData({
+        bundle_no: passedData.bundleNo,
+        bundle_id: passedData.bundle_id,
+        jobno: passedData.jobNo,
+        product: passedData.product,
+        color: passedData.colour,
+        size: passedData.size,
+        total_pieces: Number(passedData.pieces),
+      });
+      setInspectedCount(0);
+    }
+  }, [passedData]);
+
+
+  // 🔹 Fetch QC data (defects)
+  useEffect(() => {
+    const fetchQCData = async () => {
       try {
         const res = await api.get("qcapp/qcadmin_mistakes/");
         setQcdatas(res.data);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch QC data:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetch_qcdata();
+    fetchQCData();
   }, []);
 
-
-   // 🔹 Fetch last checked piece for this bundle
+  // 🔹 Fetch last bundle info
   useEffect(() => {
     const fetchLastBundle = async () => {
       try {
-        const res = await api.get(`qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`);
+        const res = await api.get(
+          `qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`
+        );
         const last = res.data;
-
-        if (last && last.bundle_id === bundle_id) {
-          // Set inspected count to reflect already checked pieces
+        if (last) {
+          setBundleData(last);
           setInspectedCount(last.checked_pieces || 0);
         }
       } catch (err) {
@@ -61,9 +70,11 @@ export default function DefectTabs() {
       }
     };
 
-    if (bundle_id) fetchLastBundle();
-  }, [bundle_id]);
+    fetchLastBundle();
+  }, [unit, line]);
 
+  // 🔹 Filtering defects based on active tab
+  const [activeTab, setActiveTab] = useState("minor");
   const getFilteredData = () => {
     return qcdatas.filter((item) => {
       if (activeTab === "minor") return item.category === "Minor Defects";
@@ -74,123 +85,102 @@ export default function DefectTabs() {
   };
 
   const getCategoryCount = (categoryName) => {
-  return qcdatas
-    .filter((item) => item.category === categoryName)
-    .reduce((total, item) => {
-      return total + (counts[item.id] || 0);
-    }, 0);
-};
-
-  const handleIncrement = (id) => {
-    setCounts((prev) => ({
-      ...prev,
-      [id]: (prev[id] || 0) + 1,
-    }));
+    return qcdatas
+      .filter((item) => item.category === categoryName)
+      .reduce((total, item) => total + (counts[item.id] || 0), 0);
   };
 
-  const handleDecrement = (id) => {
-    setCounts((prev) => ({
-      ...prev,
-      [id]: Math.max((prev[id] || 0) - 1, 0),
-    }));
-  };
+  const handleIncrement = (id) =>
+    setCounts((prev) => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+
+  const handleDecrement = (id) =>
+    setCounts((prev) => ({ ...prev, [id]: Math.max((prev[id] || 0) - 1, 0) }));
 
   const totalMistakes = Object.values(counts).reduce((a, b) => a + b, 0);
-
   const mistakePercent =
     totalPieces > 0 ? ((totalMistakes / totalPieces) * 100).toFixed(1) : 0;
 
+  // 🔹 Save a piece
+  const handleSavePiece = async () => {
+    if (inspectedCount >= totalPieces) return;
+    if (!userId) return alert("User not logged in! Cannot save piece.");
 
-const handleSavePiece = async () => {
-  if (inspectedCount >= totalPieces) return;
-  if (!userId) {
-      alert("User not logged in! Cannot save piece.");
-      return;
+    const defectsArray =
+      Object.entries(counts).map(([id, count]) => {
+        const defect = qcdatas.find((item) => item.id === Number(id));
+        return {
+          mistake_name: defect.name,
+          mistake_count: count,
+          category: defect.category,
+        };
+      }) || [];
+
+    if (defectsArray.length === 0) {
+      defectsArray.push({
+        mistake_name: "no_mistake",
+        mistake_count: 0,
+        category: "no_mistake",
+      });
     }
 
-  // Prepare defects array
-  const defectsArray = Object.entries(counts).map(([id, count]) => {
-    const defect = qcdatas.find((item) => item.id === Number(id));
-    return {
-      mistake_name: defect.name,
-      mistake_count: count,
-      category: defect.category,
+    const payload = {
+      bundle_no: bundleData.bundle_no,
+      bundle_id: bundleData.bundle_id,
+      jobno: bundleData.jobno,
+      product: bundleData.product,
+      color: bundleData.color,
+      size: bundleData.size,
+      unit,
+      line,
+      qc_type,
+      total_pieces: totalPieces,
+      piece_no: inspectedCount + 1,
+      total_mistake: totalMistakes,
+      mistake_percentage: mistakePercent,
+      defects: defectsArray,
+      userId,
     };
-  });
 
-  // If no defects, push a single record with null values
-  if (defectsArray.length === 0) {
-    defectsArray.push({
-      mistake_name: "no_mistake",
-      mistake_count: 0,
-      category: "no_mistake",
-    });
-  }
- // Calculate total mistakes and percentage
-  const totalMistakes = Object.values(counts).reduce((a, b) => a + b, 0);
-  const mistakePercentage =
-    totalPieces > 0 ? ((totalMistakes / totalPieces) * 100).toFixed(1) : "0";
-    
-  const payload = {
-    bundle_no: bundleNo,
-    bundle_id,
-    jobno: jobNo,
-    product,
-    color: colour,
-    size,
-    unit,
-    line,
-    qc_type:"first_piece",
-    total_pieces: totalPieces,
-    piece_no: inspectedCount + 1,
-    total_mistake: totalMistakes,
-    mistake_percentage: mistakePercentage,
-    defects: defectsArray,
-    userId,
+    try {
+      await api.post("qcapp/save_piece/", payload);
+      alert(`Piece ${inspectedCount + 1} saved ✅`);
+      setInspectedCount((prev) => prev + 1);
+      setCounts({});
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save piece ❌");
+    }
   };
 
-  try {
-    await api.post("qcapp/save_piece/", payload);
-    alert(`Piece ${inspectedCount + 1} saved ✅`);
-    setInspectedCount((prev) => prev + 1);
-    setCounts({});
-  } catch (err) {
-    console.error(err);
-    alert("Failed to save piece ❌");
-  }
-};
-
-useEffect(() => {
-  console.log("Current userId:", userId);
-}, [userId]);
-
+  // 🔹 Final submit
   const handleFinalSubmit = async () => {
-  try {
-  
-  await api.post("qcapp/save_final_piece/", {
-    bundle_no: bundleNo,
-    bundle_id,
-    jobno: jobNo,
-    product,
-    color: colour,
-    size,
-    unit,
-    line,
-    qc_type:"first_piece",
-    total_pieces: totalPieces,
-    checked_piece: inspectedCount,
-    force_save: forceSave,
-    userId,
-  });
+    try {
+      await api.post("qcapp/save_final_piece/", {
+        bundle_no: bundleData.bundle_no,
+        bundle_id: bundleData.bundle_id,
+        jobno: bundleData.jobno,
+        product: bundleData.product,
+        color: bundleData.color,
+        size: bundleData.size,
+        unit,
+        line,
+        qc_type,
+        total_pieces: totalPieces,
+        checked_piece: inspectedCount,
+        force_save: forceSave,
+        userId,
+        seq:"first_piece"
+      });
 
-    alert("Saved Successfully ✅");
-    navigate(-1);
-  } catch (err) {
-    console.error(err);
-    alert("Save failed ❌");
-  }
-};
-
+      alert("Saved Successfully ✅");
+      navigate(-1);
+    } catch (err) {
+      console.error(err);
+      alert("Save failed ❌");
+    }
+  };
+console.log("Bundle Data:", bundleData);
+console.log("Total Pieces:", totalPieces);
   const tabs = [
     { id: "minor", label: "Minor" },
     { id: "major", label: "Major" },
@@ -200,13 +190,10 @@ useEffect(() => {
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 flex justify-center mt-12 sm:mt-12 md:mt-4 lg:mt-0">
       <div className="w-full max-w-6xl bg-white rounded-3xl shadow-lg p-6 md:p-8">
-
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">
-              Defect Tracking
-            </h1>
+            <h1 className="text-2xl font-bold text-slate-800">Defect Tracking</h1>
             <p className="text-gray-400">Record quality issues</p>
           </div>
           <div>
@@ -217,42 +204,33 @@ useEffect(() => {
                 checked={forceSave}
                 onChange={(e) => setForceSave(e.target.checked)}
               />
-              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-              <span className="ms-3 text-md font-medium text-green-500 dark:text-gray-300">Force Save</span>
+              <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer-checked:after:translate-x-full after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              <span className="ms-3 text-md font-medium text-green-500">Force Save</span>
             </label>
           </div>
           <p className="text-blue-600 font-bold">
             Unit - {unit} / Line - {line}
           </p>
-          <p className="text-sm text-gray-500">
-            User ID: {userId}
-          </p>
+          {/* <p>{jobno}</p> */}
+          <p className="text-sm text-gray-500">User ID: {userId}</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-
           <div className="bg-gray-100 rounded-2xl p-4">
             <p className="text-gray-500 text-sm">Garments Inspected</p>
             <p className="text-2xl font-bold text-slate-800">
               {inspectedCount}/{totalPieces}
             </p>
           </div>
-
           <div className="bg-gray-100 rounded-2xl p-4">
             <p className="text-gray-500 text-sm">Mistakes Found</p>
-            <p className="text-2xl font-bold text-red-500">
-              {totalMistakes}
-            </p>
+            <p className="text-2xl font-bold text-red-500">{totalMistakes}</p>
           </div>
-
           <div className="bg-gray-100 rounded-2xl p-4">
             <p className="text-gray-500 text-sm">Mistake %</p>
-            <p className="text-2xl font-bold text-yellow-500">
-              {mistakePercent}%
-            </p>
+            <p className="text-2xl font-bold text-yellow-500">{mistakePercent}%</p>
           </div>
-
         </div>
 
         {/* Save Piece */}
@@ -270,38 +248,23 @@ useEffect(() => {
 
         {/* Tabs */}
         <div className="flex bg-gray-100 p-2 rounded-xl mb-6 gap-2">
-          <button
-            onClick={() => setActiveTab("minor")}
-            className={`flex-1 py-2 rounded-lg font-semibold ${
-              activeTab === "minor"
-                ? "bg-green-500 text-white"
-                : "text-gray-500"
-            }`}
-          >
-            Minor ({getCategoryCount("Minor Defects")})
-          </button>
-
-          <button
-            onClick={() => setActiveTab("major")}
-            className={`flex-1 py-2 rounded-lg font-semibold ${
-              activeTab === "major"
-                ? "bg-yellow-500 text-white"
-                : "text-gray-500"
-            }`}
-          >
-            Major ({getCategoryCount("Major Defects")})
-          </button>
-
-          <button
-            onClick={() => setActiveTab("critical")}
-            className={`flex-1 py-2 rounded-lg font-semibold ${
-              activeTab === "critical"
-                ? "bg-red-500 text-white"
-                : "text-gray-500"
-            }`}
-          >
-            Critical ({getCategoryCount("Critical Defects")})
-          </button>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 py-2 rounded-lg font-semibold ${
+                activeTab === tab.id
+                  ? tab.id === "minor"
+                    ? "bg-green-500 text-white"
+                    : tab.id === "major"
+                    ? "bg-yellow-500 text-white"
+                    : "bg-red-500 text-white"
+                  : "text-gray-500"
+              }`}
+            >
+              {tab.label} ({getCategoryCount(tab.label + " Defects")})
+            </button>
+          ))}
         </div>
 
         {/* Defect List */}
@@ -320,11 +283,8 @@ useEffect(() => {
                     alt={item.name}
                     className="w-12 h-12 rounded-lg object-cover"
                   />
-                  <p className="font-semibold text-gray-700">
-                    {item.name}
-                  </p>
+                  <p className="font-semibold text-gray-700">{item.name}</p>
                 </div>
-
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleDecrement(item.id)}
@@ -332,9 +292,7 @@ useEffect(() => {
                   >
                     -
                   </button>
-                  <span className="w-6 text-center font-bold">
-                    {counts[item.id] || 0}
-                  </span>
+                  <span className="w-6 text-center font-bold">{counts[item.id] || 0}</span>
                   <button
                     onClick={() => handleIncrement(item.id)}
                     className="px-3 py-1 bg-green-200 rounded-lg hover:bg-green-300"
@@ -359,7 +317,6 @@ useEffect(() => {
         >
           Complete & Save Record
         </button>
-
       </div>
     </div>
   );

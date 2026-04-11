@@ -31,7 +31,7 @@ export default function Rowing_defects() {
   const [forceSave, setForceSave] = useState(false);
   
   // State for Checkboxes and Remarks
-  const [shadeVariation, setShadeVariation] = useState(true);
+  const [shadeVariation, setShadeVariation] = useState(false);
   const [numberSticker, setNumberSticker] = useState(true);
   const [remarks, setRemarks] = useState("");
 
@@ -161,7 +161,8 @@ export default function Rowing_defects() {
         total_pieces: totalPieces,
         checked_piece: inspectedCount,
         force_save: forceSave,
-        userId
+        userId,
+        seq:process
       });
       alert("Bundle Completed Successfully ✅");
       navigate(-2);

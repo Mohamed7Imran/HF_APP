@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
   Typography, 
@@ -76,9 +75,6 @@ function FiveColumnDataTable() {
   const [u25Filter, setU25Filter] = useState('ALL');
   const [embFilter, setEmbFilter] = useState('ALL');
   const [printFilter, setPrintFilter] = useState('ALL');
-
-
-  const navigate = useNavigate();
   
   const toNumber = (val) => {
     const n = Number(val);
@@ -242,7 +238,11 @@ function FiveColumnDataTable() {
   if (error) return <Box p={2}><Alert severity="error">{error}</Alert></Box>;
 
   return (
-    <Box>
+    <Box
+      sx={{
+        mt: { xs: 4.5, md: 0 } 
+      }}
+    >
       <Box 
         sx={{ 
           position: 'sticky', top: 0, zIndex: 10, bgcolor: 'background.paper',
@@ -522,17 +522,6 @@ function FiveColumnDataTable() {
               ml: 0, '& .MuiFormControlLabel-label': { fontSize: {xs: '0.65rem', md: '1rem' }}
             }}
           />
-            <Button 
-              variant="contained" 
-              size="small"
-              onClick={() => navigate('/')}
-              sx={{ 
-                gridColumn: { xs: 'span 4', md: 'auto' }, 
-                height: '40px'
-              }}
-            >
-              Back
-            </Button>          
         </Box>
       </Box>
 

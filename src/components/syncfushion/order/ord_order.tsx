@@ -1372,8 +1372,6 @@ const HeroFashionGrid131: React.FC = () => {
 
       }
 
-
-
       case 'clearsorting_icon':
         console.log('Clear Sorting clicked');
         gridRef.current.clearSorting();

@@ -37,6 +37,7 @@ export default function Roving() {
     if (!bundle) return;
     try {
       const response = await fetch(`https://hfapi.herofashion.com/qcapp/get_bundle_data/?bundle_id=${bundle}`);
+      // const response = await fetch(`http://10.1.21.110:7003/qcapp/get_bundle_data/?bundle_id=${bundle}`);
       const data = await response.json();
       
       if (data.message || !data.length) {

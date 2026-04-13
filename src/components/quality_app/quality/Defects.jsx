@@ -8,6 +8,8 @@ export default function DefectTabs() {
   const { unit, line } = useParams();
   const navigate = useNavigate();
   const qc_type = "first_piece";
+  const seq = "first_piece";
+  const machineId =0
   const location = useLocation(); // ✅ IMPORTANT
   const passedData = location.state; // ✅ data from previous page
   const { userId } = useContext(UserContext);
@@ -58,7 +60,7 @@ export default function DefectTabs() {
     const fetchLastBundle = async () => {
       try {
         const res = await api.get(
-          `qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}`
+          `qcapp/get_last_bundle/?unit=${unit}&line=${line}&qc_type=${qc_type}&seq=${seq}`
         );
         const last = res.data;
         if (last) {
@@ -139,6 +141,8 @@ export default function DefectTabs() {
       mistake_percentage: mistakePercent,
       defects: defectsArray,
       userId,
+      seq:seq,
+      machineId:machineId
     };
 
     try {
@@ -164,6 +168,7 @@ export default function DefectTabs() {
         size: bundleData.size,
         unit,
         line,
+        machineId,
         qc_type,
         total_pieces: totalPieces,
         checked_piece: inspectedCount,

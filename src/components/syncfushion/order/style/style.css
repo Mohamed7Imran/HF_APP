@@ -181,3 +181,25 @@
 {
   background-color:yellow ;
 }
+
+.e-bigger .e-wrap.e-grid-min-height .e-rowcell{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.e-grid .e-gridheader tr:first-child:not(.e-grid-pin-row) th:not(.e-freezeleftborder, .e-freezerightborder),
+.e-grid:not(.sf-grid, .e-rtl).e-default.e-bothlines .e-headercell.e-leftfreeze.e-freezeleftborder
+{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.e-bigger .e-grid .e-groupdroparea {
+  font-size: 15px !important;
+  min-height: 40px !important;
+  padding: 12px 24px !important;
+}
+
+.e-grid .e-summarycell {
+  padding: 5px !important;
+}

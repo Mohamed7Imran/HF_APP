@@ -6,7 +6,6 @@ import TallyBalanceReport from "../order/tally.tsx"
 import OrdPagination from "../order/ord_pagination.tsx"
 import PrnReportGrid from "../order/print.tsx"
 import CardGrid from './Card.jsx';
-import { App } from '../order/SyncGrid.tsx';
 import Card1 from '../order/card/Card.jsx';
 import Card2 from '../order/card/Card2.jsx';
 import Sample from '../order/Sample.tsx';
@@ -29,7 +28,6 @@ import Pivot from '../order/pivot/Pivotview.tsx';
 import Adaptive from '../order/AdaptiveCardSync.tsx';
 import Kanban from '../order/Kanban/Kanban.jsx';
 import Quary from '../order/sync_quarybuilder.tsx';
-// import Overview from "../order/chart.tsx"
 import Form from "../order/Form/Form.tsx";
 import Websocket from "../order/websocket.jsx"
 import Weborder from "../order/web_order.tsx"
@@ -47,7 +45,6 @@ function Home() {
         <Route path="/PrnReportGrid" element={<PrnReportGrid />} /> 
         <Route path="/card1" element={<Card1 />} /> 
         <Route path="/card2" element={<Card2 />} /> 
-        <Route path="/sync" element={<App />} /> 
         <Route path="/sample" element={<Sample />} /> 
         <Route path="/mulitquality" element={<MultiQuality/>} />
         <Route path="/Schedule" element={<Schedule />} /> 

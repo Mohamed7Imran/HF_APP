@@ -31,7 +31,8 @@ import Quary from '../order/sync_quarybuilder.tsx';
 import Form from "../order/Form/Form.tsx";
 import Websocket from "../order/websocket.jsx"
 import Weborder from "../order/web_order.tsx"
-
+import "../order/Global.tsx"
+import Report from '../order/reportviewer.tsx'; 
 function Home() {
   return (
     <Routes>
@@ -67,6 +68,7 @@ function Home() {
         <Route path='/websocket' element={<Websocket />} />
         <Route path='/Weborder' element={<Weborder />} />
         <Route path='/form' element={<Form />} />
+        <Route path='/Report' element={<Report />} />
     </Routes>
   );
 }

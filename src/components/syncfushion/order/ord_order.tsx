@@ -35,10 +35,11 @@ import {
 } from '@syncfusion/ej2-react-grids';
 import { ColumnsModel, QueryBuilderComponent } from '@syncfusion/ej2-react-querybuilder';
 import { TooltipComponent, DialogComponent } from '@syncfusion/ej2-react-popups';
-import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
+import { Ajax, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent, UploaderComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect, CheckBoxSelection } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
+import './Material 3/Showcase Material3/style.css';
 // import "../../../App.css";
 // import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 import { DatePickerComponent, DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
@@ -53,7 +54,7 @@ interface OrderData {
   printing_R: string; Fdt: string; Emb: string; abc: string; order_follow_up: string;
   quality_controller: string; reference: string; insdatenew: string; styledesc: string;
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
-  shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
+  shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;Fdt_wk:string;
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string; finaldelvdate1: string; number_03_emb: string; actdate: string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string; Print: string; Others1: string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string; clr?: string; print_img?: string; Fab_R: string;
@@ -750,6 +751,13 @@ const HeroFashionGrid131: React.FC = () => {
     );
   }
 
+  
+ const udf11 = (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      <b>FabdyIN:</b> {highlightText(p.FabdyIN)}<br />
+      <b>Fdt_wk:</b> {highlightText(p.Fdt_wk)}<br />
+      </div>);
+  
   const ordHeaderTemplate = (p: OrderData) => {
     return (
       <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -800,12 +808,6 @@ const HeroFashionGrid131: React.FC = () => {
       </div>
     );
   }
-
-    const udf11 = (p: OrderData) => (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>FabdyIN :</b> {highlightText(p.FabdyIN)}<br />
-      </div>
-    );
 
   const udf = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -1198,10 +1200,10 @@ const HeroFashionGrid131: React.FC = () => {
           </div>
 
 
-          <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
+          {/* <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u311</label>
             <input id="u31" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
+          </div> */}
 
 
         </div>
@@ -1216,7 +1218,7 @@ const HeroFashionGrid131: React.FC = () => {
 
 
           <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
             <input id="ITS_R" name="ITS_R" type="text" value={data.ITS_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
@@ -1233,7 +1235,7 @@ const HeroFashionGrid131: React.FC = () => {
 
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
-            <input id="u46" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
 
@@ -1241,14 +1243,14 @@ const HeroFashionGrid131: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
 
-          <div>
+          {/* <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
             <input id="u141" name="u141" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
+          </div> */}
 
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>141</label>
-            <input id="Sample_R" name="u31" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            <input id="Sample_R" name="Sample_R" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
 
@@ -1584,7 +1586,7 @@ const HeroFashionGrid131: React.FC = () => {
 
                 </div>
 
-                /* DATA BLOCK */
+                /* DATA unBLOCK */
                 <div
                   style={{
                     display: "grid",

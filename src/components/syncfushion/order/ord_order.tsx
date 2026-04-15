@@ -57,8 +57,8 @@ interface OrderData {
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string; finaldelvdate1: string; number_03_emb: string; actdate: string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string; Print: string; Others1: string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string; clr?: string; print_img?: string; Fab_R: string;
-  ITS_R: string; Order_R: string; Dy_R: string; Sample_R: string; Week_R: string; FMonth_yr: string; Emb_R: string; Week_R1: string; year: string; wk: string;
-  prnmeaimg?: string; mpic?: string;
+  ITS_R: string; Order_R: string; Dy_R: string; Sample_R: string; Week_R: string; FMonth_yr: string; Emb_R: string; Week_R1: string; year: string; wk: string; 
+  prnmeaimg?: string; mpic?: string; FabdyIN?: string;
   Others2: string; Others3: string; Others4: string; Others5: string; Others6: string; Others7: string,
 }
 
@@ -113,7 +113,7 @@ const HeroFashionGrid131: React.FC = () => {
     'number_03_emb', 'actdate', 'actdaten', 'actyeardate', 'pono', 'u46', 'u37',
     'qltycontroller', 'Print', 'others1', 'mainimagepath', 'finaldelvdate',
     'prnclr', 'prnfile1', 'prnfile2', 'img_fpath', 'clr', 'print_img', 'FMonth_yr', 'wk',
-    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R', 'year',
+    'Fab_R', 'ITS_R', 'Order_R', 'Dy_R', 'Sample_R', 'Week_R', 'year',"FabdyIN",
     'prnmeaimg', 'mpic', 'Others2', 'Others3', 'Others4', 'Others5', 'Others6', 'Others7'
   ], []);
 
@@ -167,9 +167,7 @@ const HeroFashionGrid131: React.FC = () => {
         setLoading(true); setError(null);
         const [orderResponse] = await Promise.all([
           fetch('https://app.herofashion.com/order_panda'),
-          // fetch('https://app.herofashion.com/PrintRgb/'),
-          // fetch('https://app.herofashion.com/ord_prn/'),
-          // fetch('https://app.herofashion.com/get_quality_controllers/')
+          
         ]);
         if (!orderResponse.ok ) throw new Error("Failed to fetch data from APIs");
 
@@ -614,11 +612,55 @@ const HeroFashionGrid131: React.FC = () => {
     <>{highlightText(props[field])}</>
   );
 
+  // Double-tap detection for mobile
+  const lastTapTimeRef = useRef<number>(0);
+  const lastTapTargetRef = useRef<EventTarget | null>(null);
+  
+  const imageDoubleTapHandler = useCallback((e: React.MouseEvent<HTMLImageElement> | React.TouchEvent<HTMLImageElement>) => {
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapTimeRef.current;
+    const target = e.currentTarget;
+    
+    // Double tap detected (within 300ms and on same element)
+    if (tapLength < 300 && tapLength > 0 && lastTapTargetRef.current === target) {
+      console.log('Double tap detected on mobile!');
+      e.preventDefault(); // Prevent zoom on mobile
+      
+      if (target.getAttribute("data-tooltip-id")) {
+        tooltipRef.current?.close();
+      } else {
+        tooltipRef.current?.open(target);
+      }
+      
+      // Reset
+      lastTapTimeRef.current = 0;
+      lastTapTargetRef.current = null;
+    } else {
+      // First tap
+      lastTapTimeRef.current = currentTime;
+      lastTapTargetRef.current = target;
+    }
+  }, []);
+
   // --- Templates ---
-  const imageFieldTemplate = (field: 'mainimagepath' | 'Print' | 'print_img' | 'prnmeaimg' | 'img_fpath' | 'Emb' | 'Others1' | 'Others2' | 'Others3' | 'Others4' | 'Others5' | 'Others6' | 'Others7') => (p: OrderData) => {
+  const imageFieldTemplate = useCallback((field: 'mainimagepath' | 'Print' | 'print_img' | 'prnmeaimg' | 'img_fpath' | 'Emb' | 'Others1' | 'Others2' | 'Others3' | 'Others4' | 'Others5' | 'Others6' | 'Others7') => (p: OrderData) => {
     if (!p[field]) return <div style={{ color: '#ccc', fontSize: '10px' }}>No Image</div>;
-    return <img src={p[field]} alt="img" style={{ width: '70px', height: '70px', objectFit: 'contain', border: '1px solid #eee' }} />;
-  };
+    
+    return (
+      <img 
+        src={p[field]} 
+        alt="img" 
+        onClick={Browser.isDevice ? imageDoubleTapHandler : undefined}
+        style={{ 
+          width: '70px', 
+          height: '70px', 
+          objectFit: 'contain', 
+          border: '1px solid #eee',
+          touchAction: Browser.isDevice ? 'manipulation' : 'auto' // Prevents zoom on double-tap
+        }} 
+      />
+    );
+  }, [imageDoubleTapHandler]);
 
   let serverUpdated = false;
   let newPrimaryKey: number | null = null;
@@ -703,6 +745,7 @@ const HeroFashionGrid131: React.FC = () => {
         <b>Buy</b> <br/>
         <b>Mer</b> <br/>
         <b>Unit</b><br/>
+        <b>Qty</b><br/>
       </div>
     );
   }
@@ -720,63 +763,7 @@ const HeroFashionGrid131: React.FC = () => {
     );
   }
 
-
-
-   const qualyHeaderTemplate = (p: OrderData) => {
-    return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>styleno</b><br/>
-        <b>styledesc</b> <br/>
-        <b>qcont</b> <br/>
-      </div>
-    );
-  }
-
-
-    const prdtyHeaderTemplate = (p: OrderData) => {
-    return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>ptype</b><br/>
-        <b>dir_sam_ord</b> <br/>
-        <b>comp</b> <br/>
-        <b>order_follow_up</b><br/>
-        <b>Qty</b><br/>
-      </div>
-    );
-  }
-
-const udf4HeaderTemplate = (p: OrderData) => {
-  return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>MO</b><br/>
-        <b>wk</b> <br/>
-        <b>yr</b> <br/>
-        <b>uom</b> <br/>
-        <b>abc</b> <br/>
-        {/* <b>order_follow_up</b><br/>
-        <b>Qty</b><br/> */}
-      </div>
-    );
-  }
-
-
-const udf2HeaderTemplate = (p: OrderData) => {
-    return (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>31-ITS</b><br/>
-        <b>36-CT</b> <br/>
-        <b>45-Ord</b> <br/>
-        <b>46-Empty</b><br/>
-        <b>141-Sam</b><br/>
-      </div>
-    );
-  }
-
-
-
-
-
-   const udfheaderTemplate = (p: OrderData) => {
+  const udfheaderTemplate = (p: OrderData) => {
     return (
       <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
         <b>1-Print</b><br/>
@@ -788,8 +775,37 @@ const udf2HeaderTemplate = (p: OrderData) => {
     );
   }
   
+  const udf4HeaderTemplate = (p: OrderData) => {
+    return (
+        <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+          <b>MO</b><br/>
+          <b>wk</b> <br/>
+          <b>yr</b> <br/>
+          <b>uom</b> <br/>
+          <b>abc</b> <br/>
+          {/* <b>order_follow_up</b><br/>
+          <b>Qty</b><br/> */}
+      </div>
+    );
+  }
 
+  const udf2HeaderTemplate = (p: OrderData) => {
+    return (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>31-ITS</b><br/>
+        <b>36-CT</b> <br/>
+        <b>45-Ord</b> <br/>
+        <b>46-Empty</b><br/>
+        <b>141-Sam</b><br/>
+      </div>
+    );
+  }
 
+    const udf11 = (p: OrderData) => (
+      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+        <b>FabdyIN :</b> {highlightText(p.FabdyIN)}<br />
+      </div>
+    );
 
   const udf = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -820,12 +836,6 @@ const udf2HeaderTemplate = (p: OrderData) => {
       <b>Qty:</b> {highlightText(p.quantity)} */}
     </div>
   );
-
-
-
-
-
-
 
   const qualy = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -924,19 +934,19 @@ const udf2HeaderTemplate = (p: OrderData) => {
     'Delete',
     'Update',
     'Cancel',
-    { type: 'Separator' },
+    // { type: 'Separator' },
     { text: '', prefixIcon: 'e-filter', id: 'query_builder_toggle', tooltipText: 'Toggle Query Builder' },
     { text: 'FilterToggle', id: 'filterToggle', tooltipText: 'filterToggle' },
     { text: 'Clear All', id: 'clearAll', tooltipText: 'Clear All' },
     { text: '', prefixIcon: 'sf-icon-clear-sorting', id: 'clearsorting_icon', tooltipText: 'Clear Sorting' },
     { text: '', prefixIcon: 'e-filter-clear icon', id: 'clearfilter_icon', tooltipText: 'Clear Filtering' },
-    { type: 'Separator' },
+    // { type: 'Separator' },
     { text: '', prefixIcon: 'sf-icon-clear-selection', id: 'clear_selection', tooltipText: 'Clear Selection' },
     { text: '', prefixIcon: 'sf-icon-row-clear', id: 'clear_row_selection', tooltipText: 'Clear Row Selection' },
     { text: '', prefixIcon: 'sf-icon-column-clear', id: 'clear_column_selection', tooltipText: 'Clear Column Selection' },
     { text: '', prefixIcon: 'sf-icon-clear-cell', id: 'clear_cell_selection', tooltipText: 'Clear Cell Selection' },
-    { type: 'Separator' },
-    { type: 'Separator' },
+    // { type: 'Separator' },
+    // { type: 'Separator' },
     { text: '', prefixIcon: 'e-csvexport', id: 'export_csv', tooltipText: 'Export CSV' },
     { text: '', prefixIcon: 'e-excelexport', id: 'export_excel', tooltipText: 'Export Excel' },
     { text: '', prefixIcon: 'e-pdfexport', id: 'export_pdf', tooltipText: 'Export PDF' },
@@ -1668,12 +1678,10 @@ const udf2HeaderTemplate = (p: OrderData) => {
   const tooltipBeforeRender = (args: any) => {
 
     const isRowCell = args.target.closest('.e-rowcell');
-
     if (isRowCell) {
       const cell = args.target.closest('.e-rowcell');
 
       if (!cell) return;
-
       const column = gridRef.current?.getColumnByIndex(
         parseInt(cell.getAttribute('aria-colindex')) - 1
       );
@@ -1737,13 +1745,12 @@ const udf2HeaderTemplate = (p: OrderData) => {
           // generate html
           const imagesHtml = columns.map(col => {
             const count = col.length;
-
             let height = "100%";
             if (count === 2) height = "46%";
             else if (count >= 3) height = "29.33%";
 
             return `
-                <div style="display:flex; flex-direction:column; height:300px; gap: 20px;">
+                <div style="display:flex; flex-direction:column; height:270px; gap: 20px;">
                   ${col.map(img => `
                     <div style="height:${height}; text-align:center;">
                       <b>${img.label}</b><br/>
@@ -1759,17 +1766,17 @@ const udf2HeaderTemplate = (p: OrderData) => {
 
           // Create tooltip content with order info on left and image on right
           const tooltipContent = `
-            <div style="flex: 1; min-width: 200px; max-width: 570px; border-bottom: 1px solid #e0e0e0;">
+            <div style="flex: 1; min-width: 200px; max-width: 450px; border-bottom: 1px solid #e0e0e0;">
               ${orderInfo}
             </div>
-            <div style="display: flex; gap: 6px; max-width: 570px;">
+            <div style="display: flex; gap: 6px; max-width: 450px;">
 
               <!-- LEFT BIG IMAGE -->
               <div style="padding: 12px;">
                 <b>Order Image</b><br />
                 <img 
                   src="${imgSrc}" 
-                  style="max-width: 250px; max-height: 300px; object-fit: contain;" 
+                  style="max-width: 250px; max-height: 270px; object-fit: contain;" 
                 />
               </div>
 
@@ -1777,9 +1784,6 @@ const udf2HeaderTemplate = (p: OrderData) => {
               <div style="display: flex; gap: 10px; padding: 12px;">
                 ${imagesHtml}
               </div>
-            </div>
-            <div style="flex: 1; min-width: 200px; max-width: 570px; border-top: 1px solid #e0e0e0;">
-              ${orderInfo}
             </div>
             `;
 
@@ -1913,7 +1917,6 @@ const udf2HeaderTemplate = (p: OrderData) => {
 
   const sortSettings = useMemo(() => ({
     columns: [
-      { field: 'director_sample_order', direction: 'Descending' as any },
       { field: 'Fdt', direction: 'Ascending' as any }
     ]
   }), []);
@@ -1922,8 +1925,8 @@ const udf2HeaderTemplate = (p: OrderData) => {
   ),[])
   // Memoize the grid component to prevent unnecessary re-renders
   const memoizedGridComponent = useMemo(() => (
-    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
-      <div className='grid-container'
+    <><div><TooltipComponent ref={tooltipRef} target=".e-rowcell" width="130px" height="130px" opensOn={!Browser.isDevice ? "Hover" :"Custom"} beforeRender={tooltipBeforeRender} beforeOpen={beforeOpen}>
+      <div className='grid-container e-bigger'
         style={{
           overflow: 'hidden',
           minHeight: 0
@@ -1955,7 +1958,6 @@ const udf2HeaderTemplate = (p: OrderData) => {
           allowTextWrap={true}
           textWrapSettings={{ wrapMode: 'Both' }}
           autoFit={true}
-          // sortSettings={sortSettings}
           sortSettings={{ columns: [{ field: 'director_sample_order', direction: 'Descending' }, { field: 'Fdt', direction: 'Ascending' }] }}
           gridLines="Both"
           searchSettings={searchSettings}
@@ -1972,18 +1974,18 @@ const udf2HeaderTemplate = (p: OrderData) => {
           <ColumnsDirective>
             <ColumnDirective isPrimaryKey={true} field="jobno_oms" headerTemplate={orderSummaryHeaderTemplate} width="90" maxWidth="120" filter={{ operator: 'startsWith' }} template={orderSummaryTemplate} allowEditing={false} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" headerTemplate= {ordHeaderTemplate} template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" headerTemplate={ordHeaderTemplate} template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
-
-            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate= {udf2HeaderTemplate} width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" headerTemplate= {udf4HeaderTemplate} template={udf4} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="110" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate={udf2HeaderTemplate} width="110" maxWidth="200" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="FabdyIN" headerText="FabdyIN"  width="110" maxWidth="150" type="string" template={udf11} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="110" headerTemplate={udf4HeaderTemplate} maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
+            <ColumnDirective field="quantity" headerText="QTY" width="100" textAlign="Center" template={genericHighlighter('quantity')} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="75" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
           </ColumnsDirective>
           <AggregatesDirective>
             <AggregateDirective>

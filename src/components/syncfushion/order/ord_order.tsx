@@ -53,7 +53,7 @@ interface OrderData {
   printing_R: string; Fdt: string; Emb: string; abc: string; order_follow_up: string;
   quality_controller: string; reference: string; insdatenew: string; styledesc: string;
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
-  shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
+  shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;Fdt_wk:string;FabdyIN:string;
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string; finaldelvdate1: string; number_03_emb: string; actdate: string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string; Print: string; Others1: string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string; clr?: string; print_img?: string; Fab_R: string;
@@ -707,6 +707,13 @@ const HeroFashionGrid131: React.FC = () => {
     );
   }
 
+  
+ const udf11 = (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      <b>FabdyIN:</b> {highlightText(p.FabdyIN)}<br />
+      <b>Fdt_wk:</b> {highlightText(p.Fdt_wk)}<br />
+      </div>);
+  
   const ordHeaderTemplate = (p: OrderData) => {
     return (
       <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -1188,10 +1195,10 @@ const udf2HeaderTemplate = (p: OrderData) => {
           </div>
 
 
-          <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
+          {/* <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u311</label>
             <input id="u31" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
+          </div> */}
 
 
         </div>
@@ -1206,7 +1213,7 @@ const udf2HeaderTemplate = (p: OrderData) => {
 
 
           <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
             <input id="ITS_R" name="ITS_R" type="text" value={data.ITS_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
@@ -1223,7 +1230,7 @@ const udf2HeaderTemplate = (p: OrderData) => {
 
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
-            <input id="u46" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
 
@@ -1231,14 +1238,14 @@ const udf2HeaderTemplate = (p: OrderData) => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
 
-          <div>
+          {/* <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
             <input id="u141" name="u141" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
+          </div> */}
 
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>141</label>
-            <input id="Sample_R" name="u31" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            <input id="Sample_R" name="Sample_R" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
 
@@ -1574,7 +1581,7 @@ const udf2HeaderTemplate = (p: OrderData) => {
 
                 </div>
 
-                /* DATA BLOCK */
+                /* DATA unBLOCK */
                 <div
                   style={{
                     display: "grid",
@@ -1974,16 +1981,16 @@ const udf2HeaderTemplate = (p: OrderData) => {
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" headerTemplate= {ordHeaderTemplate} template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
-
             <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate= {udf2HeaderTemplate} width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" headerTemplate= {udf4HeaderTemplate} template={udf4} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="FabdyIN" headerText="FabdyIN"  width="150" maxWidth="150" type="string" template={udf11} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
           </ColumnsDirective>
           <AggregatesDirective>
             <AggregateDirective>

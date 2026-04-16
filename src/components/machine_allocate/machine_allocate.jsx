@@ -17,18 +17,18 @@ function Machine_allocate() {
 
   // Scanner States
   const [showScanner, setShowScanner] = useState(false);
-  const [scanStep, setScanStep] = useState(1); // 1: Machine, 2: Employee, 3: Sequence, 4: Final
+  const [scanStep, setScanStep] = useState(1); 
   const [scannedMachine, setScannedMachine] = useState(null);
   const [scannedEmployee, setScannedEmployee] = useState(null);
   const [scannedSequence, setScannedSequence] = useState("");
   const [error, setError] = useState("");
+  const [showManualInScanner, setShowManualInScanner] = useState(false);
   
   // Camera States
   const [cameras, setCameras] = useState([]);
   const [selectedCameraId, setSelectedCameraId] = useState("");
   const html5QrCodeRef = useRef(null);
 
-  // Initial Data Fetch
   useEffect(() => {
     api.get("/qcapp/api/units/").then((res) => {
       setUnits(res.data);
@@ -64,7 +64,7 @@ function Machine_allocate() {
 
   // Scanner Hook
   useEffect(() => {
-    if (showScanner && scanStep < 4 && !error && selectedCameraId) {
+    if (showScanner && scanStep < 4 && !error && selectedCameraId && !showManualInScanner) {
       const html5QrCode = new Html5Qrcode("reader");
       html5QrCodeRef.current = html5QrCode;
 
@@ -80,7 +80,7 @@ function Machine_allocate() {
         }
       };
     }
-  }, [showScanner, scanStep, selectedCameraId, error]);
+  }, [showScanner, scanStep, selectedCameraId, error, showManualInScanner]);
 
   const handleScanSuccess = (val) => {
     if (scanStep === 1) {
@@ -89,43 +89,44 @@ function Machine_allocate() {
         setScannedMachine({ id: mObj.machine.id, identity: mObj.machine.Identity });
         setScanStep(2);
       } else {
-        setError(`Machine ${val} not found in this line.`);
+        setError(`Machine ${val} not found.`);
       }
     } else if (scanStep === 2) {
       const eObj = employees.find(e => e.code.toString() === val);
       if (eObj) {
         setScannedEmployee(eObj);
-        setScanStep(3); // Go to Sequence Scan
+        setScanStep(3); 
       } else {
-        setError(`Employee ID ${val} is invalid.`);
+        setError(`Employee ID ${val} invalid.`);
       }
     } else if (scanStep === 3) {
       setScannedSequence(val);
-      setScanStep(4); // Final Step
+      setScanStep(4);
     }
   };
 
-  const skipSequence = () => {
-    setScannedSequence("N/A");
-    setScanStep(4);
-  };
-
-  const resetScanner = () => {
+  const resetScanner = async () => {
+    // Stop camera before closing state to prevent blank screen/crash
+    if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+      try {
+        await html5QrCodeRef.current.stop();
+      } catch (e) {
+        console.log("Stop error", e);
+      }
+    }
     setShowScanner(false);
     setScanStep(1);
     setScannedMachine(null);
     setScannedEmployee(null);
     setScannedSequence("");
     setError("");
+    setShowManualInScanner(false);
+    setSearchEmp("");
   };
 
   const handleAllocationSubmit = (empCode, mId, seq) => {
     api.post("/qcapp/api/emp_allocate/", {
-      emp_code: empCode, 
-      machine_id: mId, 
-      unit: selectedUnit, 
-      line: selectedLine,
-      sequence: seq
+      emp_code: empCode, machine_id: mId, unit: selectedUnit, line: selectedLine, sequence: seq
     }).then(() => {
       fetchAllocations();
       resetScanner();
@@ -162,7 +163,7 @@ function Machine_allocate() {
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
             {units.map((u) => (
               <button key={u.id} onClick={() => setSelectedUnit(u.id)}
-                className={`px-6 py-2 rounded-2xl text-xs font-bold transition-all shrink-0 ${selectedUnit === u.id ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" : "bg-white text-slate-500 border"}`}>
+                className={`px-6 py-2 rounded-2xl text-xs font-bold shrink-0 ${selectedUnit === u.id ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200" : "bg-white text-slate-500 border"}`}>
                 {u.name}
               </button>
             ))}
@@ -171,7 +172,7 @@ function Machine_allocate() {
             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
               {lines.map((l) => (
                 <button key={l.id} onClick={() => setSelectedLine(l.id)}
-                  className={`px-4 py-2 rounded-xl text-[11px] font-black transition-all shrink-0 ${selectedLine === l.id ? "bg-slate-800 text-white" : "bg-white text-slate-400 border border-slate-100"}`}>
+                  className={`px-4 py-2 rounded-xl text-[11px] font-black shrink-0 ${selectedLine === l.id ? "bg-slate-800 text-white" : "bg-white text-slate-400 border border-slate-100"}`}>
                   LINE {l.line_number}
                 </button>
               ))}
@@ -179,15 +180,14 @@ function Machine_allocate() {
           )}
         </div>
 
-        {/* Scan Action */}
         {selectedLine && (
-          <button onClick={() => setShowScanner(true)} className="bg-indigo-600 p-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-indigo-100 active:scale-95 transition-all">
+          <button onClick={() => setShowScanner(true)} className="bg-indigo-600 p-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-all">
             <span className="text-xl">📸</span>
             <span className="text-sm font-black text-white uppercase tracking-widest">New Allocation Scan</span>
           </button>
         )}
 
-        {/* Table View */}
+        {/* Table */}
         <div className="flex-1 bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col border border-slate-100">
           <div className="flex-1 overflow-y-auto custom-scrollbar">
             <table className="w-full text-left border-collapse">
@@ -209,7 +209,7 @@ function Machine_allocate() {
                     <td className="px-6 py-4">
                       {a.employees?.[0] ? (
                         <div className="flex items-center gap-3">
-                          <img src={a.employees[0].photo || 'https://via.placeholder.com/40'} className="h-10 w-10 rounded-full object-cover border-2 border-white shadow-sm" alt=""/>
+                          <img src={a.employees[0].photo || 'https://via.placeholder.com/40'} className="h-10 w-10 rounded-full border-2 border-white shadow-sm" alt=""/>
                           <div>
                             <div className="text-xs font-black text-slate-700">{a.employees[0].emp_code}</div>
                             <button onClick={() => setPopup({ open: true, machineId: a.machine.id })} className="text-[9px] font-bold text-indigo-600 uppercase">Change</button>
@@ -219,9 +219,7 @@ function Machine_allocate() {
                         <button onClick={() => setPopup({ open: true, machineId: a.machine.id })} className="text-[10px] font-black text-slate-300 border border-dashed px-3 py-1 rounded-lg uppercase">Assign</button>
                       )}
                     </td>
-                    <td className="px-6 py-4">
-                       <div className="text-sm font-black text-slate-800">{a.employees?.[0]?.sequence || "—"}</div>
-                    </td>
+                    <td className="px-6 py-4"><div className="text-sm font-black text-slate-800">{a.employees?.[0]?.sequence || "—"}</div></td>
                     <td className="px-6 py-4 text-right">
                       {a.employees?.[0] && (
                         <button onClick={() => toggleStatus(a.machine.id, a.employees[0].emp_code, a.employees[0].status)}
@@ -238,7 +236,7 @@ function Machine_allocate() {
         </div>
       </main>
 
-      {/* --- SMART SCANNER MODAL --- */}
+      {/* --- SCANNER MODAL --- */}
       {showScanner && (
         <div className="fixed inset-0 bg-slate-900/95 backdrop-blur-md z-[100] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-md rounded-[3rem] overflow-hidden shadow-2xl relative">
@@ -248,12 +246,13 @@ function Machine_allocate() {
                 <button onClick={resetScanner} className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 text-xl font-bold">&times;</button>
               </div>
               
-              {scanStep < 4 && cameras.length > 0 && (
+              {/* Camera Change Dropdown */}
+              {scanStep < 4 && cameras.length > 0 && !showManualInScanner && (
                 <div className="mb-4">
                   <select 
                     value={selectedCameraId}
                     onChange={(e) => setSelectedCameraId(e.target.value)}
-                    className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-2xl text-[11px] font-bold text-slate-700 outline-none"
+                    className="w-full bg-slate-50 border-2 border-slate-100 p-3 rounded-2xl text-[11px] font-bold text-slate-700 outline-none focus:border-indigo-500"
                   >
                     {cameras.map(cam => <option key={cam.id} value={cam.id}>{cam.label || `Camera ${cam.id}`}</option>)}
                   </select>
@@ -265,7 +264,7 @@ function Machine_allocate() {
               </div>
               
               <h2 className="text-center text-xl font-black text-slate-800 uppercase tracking-tight">
-                {scanStep === 1 ? "Scan Machine" : scanStep === 2 ? "Scan Employee" : scanStep === 3 ? "Scan Sequence" : "Review"}
+                {scanStep === 1 ? "Scan Machine" : scanStep === 2 ? (showManualInScanner ? "Search Employee" : "Scan Employee") : scanStep === 3 ? "Scan Sequence" : "Review"}
               </h2>
             </div>
 
@@ -279,18 +278,33 @@ function Machine_allocate() {
                 <>
                   {scanStep < 4 ? (
                     <div className="flex flex-col items-center">
-                      <div className="relative w-full aspect-square rounded-[2.5rem] overflow-hidden border-[10px] border-slate-50 bg-slate-50 shadow-inner">
-                        <div id="reader" className="w-full h-full"></div>
-                      </div>
-                      
-                      {/* SKIP BUTTON FOR SEQUENCE */}
-                      {scanStep === 3 && (
-                        <button 
-                          onClick={skipSequence}
-                          className="mt-6 w-full py-4 border-2 border-indigo-600 text-indigo-600 rounded-2xl font-black uppercase tracking-widest hover:bg-indigo-50 transition-all"
-                        >
-                          Skip Sequence
-                        </button>
+                      {scanStep === 2 && showManualInScanner ? (
+                        <div className="w-full animate-in fade-in duration-300">
+                          <input type="text" placeholder="Search Name or Code..." autoFocus onChange={(e) => setSearchEmp(e.target.value)}
+                            className="w-full p-4 bg-slate-100 rounded-2xl text-sm font-bold outline-none mb-3 border-2 border-indigo-50" />
+                          <div className="max-h-60 overflow-y-auto custom-scrollbar space-y-2 pr-1">
+                            {employees.filter(e => e.name.toLowerCase().includes(searchEmp.toLowerCase()) || e.code.toString().includes(searchEmp)).map(emp => (
+                                <div key={emp.code} onClick={() => { setScannedEmployee(emp); setShowManualInScanner(false); setScanStep(3); }}
+                                  className="flex items-center gap-3 p-3 rounded-2xl cursor-pointer hover:bg-indigo-50 border border-slate-50 transition-all">
+                                  <img src={emp.photo || 'https://via.placeholder.com/40'} className="h-9 w-9 rounded-full border shadow-sm" alt=""/>
+                                  <div className="flex flex-col"><span className="text-[11px] font-black text-slate-700">{emp.code}</span><span className="text-[10px] font-bold text-slate-400 uppercase">{emp.name}</span></div>
+                                </div>
+                            ))}
+                          </div>
+                          <button onClick={() => setShowManualInScanner(false)} className="mt-4 w-full text-[10px] font-black text-slate-400 uppercase">Back to Camera</button>
+                        </div>
+                      ) : (
+                        <div className="w-full">
+                          <div className="relative w-full aspect-square rounded-[2.5rem] overflow-hidden border-[10px] border-slate-50 bg-slate-50 shadow-inner">
+                            <div id="reader" className="w-full h-full"></div>
+                          </div>
+                          {scanStep === 2 && (
+                            <button onClick={() => setShowManualInScanner(true)} className="mt-6 w-full py-4 bg-slate-800 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 shadow-lg">⌨️ Manual Selection</button>
+                          )}
+                          {scanStep === 3 && (
+                            <button onClick={() => { setScannedSequence("N/A"); setScanStep(4); }} className="mt-6 w-full py-4 border-2 border-indigo-600 text-indigo-600 rounded-2xl font-black uppercase tracking-widest">Skip Sequence</button>
+                          )}
+                        </div>
                       )}
                     </div>
                   ) : (
@@ -299,7 +313,7 @@ function Machine_allocate() {
                       <div className="bg-slate-50 p-6 rounded-3xl border border-dashed border-slate-200 text-left space-y-4">
                          <div className="flex justify-between"><span className="text-[10px] font-black text-slate-400 uppercase">Machine</span><span className="text-xs font-black text-slate-800">{scannedMachine?.identity}</span></div>
                          <div className="flex justify-between"><span className="text-[10px] font-black text-slate-400 uppercase">Employee</span><span className="text-xs font-black text-slate-800">{scannedEmployee?.code}</span></div>
-                         <div className="flex justify-between"><span className="text-[10px] font-black text-slate-400 uppercase">Sequence</span><span className="text-xs font-black text-slate-800">{scannedSequence || "None"}</span></div>
+                         <div className="flex justify-between"><span className="text-[10px] font-black text-slate-400 uppercase">Sequence</span><span className="text-xs font-black text-slate-800">{scannedSequence || "N/A"}</span></div>
                       </div>
                       <button onClick={() => handleAllocationSubmit(scannedEmployee.code, scannedMachine.id, scannedSequence)} className="w-full bg-indigo-600 py-5 rounded-[2rem] text-white font-black uppercase tracking-widest shadow-xl shadow-indigo-100">Confirm & Allocate</button>
                     </div>
@@ -311,7 +325,7 @@ function Machine_allocate() {
         </div>
       )}
 
-      {/* --- MANUAL CHANGE POPUP --- */}
+      {/* --- TABLE CHANGE POPUP --- */}
       {popup.open && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] flex items-center justify-center p-6">
           <div className="bg-white rounded-[2.5rem] w-full max-w-sm overflow-hidden shadow-2xl">

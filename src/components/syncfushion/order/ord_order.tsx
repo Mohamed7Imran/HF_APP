@@ -1177,7 +1177,7 @@ const HeroFashionGrid131: React.FC = () => {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
-
+          
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u8</label>
             <input id="Fab_R" name="Fab_R" type="text" value={data.Fab_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
@@ -1188,43 +1188,28 @@ const HeroFashionGrid131: React.FC = () => {
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u14</label>
             <input id="u14" name="u14" type="text" value={data.u14 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
-
-
-        </div>
-
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
+              
+             <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
+            <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+          </div>
 
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
             <input id="u36" name="u36" type="text" value={data.u36 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
-
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
             <input id="ITS_R" name="ITS_R" type="text" value={data.ITS_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
-
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
-
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
             <input id="Order_R" name="Order_R" type="text" value={data.Order_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
-
-          <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
-            <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
-
-
         </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
 
@@ -1239,6 +1224,11 @@ const HeroFashionGrid131: React.FC = () => {
           </div>
 
 
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+              <input id="u45" name="u45" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
+
         </div>
 
 
@@ -1249,36 +1239,38 @@ const HeroFashionGrid131: React.FC = () => {
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
             <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
-
-        </div>
-
-        {/* Row 2 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-            <div>
+           <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>quantity</label>
               <input id="quantity" name="quantity" type="text" value={data.quantity || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
 
-            <div>
+
+        </div>
+
+        
+        {/* Row 2 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            {/* <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>quantity</label>
+              <input id="quantity" name="quantity" type="text" value={data.quantity || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div> */}
+          
+          
+
+            {/* <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
               <input id="u45" name="u45" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
+            </div> */}
 
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
               <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
 
-        </div>
-
-        {/* Row 3 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u141</label>
               <input id="u141" name="u141" type="text" value={data.u141 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-
         </div>
 
         {/* Row 4 - Full width image uploader */}

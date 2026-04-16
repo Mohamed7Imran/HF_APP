@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@boldbi/boldbi-embedded-sdk": "^15.2.6",
     "@boldreports/react-reporting-components": "^13.1.27",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
@@ -21,6 +22,7 @@
     "@syncfusion/ej2-react-calendars": "*",
     "@syncfusion/ej2-react-charts": "^33.1.44",
     "@syncfusion/ej2-react-dropdowns": "*",
+    "@syncfusion/ej2-react-form-renderer": "^0.1.0-beta",
     "@syncfusion/ej2-react-gantt": "^33.1.44",
     "@syncfusion/ej2-react-grids": "^33.1.49",
     "@syncfusion/ej2-react-inputs": "*",

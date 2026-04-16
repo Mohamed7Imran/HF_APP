@@ -33,6 +33,9 @@ import Websocket from "../order/websocket.jsx"
 import Weborder from "../order/web_order.tsx"
 import "../order/Global.tsx"
 import Report from '../order/reportviewer.tsx'; 
+import Formbuilder from '../order/formbuilder.tsx'; 
+import Embedd from '../DashboardListing/DashboardListing.jsx'
+
 function Home() {
   return (
     <Routes>
@@ -69,6 +72,9 @@ function Home() {
         <Route path='/Weborder' element={<Weborder />} />
         <Route path='/form' element={<Form />} />
         <Route path='/Report' element={<Report />} />
+        <Route path='/Report' element={<Report />} />
+        <Route path='/Formbuilder' element={<Formbuilder />} />
+        <Route path='/Embedd' element={<Embedd />} />
     </Routes>
   );
 }

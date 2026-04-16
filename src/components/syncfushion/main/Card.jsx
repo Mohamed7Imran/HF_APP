@@ -467,7 +467,7 @@ const Dashboard = () => {
             </p>
           </div>
               
-       <div
+          <div
             onClick={() => navigate("Report")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
@@ -482,6 +482,7 @@ const Dashboard = () => {
               Syncfusion Bold Reports details 
             </p>
           </div>
+          
         </div>
       </div>
     </div>

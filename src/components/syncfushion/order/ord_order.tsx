@@ -51,10 +51,10 @@ interface OrderData {
   jobno_oms: string; company_name: string; buyer1: string; stylename: string; uom: string;
   final_delivery_date: string; merch: string; punit_sh: string; styleno: string;
   production_type_inside_outside: string; quantity: string; director_sample_order: string;
-  printing_R: string; Fdt: string; Emb: string; abc: string; order_follow_up: string;
+  printing_R: string; Fdt?: string; Emb: string; abc: string; order_follow_up: string;
   quality_controller: string; reference: string; insdatenew: string; styledesc: string;
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
-  shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;Fdt_wk:string;FabdyIN:string;
+  shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;Fdt_wk:string;
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string; finaldelvdate1: string; number_03_emb: string; actdate: string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string; Print: string; Others1: string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string; clr?: string; print_img?: string; Fab_R: string;
@@ -1137,18 +1137,22 @@ const HeroFashionGrid131: React.FC = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '15px' }}>
         {/* Row 1 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          {isFieldInGrid('jobno_oms') && (
+          {/* {isFieldInGrid('jobno_oms') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>jobno_oms</label>
               <input ref={jobnoRef} id="jobno_oms" name="jobno_oms" type="text" disabled value={data.jobno_oms || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px', backgroundColor: '#f5f5f5' }} />
             </div>
-          )}
-          {isFieldInGrid('printing_R') && (
+          )} */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>printing_R</label>
               <input id="printing_R" name="printing_R" type="text" value={data.printing_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
+            
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>Fdt</label>
+              {/* <input id="Fdt" name="Fdt" type="text" value={data.Fdt || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} /> */}
+              <DatePickerComponent id="fdt" name="fdt" type="text" value={(data as any).fdt}/>
+            </div>
         </div>
 
 
@@ -1188,25 +1192,6 @@ const HeroFashionGrid131: React.FC = () => {
 
         </div>
 
-
-
-        {/* Row 1 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
-
-          <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u25</label>
-            <input id="Week_R1" name="Week_R1" type="text" value={data.Week_R1 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
-
-
-          {/* <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u311</label>
-            <input id="u31" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div> */}
-
-
-        </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
@@ -1269,39 +1254,35 @@ const HeroFashionGrid131: React.FC = () => {
 
         {/* Row 2 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          {isFieldInGrid('quantity') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>quantity</label>
               <input id="quantity" name="quantity" type="text" value={data.quantity || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
-          {isFieldInGrid('u45') && (
+
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
               <input id="u45" name="u45" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
 
-          {isFieldInGrid('u46') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
               <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
+
         </div>
 
         {/* Row 3 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          {isFieldInGrid('u141') && (
+
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u141</label>
               <input id="u141" name="u141" type="text" value={data.u141 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
+
         </div>
 
         {/* Row 4 - Full width image uploader */}
-        {isFieldInGrid('mainimagepath') && (
+
           <div style={{ textAlign: 'center', paddingTop: '15px', borderTop: '1px solid #eee' }}>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '15px', fontWeight: 'bold' }}>mainimagepath</label>
             {data.mainimagepath && (
@@ -1334,7 +1315,6 @@ const HeroFashionGrid131: React.FC = () => {
               />
             </div>
           </div>
-        )}
       </div>
     );
   };

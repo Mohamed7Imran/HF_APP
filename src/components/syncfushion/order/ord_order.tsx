@@ -1978,16 +1978,16 @@ const HeroFashionGrid131: React.FC = () => {
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" headerTemplate={ordHeaderTemplate} template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
-            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="110" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate={udf2HeaderTemplate} width="110" maxWidth="200" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="FabdyIN" headerText="FabdyIN"  width="110" maxWidth="150" type="string" template={udf11} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="110" headerTemplate={udf4HeaderTemplate} maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate= {udf2HeaderTemplate} width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" headerTemplate= {udf4HeaderTemplate} template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="FabdyIN" headerText="FabdyIN"  width="150" maxWidth="150" type="string" template={udf11} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="quantity" headerText="QTY" width="100" textAlign="Center" template={genericHighlighter('quantity')} />
-            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="75" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
           </ColumnsDirective>
           <AggregatesDirective>
             <AggregateDirective>

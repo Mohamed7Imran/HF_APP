@@ -4,11 +4,11 @@ import React from 'react';
 
 //Report Viewer source
 // import '@boldreports/javascript-reporting-controls/Content/v2.0/tailwind-light/bold.report-viewer.min.css'
-// import '@boldreports/javascript-reporting-controls/Scripts/v2.0/common/bold.reports.common.min';
-// import '@boldreports/javascript-reporting-controls/Scripts/v2.0/common/bold.reports.widgets.min';
-// import '@boldreports/javascript-reporting-controls/Scripts/v2.0/bold.report-viewer.min';
-// //Reports react base
-// import '@boldreports/react-reporting-components/Scripts/bold.reports.react.min';
+import '@boldreports/javascript-reporting-controls/Scripts/v2.0/common/bold.reports.common.min';
+import '@boldreports/javascript-reporting-controls/Scripts/v2.0/common/bold.reports.widgets.min';
+import '@boldreports/javascript-reporting-controls/Scripts/v2.0/bold.report-viewer.min';
+//Reports react base
+import '@boldreports/react-reporting-components/Scripts/bold.reports.react.min';
 declare let BoldReportViewerComponent: any;
 
 var viewerStyle = {

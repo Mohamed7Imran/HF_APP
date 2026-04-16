@@ -34,7 +34,9 @@ import Weborder from "../order/web_order.tsx"
 import "../order/Global.tsx"
 import Report from '../order/reportviewer.tsx'; 
 import Formbuilder from '../order/formbuilder.tsx'; 
-import Embedd from '../DashboardListing/DashboardListing.jsx'
+import Dashboard from '../DashboardListing/DashboardListing.jsx'
+import Embedd from '../DashboardListing/Dashboardnew.jsx'
+
 
 function Home() {
   return (
@@ -75,6 +77,7 @@ function Home() {
         <Route path='/Report' element={<Report />} />
         <Route path='/Formbuilder' element={<Formbuilder />} />
         <Route path='/Embedd' element={<Embedd />} />
+        <Route path='/Dashboard' element={<Dashboard />} />
     </Routes>
   );
 }

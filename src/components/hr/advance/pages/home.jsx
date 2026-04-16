@@ -9,7 +9,7 @@ import {
   ClipboardList
 } from "lucide-react"; // npm install lucide-react
 
-const Ad_Home = () => {
+const Home_2 = () => {
   const [cards, setCards] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,13 +31,13 @@ const Ad_Home = () => {
 
     if (role === "request") {
       setCards([
-        { name: "Request", path: "/request", icon: iconMap.Request, color: "border-t-blue-500" },
-        { name: "Statement", path: "/statement", icon: iconMap.Statement, color: "border-t-purple-500" },
+        { name: "Request", path: "/advance/request", icon: iconMap.Request, color: "border-t-blue-500" },
+        { name: "Statement", path: "/advance/statement", icon: iconMap.Statement, color: "border-t-purple-500" },
       ]);
     } else if (role === "action") {
       setCards([
-        { name: "Approve", path: "/approve", icon: iconMap.Approve, color: "border-t-emerald-500" },
-        { name: "Statement", path: "/statement", icon: iconMap.Statement, color: "border-t-purple-500" },
+        { name: "Approve", path: "/advance/approve", icon: iconMap.Approve, color: "border-t-emerald-500" },
+        { name: "Statement", path: "/advance/statement", icon: iconMap.Statement, color: "border-t-purple-500" },
       ]);
     }
   }, [user]);
@@ -115,4 +115,4 @@ const Ad_Home = () => {
   );
 };
 
-export default Ad_Home;
+export default Home_2;

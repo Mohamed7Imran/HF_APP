@@ -27,7 +27,7 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const res = await axios.get('http://10.1.21.13:8200/advance/login/');
+      const res = await axios.get('https://hfapi.herofashion.com/advance/login/');
       const users = res.data;
 
       const validUser = users.find(
@@ -48,7 +48,7 @@ const Login = () => {
       if (role === 'admin') {
         navigate('/advance/admin', { state: validUser });
       } else if (role === 'request' || role === 'action') {
-        navigate('/home', { state: validUser });
+        navigate('/advance/home', { state: validUser });
       } else if (role === 'statement') {
         navigate('/statement', { state: validUser });
       } else {

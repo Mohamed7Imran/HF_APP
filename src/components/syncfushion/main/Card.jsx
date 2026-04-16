@@ -1,10 +1,10 @@
 import React from "react";
 import { 
-  FaChartPie, FaCheck, FaWallet, FaViadeo, FaAudible, 
+  FaChartPie, FaCheck, FaWallet, FaViadeo, FaAudible, FaDiceD20, FaDisease, FaDrupal,
   FaDribbble, FaRegSmileWink, FaTencentWeibo, FaMixcloud,
   FaCodepen, FaAirbnb, FaDove, FaPushed, FaRaspberryPi,
   FaRegPaperPlane, FaVirus, FaBity , FaVolleyballBall,
-  FaReact, FaGalacticRepublic
+  FaReact, FaGalacticRepublic,FaCodiepie, FaDemocrat
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -125,23 +125,6 @@ const Dashboard = () => {
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               Printing Details
-            </p>
-          </div>
-
-          {/* Card 6 */}
-          <div
-            onClick={() => navigate("sync")}
-            className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
-          >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-pink-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaDribbble className="text-pink-500 text-2xl" />
-            </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-pink-600 transition">
-              Syncfusion Grid - K
-            </h2>
-            <p className="text-gray-500 text-sm mt-1">
-              Update Grid
             </p>
           </div>
 
@@ -320,11 +303,11 @@ const Dashboard = () => {
             onClick={() => navigate("sync_iframe")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-orange-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-orange-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaPushed className="text-orange-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-yellow-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaCodiepie className="text-yellow-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-orange-600 transition">
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-yellow-600 transition">
              BoldBi iframe
             </h2>
             <p className="text-gray-500 text-sm mt-1">
@@ -354,11 +337,11 @@ const Dashboard = () => {
             onClick={() => navigate("pivot")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-yellow-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaReact className="text-yellow-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-indigo-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-indigo-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaReact className="text-indigo-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-yellow-600 transition">
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-indigo-600 transition">
              PivotView - K
             </h2>
             <p className="text-gray-500 text-sm mt-1">
@@ -382,18 +365,16 @@ const Dashboard = () => {
             </p>
           </div>
 
-
-
           {/* Card  */}
           <div
             onClick={() => navigate("adaptive")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaGalacticRepublic className="text-blue-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-purple-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaGalacticRepublic className="text-purple-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-purple-600 transition">
              Adaptive - K
             </h2>
             <p className="text-gray-500 text-sm mt-1">
@@ -407,11 +388,11 @@ const Dashboard = () => {
             onClick={() => navigate("kanban")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaGalacticRepublic className="text-blue-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-sky-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-sky-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaDribbble className="text-sky-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-sky-600 transition">
              Kanban - K
             </h2>
             <p className="text-gray-500 text-sm mt-1">
@@ -424,11 +405,11 @@ const Dashboard = () => {
             onClick={() => navigate("quary")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaGalacticRepublic className="text-blue-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-pink-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaDisease className="text-pink-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-pink-600 transition">
              Query Builder 
             </h2>
             <p className="text-gray-500 text-sm mt-1">
@@ -441,11 +422,11 @@ const Dashboard = () => {
             onClick={() => navigate("websocket")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaGalacticRepublic className="text-blue-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-red-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-red-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaDemocrat className="text-red-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-red-600 transition">
              WebSocket
             </h2>
             <p className="text-gray-500 text-sm mt-1">
@@ -458,11 +439,11 @@ const Dashboard = () => {
             onClick={() => navigate("Weborder")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaGalacticRepublic className="text-blue-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-emerald-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaDrupal className="text-emerald-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-blue-600 transition">
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-emerald-600 transition">
              Web Order
             </h2>
             <p className="text-gray-500 text-sm mt-1">
@@ -474,17 +455,70 @@ const Dashboard = () => {
             onClick={() => navigate("form")}
             className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
           >
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
-            <div className="w-14 h-14 flex items-center justify-center bg-purple-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
-              <FaDove className="text-purple-500 text-2xl" />
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-cyan-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaDiceD20 className="text-cyan-500 text-2xl" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-purple-600 transition">
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-cyan-600 transition">
               Form details - K
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               Syncfusion form details
             </p>
           </div>
+              
+          <div
+            onClick={() => navigate("Report")}
+            className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+          >
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-cyan-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaDiceD20 className="text-cyan-500 text-2xl" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-cyan-600 transition">
+            Bold Reports details 
+            </h2>
+            <p className="text-gray-500 text-sm mt-1">
+              Syncfusion Bold Reports details 
+            </p>
+          </div>
+
+
+          <div
+            onClick={() => navigate("Embedd")}
+            className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+          >
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-cyan-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaDiceD20 className="text-cyan-500 text-2xl" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-cyan-600 transition">
+            Embedd Edit Reports details 
+            </h2>
+            <p className="text-gray-500 text-sm mt-1">
+              Embedd Edit Bold Reports details 
+            </p>
+          </div>
+        
+             <div
+            onClick={() => navigate("Dashboard")}
+            className="group cursor-pointer bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden transform hover:scale-105 hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+          >
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-200 rounded-full opacity-40 group-hover:scale-150 transition duration-500"></div>
+            <div className="w-14 h-14 flex items-center justify-center bg-cyan-100 rounded-xl mb-4 group-hover:rotate-12 transition duration-300">
+              <FaDiceD20 className="text-cyan-500 text-2xl" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-800 group-hover:text-cyan-600 transition">
+            Embedd Published Reports details 
+            </h2>
+            <p className="text-gray-500 text-sm mt-1">
+              Embedd Bold Reports details 
+            </p>
+          </div>        
+
+
+
+
 
         </div>
       </div>

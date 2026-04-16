@@ -17,10 +17,11 @@ import GreyRollChecking from "./components/GreyrollChecking/main/App";
 import FabricForm from "./components/syncfushion/fabric/Fabric";
 import Machine_Allocate from "./components/machine_allocate/main"
 import Home_1 from "./components/reports/main";
-import Ad_login from "./components/advance/auth/ad_login";
+import Ad_login from "./components/hr/advance/auth/ad_main";
 import Sticker from "./components/Cutting/sticker production/App"
 import Bitcheck from "./components/Cutting/bit checking/App"
 import BitCheckingUI from "./components/Cutting/bit checking/BitcheckingPly";
+import Home_hw from "./components/fininace/holdwage/entry/hw_main";
 
 function App() {
 
@@ -209,6 +210,17 @@ function App() {
             <ProtectedRoute>
               <ProtectedLayout>
                 <BitCheckingUI />
+              </ProtectedLayout>
+            </ProtectedRoute>
+          }
+        />
+
+         <Route
+          path="/holdwage/*"
+          element={
+            <ProtectedRoute>
+              <ProtectedLayout>
+                <Home_hw />
               </ProtectedLayout>
             </ProtectedRoute>
           }

@@ -13,7 +13,7 @@ import {
   X
 } from "lucide-react"; 
 
-const BASE_URL = "http://10.1.21.13:8600";
+const BASE_URL = "https://hfapi.herofashion.com/advance";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("users");

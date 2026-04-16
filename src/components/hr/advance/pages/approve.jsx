@@ -31,8 +31,8 @@ const Approve = () => {
   const fetchData = async () => {
     try {
       const [reqRes, empRes] = await Promise.all([
-        fetch("http://10.1.21.13:8600/request/"),
-        fetch("http://10.1.21.13:8600/empwisesal/"),
+        fetch("https://hfapi.herofashion.com/advance/request/"),
+        fetch("https://hfapi.herofashion.com/advance/empwisesal/"),
       ]);
       const reqData = await reqRes.json();
       const empData = await empRes.json();
@@ -86,7 +86,7 @@ const Approve = () => {
   };
 
   try {
-    const res = await fetch("http://10.1.21.13:8600/ad_approve/", {
+    const res = await fetch("https://hfapi.herofashion.com/advance/ad_approve/", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -95,7 +95,7 @@ const Approve = () => {
     if (!res.ok) throw new Error("Update failed");
 
     try {
-      await fetch("http://10.1.21.13:8600/approve_mail/", {
+      await fetch("https://hfapi.herofashion.com/advance/approve_mail/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entryno: request.entryno, status: statusValue }),

@@ -13,7 +13,10 @@ function App() {
   // here you can modify the loggged in user from your data to filter the data based on the logged in user.
   const loggedInUser = 'PREMAVATHI.N';
   const data = new DataManager(kanbanData);
-  const query = new Query().where('asgby_name', 'equal', loggedInUser);
+  const [query, setQuery] = useState(new Query());
+  useEffect(() => {
+    setQuery(new Query().where('asgby_name', 'equal', loggedInUser));
+  }, [loggedInUser]);
   // Load initial data
   useEffect(() => {
     loadData();
@@ -37,26 +40,24 @@ function App() {
                         <table className="card-template-wrap">
                             <tbody>
                                 <tr>
-                                    <td className="CardHeader">Entry No:</td>
-                                    <td>{props.entryno}</td>
+                                    
+                                    <td><b>{props.entryno}</b></td>
                                 </tr>
                                 <tr>
-                                    <td className="CardHeader">Name:</td>
+                                    
                                     <td>{props.asgby_name}</td>
                                 </tr>
                                 <tr>
-                                    <td className="CardHeader">Code:</td>
-                                    <td>{props.asgby_code}</td>
+                                    
+                                    <td>{props.asgdt}</td>
                                 </tr>
                                 <tr>
-                                    <td className="CardHeader">Category:</td>
-                                    <td>{props.wrkcat}</td>
+                                    
+                                    <td><div className="e-card-tags"><div className="e-card-tag e-card-label">{props.wrkcat}</div></div></td>
+                                    <td><div className="e-card-tags"><div className="e-card-tag e-card-label">{props.asgby_code}</div></div></td>
+                                    <td><img src={props.photo_url} alt={props.ImageURL} height={50} width={50} style={{ borderRadius: '30px' }}/></td>
                                 </tr>
-                                <tr>
-                                   <td className="e-image">
-                                    <img src={props.photo_url} alt={props.ImageURL} height={50} width={50}/>
-                                </td>
-                                </tr>
+                              
                             </tbody>
                         </table>
                     </div>
@@ -187,7 +188,7 @@ function App() {
                             </td>
                         </tr>
                         <tr>
-                            <td className="e-label">Status</td>
+                            <td className="e-label">Work Type</td>
                             <td>
                                 <DropDownListComponent
                                     id="Status"
@@ -213,7 +214,7 @@ function App() {
                             </td>
                         </tr>
                         <tr>
-                            <td className="e-label">Priority</td>
+                            <td className="e-label">Work Category</td>
                             <td>
                                 <DropDownListComponent
                                     type="text"
@@ -228,7 +229,7 @@ function App() {
                             </td>
                         </tr>
                         <tr>
-                            <td className="e-label">Summary</td>
+                            <td className="e-label">Time</td>
                             <td>
                                 <div className="e-float-input e-control-wrapper">
                                     <textarea
@@ -248,6 +249,23 @@ function App() {
 const dialogTemplate = (props: any) => {
         return <KanbanDialogFormTemplate {...props} />;
 };
+const imageContainer: HTMLElement | null = document.getElementById('image-container') as HTMLElement;
+    if (imageContainer) {
+      const circularImages: NodeListOf<HTMLElement> = imageContainer.querySelectorAll('.circular-image');
+      circularImages.forEach((image: HTMLElement) => {
+        image.addEventListener('click', (event: Event) => {
+          const target = event.target as HTMLImageElement;
+          if (target.tagName === 'IMG') {
+            let altText: any = target.alt;
+            if (altText) {
+                const newQuery = new Query().where('asgby_name', 'equal', altText);
+                setQuery(newQuery);
+            }
+          }
+        });
+      });
+    }
+
 let priorityObj = useRef(null);
 let kanbanObj = useRef(null);
     let textBoxObj = useRef(null);
@@ -299,6 +317,7 @@ let kanbanObj = useRef(null);
         (statusObj.current as any).value = "None";
         (kanbanObj.current as any).query = new Query();
     };
+    
   return (
     <div style={{ marginTop: '100px' }}>
       <div className="col-lg-3 property-section" id="searchFilterProperty">
@@ -372,6 +391,18 @@ let kanbanObj = useRef(null);
                     </div>
                 </div>
             </div>
+          <div className="datasource-filter-container">
+                       
+              <div id="image-container" className="custom-dropdown">
+                <img src="https://app.herofashion.com/staff_images/10006.jpg" alt="PREMAVATHI.N" className="circular-image" title="Martin Tamer" style={{ width: '35px', height: '35px' }} />
+                <img src="https://app.herofashion.com/staff_images/10014.jpg" alt="SARANYA.S" className="circular-image" title="Rose Fuller" style={{ width: '35px', height: '35px' }} />
+                <img src="https://app.herofashion.com/staff_images/10021.jpg" alt="KANDASAMY.M" className="circular-image" title="Margaret Buchanan" style={{ width: '35px', height: '35px' }} />
+                <img src="https://app.herofashion.com/staff_images/10022.jpg" alt="VIJAYAKUMAR.K" className="circular-image" title="Fuller King" style={{ width: '35px', height: '35px' }} />
+                <img src="https://app.herofashion.com/staff_images/10028.jpg" alt="THANGADURAI.P" className="circular-image" title="Davolio Fuller" style={{ width: '35px', height: '35px' }} />
+              </div>
+              
+            
+          </div>
       <KanbanComponent 
         id="kanban" 
         keyField="worktype1" 
@@ -383,7 +414,8 @@ let kanbanObj = useRef(null);
         swimlaneSettings={{ keyField: "asgby_code" }}
         cardSettings={{
           headerField: "entryno",
-          template: cardTemplate  ,
+          template: cardTemplate,
+          grabberField: 'color',
         }}
         dialogSettings={{ template: dialogTemplate }}
       >

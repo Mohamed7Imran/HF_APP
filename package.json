@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node --max-old-space-size=4096 node_modules/vite/bin/vite.js build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@boldbi/boldbi-embedded-sdk": "^15.2.6",
+    "@boldreports/react-reporting-components": "^13.1.27",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.9",
@@ -20,8 +22,9 @@
     "@syncfusion/ej2-react-calendars": "*",
     "@syncfusion/ej2-react-charts": "^33.1.44",
     "@syncfusion/ej2-react-dropdowns": "*",
+    "@syncfusion/ej2-react-form-renderer": "^0.1.0-beta",
     "@syncfusion/ej2-react-gantt": "^33.1.44",
-    "@syncfusion/ej2-react-grids": "^33.1.47",
+    "@syncfusion/ej2-react-grids": "^33.1.49",
     "@syncfusion/ej2-react-inputs": "*",
     "@syncfusion/ej2-react-kanban": "^33.1.44",
     "@syncfusion/ej2-react-lists": "*",
@@ -33,14 +36,21 @@
     "@syncfusion/ej2-react-schedule": "*",
     "@syncfusion/ej2-react-treegrid": "*",
     "@tailwindcss/vite": "^4.2.1",
+    "@types/create-react-class": "^15.6.9",
     "@yudiel/react-qr-scanner": "^2.5.1",
+<<<<<<< HEAD
     "axios": "^1.15.0",
     "chart.js": "^4.5.1",
     "chartjs-plugin-datalabels": "^2.2.0",
     "date-fns": "^4.1.0",
+=======
+    "axios": "^1.13.6",
+    "create-react-class": "^15.7.0",
+>>>>>>> aafaeb9aca281496c538df7cf82b6868d08b678b
     "file-saver": "^2.0.5",
     "framer-motion": "^12.35.0",
     "html5-qrcode": "^2.3.8",
+    "jquery": "^3.7.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.575.0",

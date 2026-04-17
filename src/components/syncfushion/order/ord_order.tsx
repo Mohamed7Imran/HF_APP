@@ -35,10 +35,11 @@ import {
 } from '@syncfusion/ej2-react-grids';
 import { ColumnsModel, QueryBuilderComponent } from '@syncfusion/ej2-react-querybuilder';
 import { TooltipComponent, DialogComponent } from '@syncfusion/ej2-react-popups';
-import { Ajax, registerLicense, Browser } from '@syncfusion/ej2-base';
+import { Ajax, Browser } from '@syncfusion/ej2-base';
 import { TextBoxComponent, UploaderComponent } from '@syncfusion/ej2-react-inputs';
 import { DropDownListComponent, MultiSelect, CheckBoxSelection } from '@syncfusion/ej2-react-dropdowns';
 import { ButtonComponent } from '@syncfusion/ej2-react-buttons';
+import './Material 3/Showcase Material3/style.css';
 // import "../../../App.css";
 // import { ClickEventArgs } from '@syncfusion/ej2-react-navigations';
 import { DatePickerComponent, DateRangePickerComponent } from '@syncfusion/ej2-react-calendars';
@@ -50,10 +51,10 @@ interface OrderData {
   jobno_oms: string; company_name: string; buyer1: string; stylename: string; uom: string;
   final_delivery_date: string; merch: string; punit_sh: string; styleno: string;
   production_type_inside_outside: string; quantity: string; director_sample_order: string;
-  printing_R: string; Fdt: string; Emb: string; abc: string; order_follow_up: string;
+  printing_R: string; Fdt?: string; Emb: string; abc: string; order_follow_up: string;
   quality_controller: string; reference: string; insdatenew: string; styledesc: string;
   date: string; ourdelvdate: string; podate: string; vessel_dt: string; vessel_yr: string;
-  shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;
+  shipment_complete: string; u7: string; u141: string; u45: string; u36: string; u31: string;Fdt_wk:string;
   u15: string; u14: string; u8: string; u25: string; insdate: string; insdateyear: string; finaldelvdate1: string; number_03_emb: string; actdate: string;
   actdaten: string; actyeardate: string; pono: string; u46: string; u37: string; qltycontroller: string; Print: string; Others1: string;
   mainimagepath: string; finaldelvdate: string; prnclr?: string | null; prnfile1?: string; prnfile2?: string; img_fpath?: string; clr?: string; print_img?: string; Fab_R: string;
@@ -391,6 +392,17 @@ const HeroFashionGrid131: React.FC = () => {
     }
   };
 
+   const stringOperator = [
+    { key: 'IN', value: 'in' },
+    { key: 'NOT IN', value: 'notin' },
+    { key: 'STARTS WITH', value: 'startswith' },
+    { key: 'ENDS WITH', value: 'endswith' },
+    { key: 'CONTAINS', value: 'contains' },
+    { key: 'EQUAL', value: 'equal' },
+    { key: 'NOT EQUAL', value: 'notequal' },
+
+  ];
+
   // --- QueryBuilder Configuration (Memoized for performance) ---
   const queryBuilderColumns: ColumnsModel[] = useMemo(() => [
     // { field: 'jobno_oms', label: 'Job No', type: 'string' },
@@ -414,99 +426,98 @@ const HeroFashionGrid131: React.FC = () => {
     // { field: 'uom', label: 'UOM', type: 'string' },
     // { field: 'abc', label: 'ABC', type: 'string' }
     
-    { field: 'fdt', label: 'FDT ISO', type: 'date' },
-    { field: 'slno', label: 'Serial No', type: 'number' },
-    { field: 'insdatenew', label: 'Ins Date New', type: 'string' },
-    { field: 'jobno_oms', label: 'Job No OMS', type: 'string' },
-    { field: 'printing_R', label: 'Printing Status', type: 'string' },
-    { field: 'buyerid', label: 'Buyer ID', type: 'number' },
-    { field: 'mpyear', label: 'MP Year', type: 'number' },
-    { field: 'number_01_printing', label: 'Printing No', type: 'number' },
-    { field: 'number_03_emb', label: 'Embroidery No', type: 'number' },
-    { field: 'mpdate', label: 'MP Date', type: 'date' },
-    { field: 'refno', label: 'Ref No', type: 'string' },
-    { field: 'stylename', label: 'Style Name', type: 'string' },
-    { field: 'styledesc', label: 'Style Description', type: 'string' },
-    { field: 'season', label: 'Season', type: 'string' },
-    { field: 'jobnoomsnew', label: 'Job No New', type: 'string' },
-    { field: 'Print', label: 'Print Detail', type: 'string' },
-    { field: 'Others1', label: 'Image Link 1', type: 'string' },
-    { field: 'Others2', label: 'Image Link 2', type: 'string' },
-    { field: 'Others3', label: 'Image Link 3', type: 'string' },
-    { field: 'Others4', label: 'Image Link 4', type: 'string' },
-    { field: 'Others5', label: 'Image Link 5', type: 'string' },
-    { field: 'Others6', label: 'Image Link 6', type: 'string' },
-    { field: 'Others7', label: 'Image Link 7', type: 'string' },
-    { field: 'Emb', label: 'Embroidery Detail', type: 'string' },
-    { field: 'mainimagepath', label: 'Main Image Path', type: 'string' },
-    { field: 'ordimg1_pen', label: 'Order Image Pending', type: 'string' },
-    { field: 'seasonyear', label: 'Season Year', type: 'number' },
-    { field: 'styleid', label: 'Style ID', type: 'number' },
-    { field: 'final_delivery_date', label: 'Final Delivery Date', type: 'string' },
-    { field: 'finaldelvdate1', label: 'Final Delv Date ISO', type: 'date' },
-    { field: 'year', label: 'Year', type: 'string' },
-    { field: 'final_year_delivery', label: 'Final Year Delv', type: 'string' },
-    { field: 'final_year_delivery1', label: 'Final Year Delv ISO', type: 'string' },
-    { field: 'ddays', label: 'Delivery Days', type: 'number' },
-    { field: 'fdays', label: 'Final Days', type: 'number' },
-    { field: 'insdays', label: 'Inspection Days', type: 'number' },
-    { field: 'finaldelvdate', label: 'Final Delv Date Str', type: 'string' },
-    { field: 'ourdeldate', label: 'Our Delivery Date', type: 'string' },
-    { field: 'date', label: 'Entry Date', type: 'string' },
-    { field: 'ourdelvdate', label: 'Our Delv Date Short', type: 'string' },
-    { field: 'podate', label: 'PO Date', type: 'string' },
-    { field: 'vessel_dt', label: 'Vessel Date', type: 'date' },
-    { field: 'vessel_yr', label: 'Vessel Year', type: 'string' },
-    { field: 'pono', label: 'PO No', type: 'string' },
-    { field: 'shipmentcompleted', label: 'Shipment Completed', type: 'number' },
-    { field: 'reference', label: 'Production Remarks', type: 'string' },
-    { field: 'no', label: 'Job No Short', type: 'string' },
-    { field: 'company_name', label: 'Company Name', type: 'string' },
-    { field: 'mer_un', label: 'Merchandiser Unit', type: 'string' },
-    { field: 'image_order', label: 'Order Image URL', type: 'string' },
-    { field: 'abc', label: 'ABC Status', type: 'string' },
-    { field: 'order_follow_up', label: 'Order Follow-up', type: 'string' },
-    { field: 'quality_controller', label: 'QC Person', type: 'string' },
-    { field: 'buyer_sh', label: 'Buyer Short', type: 'string' },
-    { field: 'buyer1', label: 'Buyer Code', type: 'string' },
-    { field: 'punit_sh', label: 'Production Unit Short', type: 'string' },
-    { field: 'insdateyear', label: 'Inspection Year', type: 'string' },
-    { field: 'insdate', label: 'Inspection Date', type: 'date' },
-    { field: 'FMonth_yr', label: 'Month Year Ref', type: 'string' },
-    { field: 'quantity', label: 'Total Quantity', type: 'number' },
-    { field: 'production_unit1', label: 'Prod Unit Code', type: 'string' },
-    { field: 'styleno', label: 'Style No', type: 'string' },
-    { field: 'buyer', label: 'Buyer Full Name', type: 'string' },
-    { field: 'merch', label: 'Merchandiser', type: 'string' },
-    { field: 'u46', label: 'U46 Status', type: 'string' },
-    { field: 'u7', label: 'U7 Status', type: 'string' },
-    { field: 'u141', label: 'U141 Status', type: 'string' },
-    { field: 'u45', label: 'U45 Status', type: 'string' },
-    { field: 'u36', label: 'U36 Status', type: 'string' },
-    { field: 'u31', label: 'U31 Status', type: 'string' },
-    { field: 'u5', label: 'U5 Status', type: 'string' },
-    { field: 'u14', label: 'U14 Status', type: 'string' },
-    { field: 'u8', label: 'U8 Status', type: 'string' },
-    { field: 'u37', label: 'U37 Status', type: 'string' },
-    { field: 'u25', label: 'U25 Status', type: 'string' },
-    { field: 'Emb_R', label: 'Embroidery Readiness', type: 'string' },
-    { field: 'Week_R1', label: 'Week Ref Full', type: 'string' },
-    { field: 'wk', label: 'Week Year', type: 'string' },
-    { field: 'wk113', label: 'Week Detailed', type: 'string' },
-    { field: 'Fab_R', label: 'Fabric Readiness', type: 'string' },
-    { field: 'ITS_R', label: 'ITS Readiness', type: 'string' },
-    { field: 'Order_R', label: 'Order Readiness', type: 'string' },
-    { field: 'Dy_R', label: 'Dyeing Readiness', type: 'string' },
-    { field: 'Sample_R', label: 'Sample Readiness', type: 'string' },
-    { field: 'Week_R', label: 'Week Ref Short', type: 'string' },
-    { field: 'actdaten', label: 'Actual Date ISO', type: 'date' },
-    { field: 'actdate', label: 'Actual Date Str', type: 'string' },
-    { field: 'actyeardate', label: 'Actual Year Date', type: 'string' },
-    { field: 'con_actdate', label: 'Combined Act Date', type: 'string' },
-    { field: 'uom', label: 'Unit of Measure', type: 'string' },
-    { field: 'production_unit', label: 'Production Unit Name', type: 'string' },
-    { field: 'director_sample_order', label: 'Director Status', type: 'string' }
-
+    { field: 'fdt', label: 'FDT ISO', type: 'date' , operators:stringOperator },
+    { field: 'slno', label: 'Serial No', type: 'number' , operators:stringOperator},
+    { field: 'insdatenew', label: 'Ins Date New', type: 'string', operators:stringOperator },
+    { field: 'jobno_oms', label: 'Job No OMS', type: 'string', operators:stringOperator },
+    { field: 'printing_R', label: 'Printing Status', type: 'string', operators:stringOperator },
+    { field: 'buyerid', label: 'Buyer ID', type: 'number', operators:stringOperator },
+    { field: 'mpyear', label: 'MP Year', type: 'number' , operators:stringOperator},
+    { field: 'number_01_printing', label: 'Printing No', type: 'number', operators:stringOperator },
+    { field: 'number_03_emb', label: 'Embroidery No', type: 'number', operators:stringOperator },
+    { field: 'mpdate', label: 'MP Date', type: 'date' , operators:stringOperator},
+    { field: 'refno', label: 'Ref No', type: 'string', operators:stringOperator },
+    { field: 'stylename', label: 'Style Name', type: 'string', operators:stringOperator },
+    { field: 'styledesc', label: 'Style Description', type: 'string', operators:stringOperator },
+    { field: 'season', label: 'Season', type: 'string' , operators:stringOperator},
+    { field: 'jobnoomsnew', label: 'Job No New', type: 'string', operators:stringOperator },
+    { field: 'Print', label: 'Print Detail', type: 'string', operators:stringOperator },
+    { field: 'Others1', label: 'Image Link 1', type: 'string', operators:stringOperator },
+    { field: 'Others2', label: 'Image Link 2', type: 'string', operators:stringOperator },
+    { field: 'Others3', label: 'Image Link 3', type: 'string', operators:stringOperator },
+    { field: 'Others4', label: 'Image Link 4', type: 'string', operators:stringOperator },
+    { field: 'Others5', label: 'Image Link 5', type: 'string', operators:stringOperator },
+    { field: 'Others6', label: 'Image Link 6', type: 'string', operators:stringOperator },
+    { field: 'Others7', label: 'Image Link 7', type: 'string', operators:stringOperator },
+    { field: 'Emb', label: 'Embroidery Detail', type: 'string', operators:stringOperator },
+    { field: 'mainimagepath', label: 'Main Image Path', type: 'string', operators:stringOperator },
+    { field: 'ordimg1_pen', label: 'Order Image Pending', type: 'string', operators:stringOperator },
+    { field: 'seasonyear', label: 'Season Year', type: 'number', operators:stringOperator },
+    { field: 'styleid', label: 'Style ID', type: 'number', operators:stringOperator },
+    { field: 'final_delivery_date', label: 'Final Delivery Date', type: 'string', operators:stringOperator },
+    { field: 'finaldelvdate1', label: 'Final Delv Date ISO', type: 'date', operators:stringOperator },
+    { field: 'year', label: 'Year', type: 'string', operators:stringOperator },
+    { field: 'final_year_delivery', label: 'Final Year Delv', type: 'string', operators:stringOperator },
+    { field: 'final_year_delivery1', label: 'Final Year Delv ISO', type: 'string', operators:stringOperator },
+    { field: 'ddays', label: 'Delivery Days', type: 'number', operators:stringOperator },
+    { field: 'fdays', label: 'Final Days', type: 'number', operators:stringOperator },
+    { field: 'insdays', label: 'Inspection Days', type: 'number', operators:stringOperator },
+    { field: 'finaldelvdate', label: 'Final Delv Date Str', type: 'string', operators:stringOperator },
+    { field: 'ourdeldate', label: 'Our Delivery Date', type: 'string', operators:stringOperator },
+    { field: 'date', label: 'Entry Date', type: 'string', operators:stringOperator },
+    { field: 'ourdelvdate', label: 'Our Delv Date Short', type: 'string', operators:stringOperator },
+    { field: 'podate', label: 'PO Date', type: 'string', operators:stringOperator },
+    { field: 'vessel_dt', label: 'Vessel Date', type: 'date', operators:stringOperator },
+    { field: 'vessel_yr', label: 'Vessel Year', type: 'string', operators:stringOperator },
+    { field: 'pono', label: 'PO No', type: 'string', operators:stringOperator },
+    { field: 'shipmentcompleted', label: 'Shipment Completed', type: 'number', operators:stringOperator },
+    { field: 'reference', label: 'Production Remarks', type: 'string', operators:stringOperator },
+    { field: 'no', label: 'Job No Short', type: 'string', operators:stringOperator },
+    { field: 'company_name', label: 'Company Name', type: 'string', operators:stringOperator },
+    { field: 'mer_un', label: 'Merchandiser Unit', type: 'string', operators:stringOperator },
+    { field: 'image_order', label: 'Order Image URL', type: 'string', operators:stringOperator },
+    { field: 'abc', label: 'ABC Status', type: 'string', operators:stringOperator },
+    { field: 'order_follow_up', label: 'Order Follow-up', type: 'string', operators:stringOperator },
+    { field: 'quality_controller', label: 'QC Person', type: 'string', operators:stringOperator },
+    { field: 'buyer_sh', label: 'Buyer Short', type: 'string', operators:stringOperator },
+    { field: 'buyer1', label: 'Buyer Code', type: 'string', operators:stringOperator },
+    { field: 'punit_sh', label: 'Production Unit Short', type: 'string', operators:stringOperator },
+    { field: 'insdateyear', label: 'Inspection Year', type: 'string', operators:stringOperator },
+    { field: 'insdate', label: 'Inspection Date', type: 'date', operators:stringOperator },
+    { field: 'FMonth_yr', label: 'Month Year Ref', type: 'string', operators:stringOperator },
+    { field: 'quantity', label: 'Total Quantity', type: 'number', operators:stringOperator },
+    { field: 'production_unit1', label: 'Prod Unit Code', type: 'string', operators:stringOperator },
+    { field: 'styleno', label: 'Style No', type: 'string', operators:stringOperator },
+    { field: 'buyer', label: 'Buyer Full Name', type: 'string', operators:stringOperator },
+    { field: 'merch', label: 'Merchandiser', type: 'string', operators:stringOperator },
+    { field: 'u46', label: 'U46 Status', type: 'string', operators:stringOperator },
+    { field: 'u7', label: 'U7 Status', type: 'string', operators:stringOperator },
+    { field: 'u141', label: 'U141 Status', type: 'string', operators:stringOperator },
+    { field: 'u45', label: 'U45 Status', type: 'string', operators:stringOperator },
+    { field: 'u36', label: 'U36 Status', type: 'string', operators:stringOperator },
+    { field: 'u31', label: 'U31 Status', type: 'string', operators:stringOperator },
+    { field: 'u5', label: 'U5 Status', type: 'string', operators:stringOperator },
+    { field: 'u14', label: 'U14 Status', type: 'string', operators:stringOperator },
+    { field: 'u8', label: 'U8 Status', type: 'string', operators:stringOperator },
+    { field: 'u37', label: 'U37 Status', type: 'string', operators:stringOperator },
+    { field: 'u25', label: 'U25 Status', type: 'string', operators:stringOperator },
+    { field: 'Emb_R', label: 'Embroidery Readiness', type: 'string', operators:stringOperator },
+    { field: 'Week_R1', label: 'Week Ref Full', type: 'string', operators:stringOperator },
+    { field: 'wk', label: 'Week Year', type: 'string', operators:stringOperator },
+    { field: 'wk113', label: 'Week Detailed', type: 'string', operators:stringOperator },
+    { field: 'Fab_R', label: 'Fabric Readiness', type: 'string', operators:stringOperator },
+    { field: 'ITS_R', label: 'ITS Readiness', type: 'string', operators:stringOperator },
+    { field: 'Order_R', label: 'Order Readiness', type: 'string', operators:stringOperator },
+    { field: 'Dy_R', label: 'Dyeing Readiness', type: 'string', operators:stringOperator },
+    { field: 'Sample_R', label: 'Sample Readiness', type: 'string', operators:stringOperator },
+    { field: 'Week_R', label: 'Week Ref Short', type: 'string', operators:stringOperator },
+    { field: 'actdaten', label: 'Actual Date ISO', type: 'date', operators:stringOperator },
+    { field: 'actdate', label: 'Actual Date Str', type: 'string', operators:stringOperator },
+    { field: 'actyeardate', label: 'Actual Year Date', type: 'string', operators:stringOperator },
+    { field: 'con_actdate', label: 'Combined Act Date', type: 'string', operators:stringOperator },
+    { field: 'uom', label: 'Unit of Measure', type: 'string', operators:stringOperator },
+    { field: 'production_unit', label: 'Production Unit Name', type: 'string', operators:stringOperator },
+    { field: 'director_sample_order', label: 'Director Status', type: 'string', operators:stringOperator }
 
   ], []);
 
@@ -740,6 +751,13 @@ const HeroFashionGrid131: React.FC = () => {
     );
   }
 
+  
+ const udf11 = (p: OrderData) => (
+    <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
+      <b>FabdyIN:</b> {highlightText(p.FabdyIN)}<br />
+      <b>Fdt_wk:</b> {highlightText(p.Fdt_wk)}<br />
+      </div>);
+  
   const ordHeaderTemplate = (p: OrderData) => {
     return (
       <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -790,12 +808,6 @@ const HeroFashionGrid131: React.FC = () => {
       </div>
     );
   }
-
-    const udf11 = (p: OrderData) => (
-      <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
-        <b>FabdyIN :</b> {highlightText(p.FabdyIN)}<br />
-      </div>
-    );
 
   const udf = (p: OrderData) => (
     <div style={{ fontSize: '12px', lineHeight: '1.4' }}>
@@ -1125,18 +1137,22 @@ const HeroFashionGrid131: React.FC = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '15px' }}>
         {/* Row 1 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          {isFieldInGrid('jobno_oms') && (
+          {/* {isFieldInGrid('jobno_oms') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>jobno_oms</label>
               <input ref={jobnoRef} id="jobno_oms" name="jobno_oms" type="text" disabled value={data.jobno_oms || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px', backgroundColor: '#f5f5f5' }} />
             </div>
-          )}
-          {isFieldInGrid('printing_R') && (
+          )} */}
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>printing_R</label>
               <input id="printing_R" name="printing_R" type="text" value={data.printing_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
+            
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>Fdt</label>
+              {/* <input id="Fdt" name="Fdt" type="text" value={data.Fdt || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} /> */}
+              <DatePickerComponent id="fdt" name="fdt" type="text" value={(data as any).fdt}/>
+            </div>
         </div>
 
 
@@ -1161,7 +1177,7 @@ const HeroFashionGrid131: React.FC = () => {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
-
+          
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u8</label>
             <input id="Fab_R" name="Fab_R" type="text" value={data.Fab_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
@@ -1172,75 +1188,46 @@ const HeroFashionGrid131: React.FC = () => {
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u14</label>
             <input id="u14" name="u14" type="text" value={data.u14 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
-
-
-        </div>
-
-
-
-        {/* Row 1 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
-
-          <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u25</label>
-            <input id="Week_R1" name="Week_R1" type="text" value={data.Week_R1 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+              
+             <div>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
+            <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
-
-
-          <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
-            <input id="u31" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
-
-
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
 
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
             <input id="u36" name="u36" type="text" value={data.u36 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
-
           <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u36</label>
+            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u31</label>
             <input id="ITS_R" name="ITS_R" type="text" value={data.ITS_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
-
-
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-
 
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
             <input id="Order_R" name="Order_R" type="text" value={data.Order_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
-
-          <div>
-            <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
-            <input id="u46" name="u31" type="text" value={data.u31 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
-
-
         </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
 
 
-          <div>
+          {/* <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
             <input id="u141" name="u141" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-          </div>
+          </div> */}
 
           <div>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>141</label>
-            <input id="Sample_R" name="u31" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            <input id="Sample_R" name="Sample_R" type="text" value={data.Sample_R || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
 
+
+            <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
+              <input id="u45" name="u45" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div>
 
         </div>
 
@@ -1252,44 +1239,42 @@ const HeroFashionGrid131: React.FC = () => {
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u7</label>
             <input id="u7" name="u7" type="text" value={data.u7 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
           </div>
-
-        </div>
-
-        {/* Row 2 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          {isFieldInGrid('quantity') && (
-            <div>
+           <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>quantity</label>
               <input id="quantity" name="quantity" type="text" value={data.quantity || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
-          {isFieldInGrid('u45') && (
-            <div>
+
+
+        </div>
+
+        
+        {/* Row 2 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            {/* <div>
+              <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>quantity</label>
+              <input id="quantity" name="quantity" type="text" value={data.quantity || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
+            </div> */}
+          
+          
+
+            {/* <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u45</label>
               <input id="u45" name="u45" type="text" value={data.u45 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
-            </div>
-          )}
+            </div> */}
 
-          {isFieldInGrid('u46') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u46</label>
               <input id="u46" name="u46" type="text" value={data.u46 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
-        </div>
 
-        {/* Row 3 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-          {isFieldInGrid('u141') && (
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '5px' }}>u141</label>
               <input id="u141" name="u141" type="text" value={data.u141 || ''} onChange={onChange} style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '14px' }} />
             </div>
-          )}
         </div>
 
         {/* Row 4 - Full width image uploader */}
-        {isFieldInGrid('mainimagepath') && (
+
           <div style={{ textAlign: 'center', paddingTop: '15px', borderTop: '1px solid #eee' }}>
             <label style={{ display: 'block', fontSize: '13px', color: '#666', marginBottom: '15px', fontWeight: 'bold' }}>mainimagepath</label>
             {data.mainimagepath && (
@@ -1322,7 +1307,6 @@ const HeroFashionGrid131: React.FC = () => {
               />
             </div>
           </div>
-        )}
       </div>
     );
   };
@@ -1361,8 +1345,6 @@ const HeroFashionGrid131: React.FC = () => {
         break;
 
       }
-
-
 
       case 'clearsorting_icon':
         console.log('Clear Sorting clicked');
@@ -1576,7 +1558,7 @@ const HeroFashionGrid131: React.FC = () => {
 
                 </div>
 
-                /* DATA BLOCK */
+                /* DATA unBLOCK */
                 <div
                   style={{
                     display: "grid",
@@ -1968,16 +1950,16 @@ const HeroFashionGrid131: React.FC = () => {
             <ColumnDirective field="mainimagepath" headerText="IMG" width="100" textAlign="Center" allowFiltering={false} filter={{ operator: 'startsWith' }} template={imageFieldTemplate('mainimagepath')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Fdt" headerText="Fdt,Dir,ST,Uom,Ptype" width="110" maxWidth="150" headerTemplate={ordHeaderTemplate} template={deliveryInfoTemplate} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="n" headerText='n' minWidth={60} width="30" textAlign="Center" allowFiltering={false} template={rollnoTemplate} filter={{ operator: 'startsWith' }} allowEditing={false} />
-            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="110" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate={udf2HeaderTemplate} width="110" maxWidth="200" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="FabdyIN" headerText="FabdyIN"  width="110" maxWidth="150" type="string" template={udf11} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
-            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="110" headerTemplate={udf4HeaderTemplate} maxWidth="150" template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="printing_R" headerText="1_PR,3_Em,8_Fa_9_Dy,7_Cus" headerTemplate= {udfheaderTemplate} width="150" maxWidth="150" type="string" template={udf} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="ITS_R" headerText="31_IT,36_Cu,45_Or,46_Em,141-Sa" headerTemplate= {udf2HeaderTemplate} width="150" maxWidth="150" type="string" template={udf2} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="Week_R" headerText="Mo,Wk,Ye,Uo" width="150" maxWidth="150" headerTemplate= {udf4HeaderTemplate} template={udf4} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="FabdyIN" headerText="FabdyIN"  width="150" maxWidth="150" type="string" template={udf11} filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
             <ColumnDirective field="Print" headerText="Print" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Print')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Emb" headerText="Emb" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Emb')} allowEditing={true} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others1" headerText="imgs1" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others1')} allowEditing={false} customAttributes={{ class: 'img' }} />
             <ColumnDirective field="Others2" headerText="AOP-9 img" width="100" textAlign="Center" allowFiltering={false} template={imageFieldTemplate('Others2')} allowEditing={false} customAttributes={{ class: 'img' }} />
-            <ColumnDirective field="quantity" headerText="QTY" width="100" textAlign="Center" template={genericHighlighter('quantity')} />
-            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="75" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
+            <ColumnDirective field="quantity" headerText="QTY" width="110" textAlign="Center" template={genericHighlighter('quantity')} />
+            <ColumnDirective field="director_sample_order" headerText="dir" width="75" maxWidth="100" filter={{ operator: 'startsWith' }} customAttributes={{ class: 'editCss' }} />
           </ColumnsDirective>
           <AggregatesDirective>
             <AggregateDirective>
@@ -2147,16 +2129,16 @@ const HeroFashionGrid131: React.FC = () => {
         <ol className="flex items-center whitespace-nowrap breadcromp">
           <li className="inline-flex items-center">
             <a className="flex items-center text-xs md:text-xs text-xs text-muted-foreground-1 hover:text-primary-focus focus:outline-hidden focus:text-primary-focus" href="/#/dashboard">
-              <svg className="shrink-0 me-3 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+              <svg className="shrink-0 me-3 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
               Dashboard
             </a>
-            <svg className="shrink-0 mx-2 size-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+            <svg className="shrink-0 mx-2 size-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
           </li>
           <li className="inline-flex items-center">
             <a className="flex items-center text-xs md:text-xs text-muted-foreground-1 hover:text-primary-focus focus:outline-hidden focus:text-primary-focus" href="/#/sy-order">
-              <svg className="shrink-0 me-3 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="14" y="3" rx="1" /><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3" /></svg>
+              <svg className="shrink-0 me-3 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="14" y="3" rx="1" /><path d="M10 21V8a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H3" /></svg>
               Order
-              <svg className="shrink-0 mx-2 size-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+              <svg className="shrink-0 mx-2 size-4 text-muted-foreground" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
             </a>
           </li>
           <li className="inline-flex items-center text-xs md:text-xs text-foreground truncate" aria-current="page">

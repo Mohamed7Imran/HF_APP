@@ -324,3 +324,145 @@ export let editingData = [
     { TaskID: 39, TaskName: "Celebrate Project Completion", StartDate: new Date("08/07/2025"), EndDate: new Date("08/09/2025"), Duration: 3, Progress: 0, Predecessor: "38", resources: [6, 7] },
     { TaskID: 40, TaskName: "Begin Next Project Planning", StartDate: new Date("08/10/2025"), EndDate: new Date("08/13/2025"), Duration: 4, Progress: 0, Predecessor: "39", resources: [8, 9] }
 ];
+import {
+  type DataSchema,
+  type UISchema,
+} from '@syncfusion/ej2-react-form-renderer';
+
+export const data1: DataSchema = {
+  version: '0.1.0',
+  properties: {
+    firstName: {
+      id: 'textbox_1776075048818_548',
+      type: 'string',
+      label: 'First Name',
+      required: true,
+      minLength: 2,
+    },
+    lastName: {
+      id: 'textbox_1776075048818_410',
+      type: 'string',
+      label: 'Last Name',
+      minLength: 2,
+    },
+    emailAddress: {
+      id: 'textbox_1776075048818_108',
+      type: 'string',
+      label: 'Email Address',
+      textboxType: 'email',
+      required: true,
+    },
+    password: {
+      id: 'textbox_1776075048818_479',
+      type: 'string',
+      label: 'Password',
+      textboxType: 'password',
+      required: true,
+      minLength: 8,
+    },
+    confirmPassword: {
+      id: 'textbox_1776075048818_272',
+      type: 'string',
+      label: 'Confirm Password',
+      textboxType: 'password',
+      required: true,
+      minLength: 8,
+    },
+    iAgreeToTheTermsAndConditions: {
+      id: 'checkbox_1776075048818_716',
+      type: 'boolean',
+      label: 'I agree to the Terms and Conditions',
+    },
+    submit: {
+      id: 'submit_button_initial',
+      type: 'button',
+      label: 'Submit',
+      buttonType: 'submit',
+    },
+  },
+};
+
+export const uischema: UISchema = {
+  properties: {
+    firstName: {
+      widget: 'textbox',
+    },
+    lastName: {
+      widget: 'textbox',
+    },
+    emailAddress: {
+      widget: 'textbox',
+    },
+    password: {
+      widget: 'textbox',
+    },
+    confirmPassword: {
+      widget: 'textbox',
+    },
+    iAgreeToTheTermsAndConditions: {
+      widget: 'switch',
+    },
+    submit: {
+      widget: 'button',
+      buttonsGroups: [
+        {
+          label: 'Submit',
+          type: 'submit',
+          style: 'success',
+          iconCss: 'e-icons e-check',
+          iconPosition: 'Right',
+          disabled: false,
+        },
+        {
+          label: 'Reset',
+          type: 'reset',
+          style: 'error',
+          iconCss: 'e-icons e-close',
+          iconPosition: 'Right',
+          disabled: false,
+        },
+      ],
+      gap: '20px',
+      allowMultiple: true,
+    },
+  },
+  layout: [
+    {
+      type: 'card',
+      id: 'card_1776075025916_119',
+      label: 'Card',
+      cardTitle: 'User Registration',
+      cardSubtitle: new Date().toDateString(),
+      children: [
+        {
+          type: 'field',
+          propertyId: 'firstName',
+        },
+        {
+          type: 'field',
+          propertyId: 'lastName',
+        },
+        {
+          type: 'field',
+          propertyId: 'emailAddress',
+        },
+        {
+          type: 'field',
+          propertyId: 'password',
+        },
+        {
+          type: 'field',
+          propertyId: 'confirmPassword',
+        },
+        {
+          type: 'field',
+          propertyId: 'iAgreeToTheTermsAndConditions',
+        },
+        {
+          type: 'field',
+          propertyId: 'submit',
+        },
+      ],
+    },
+  ],
+};

@@ -203,3 +203,76 @@
 .e-grid .e-summarycell {
   padding: 5px !important;
 }
+
+.e-kanban .e-kanban-table.e-content-table .e-card .e-card-tag.e-card-label {
+    background: #e09c9c;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .inner-cadr {
+    width: calc(23.7% - 10px);
+    border: 1.5px solid #f0f0f0;
+    padding: 30px 15px 30px 12px;
+    margin-right: 32px;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: row;
+  }
+  .inner-cadr:nth-child(1) {
+    background-color: rgba(194, 220, 240, 1);
+  }
+  .inner-cadr:nth-child(2) {
+    background-color: rgba(201, 167, 244, 1);
+  }
+  .inner-cadr:nth-child(3) {
+    background-color: rgba(244, 218, 168, 1);
+  }
+  .inner-cadr:nth-child(4) {
+    background-color: rgba(182, 214, 171, 1);
+  }
+  .inner-cadr:last-child {
+    margin-right: 0;
+  }
+  #image-container {
+    position: relative; 
+    height: 100px;
+    padding-top: 20px;
+  }
+  #image-container img {
+    position: absolute; /* Set position absolute for precise positioning */
+  }
+  
+  #image-container img:nth-child(1) {
+    left: 0; /* Position the first image at the left edge */
+    border: 1px solid black;
+    border-radius: 30px;
+  }
+  
+  #image-container img:nth-child(2) {
+    left: 37px; /* Position the second image with some overlap from the first */
+    border: 1px solid black;
+    border-radius: 30px;
+  }
+  
+  #image-container img:nth-child(3) {
+    left: 73px; /* Position the third image with some overlap from the second */
+    border: 1px solid black;
+    border-radius: 30px;
+  }
+  
+  #image-container img:nth-child(4) {
+    left: 106px; /* Position the fourth image with some overlap from the third */
+    border: 1px solid black;
+    border-radius: 30px;
+  }
+  
+  #image-container img:nth-child(5) {
+    left: 140px; /* Position the fifth image with some overlap from the fourth */
+    border: 1px solid black;
+    border-radius: 30px;
+  }

@@ -94,7 +94,7 @@ const HwReport = () => {
             >
               Refresh Data
             </button>
-            <button onClick={() => navigate('/')} className="bg-white cursor-pointer text-slate-600 hover:bg-slate-50 px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-all active:scale-95 border border-slate-200">
+            <button onClick={() => navigate(-1)} className="bg-white cursor-pointer text-slate-600 hover:bg-slate-50 px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm transition-all active:scale-95 border border-slate-200">
                   ← Back
              </button>
           </div>

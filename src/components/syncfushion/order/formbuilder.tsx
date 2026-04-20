@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormRenderer } from '@syncfusion/ej2-react-form-renderer';
-import { data, uischema } from './data';
+import { formData, uiSchema } from './data';
 
 function Formbuilder() {
   // Key state to reset the form after a successful submission
@@ -9,16 +9,16 @@ function Formbuilder() {
   return (
     <FormRenderer
       key={formKey}
-      dataSchema={data}
-      uiSchema={uischema}
+      dataSchema={formData}
+      uiSchema={uiSchema}
       onSubmit={async ({ data: formData }) => {
         console.log("Form data:", formData);
 
         // Map form fields to match your backend payload requirements
         const payload = {
-          ordid: formData["ordid"],
-          planno: formData["planno"],
-          shipreqd: formData["shipreqd"]
+          ordid: formData['Order ID'],
+          planno: formData['Plan No'],
+          shipreqd: formData['Ship Reqd']
         };
 
         try {

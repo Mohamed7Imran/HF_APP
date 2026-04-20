@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@boldbi/boldbi-embedded-sdk": "^15.2.6",
+    "@boldreports/javascript-reporting-controls": "^13.1.28",
     "@boldreports/react-reporting-components": "^13.1.27",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
